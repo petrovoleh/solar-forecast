@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.2'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.olehpetrov'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(22)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    // Bean Validation API
+    implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
+
+    // Hibernate Validator (reference implementation)
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+
+    // Optional: If you are using Spring Boot, you may also want the following for integration
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // JJWT Implementation, required at runtime
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+
+    // Jackson integration for JJWT, required for JSON parsing
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Залежність для Spring Web
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'  // Залежність для javax.servlet API
+    implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security Starter
+    implementation 'org.springframework.boot:spring-boot-starter'  // Загальний Spring Boot Starter
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // Залежність для тестування
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
