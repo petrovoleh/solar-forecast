@@ -1,0 +1,147 @@
+/* Profile and Edit Profile Page Container */
+.profile-container {
+    flex: 1;
+    display: flex; /* Use flexbox to arrange items */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: calc(93vh - 60px);
+    background-color: #f4f4f9; /* Slightly adjusted for consistency */
+}
+
+/* Profile Card Styles */
+.profile-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: left;
+    margin-right: 20px; /* Add some space between the card and the map */
+}
+
+/* Title */
+.profile-card h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #004d40; /* Changed to match overall theme */
+    margin-bottom: 1.5rem;
+}
+
+/* Profile Information Styles */
+.profile-info {
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6e6e73;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-item p,
+.info-item input {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.info-item input {
+    width: 90%;
+    padding: 0.9rem;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.info-item input:focus {
+    border-color: #00796b; /* Changed to match theme */
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
+}
+
+/* Save Changes Button Styles */
+.edit-button {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #00796b; /* Changed to match theme */
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #004d40; /* Changed to match hover color */
+}
+
+.edit-button:disabled {
+    background-color: #c7c7c7;
+    cursor: not-allowed;
+}
+.exit-button,.discard-button {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #970000; /* Changed to match theme */
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.exit-button:hover,.discard-button:hover {
+    background-color: #4d0000; /* Changed to match hover color */
+}
+
+.exit-button:disabled,.discard-button:disabled {
+    background-color: #c7c7c7;
+    cursor: not-allowed;
+}
+/* Map Card Styles */
+.map-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 750px;
+    width: 100%;
+    text-align: left;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 500px) {
+    .profile-card {
+        padding: 1.5rem;
+        margin-right: 0; /* Remove margin on small screens */
+    }
+
+    .profile-card h2 {
+        font-size: 22px;
+    }
+
+    .edit-button {
+        padding: 0.75rem;
+    }
+
+    .map-container {
+        display: none; /* Hide map on mobile if necessary */
+    }
+
+    .map-card {
+        padding: 1.5rem; /* Adjust padding for mobile */
+    }
+}
