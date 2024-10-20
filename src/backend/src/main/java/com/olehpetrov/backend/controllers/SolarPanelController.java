@@ -117,7 +117,8 @@ public class SolarPanelController {
         }
 
         SolarPanel panel = panelService.getPanelById(panelId);
-        if (panel == null || !panel.getUserId().equals(user)) {
+        if (panel == null || !panel.getUserId().equals(user.getId())) {
+            logger.error(String.valueOf(panel));
             return ResponseEntity.status(403).body(null); // Forbidden if panel does not belong to the user
         }
 
