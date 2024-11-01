@@ -137,7 +137,7 @@ public class SolarPanelController {
 
         SolarPanel existingPanel = panelService.getPanelById(panelId);
 
-        if (existingPanel == null || !existingPanel.getUserId().equals(user)) {
+        if (existingPanel == null || !existingPanel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }
 
@@ -191,7 +191,7 @@ public class SolarPanelController {
         }
 
         SolarPanel existingPanel = panelService.getPanelById(panelId);
-        if (existingPanel == null || !existingPanel.getUserId().equals(user)) {
+        if (existingPanel == null || !existingPanel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }
 

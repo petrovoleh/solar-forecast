@@ -63,7 +63,7 @@ const App: React.FC = () => {
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/panelslist" element={<PanelsList/>}/>
                         <Route path="/add" element={<AddPanel/>}/>
-                        {/*<Route path="/edit/:id" element={<AddPanel panels={panels} setPanels={setPanels}/>}/>*/}
+                        <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
 
                     </Routes>

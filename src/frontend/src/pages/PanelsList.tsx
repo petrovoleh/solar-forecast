@@ -35,9 +35,17 @@ const PanelList: React.FC = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+
+                // Check if the response is ok and has content
                 if (response.ok) {
-                    const data = await response.json();
-                    setPanels(data);
+                    const text = await response.text(); // Get response as plain text first
+
+                    if (text) {
+                        const data = JSON.parse(text); // Parse only if there's content
+                        setPanels(data);
+                    } else {
+                        setPanels([]); // Handle case with no data (empty array)
+                    }
                 } else {
                     console.error("Failed to fetch panels:", response.statusText);
                 }
@@ -47,6 +55,7 @@ const PanelList: React.FC = () => {
         };
         fetchPanels();
     }, []);
+
 
     const handleSort = (key: keyof SolarPanel) => {
         const sortedPanels = [...panels].sort((a, b) => {
@@ -59,6 +68,26 @@ const PanelList: React.FC = () => {
         });
         setPanels(sortedPanels);
         setSortKey(key);
+    };
+    const handleDelete = async (id: string) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/panel/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                setPanels(panels.filter(panel => panel.id !== id)); // Remove deleted panel from the state
+            } else {
+                console.error("Failed to delete panel:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error deleting panel:", error);
+        }
     };
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,22 +140,27 @@ const PanelList: React.FC = () => {
                 </div>
             )}
 
-            <div className={`panel-list ${viewMode}`}>
-                {filteredPanels.map((panel) => (
-                    <div key={panel.id} className="panel-cardd">
-                        <div>{viewMode === 'grid' && <strong>Name: </strong>}{panel.name}</div>
-                        <div>{viewMode === 'grid' && <strong>Power Rating: </strong>}{panel.powerRating}W</div>
-                        <div>{viewMode === 'grid' && <strong>Efficiency: </strong>}{panel.efficiency}%</div>
-                        <div>{viewMode === 'grid' && <strong>Quantity: </strong>}{panel.quantity}</div>
-                        <div>{viewMode === 'grid' && <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
-                        <div className="panel-actions">
-                            <button onClick={() => navigate(`/view/${panel.id}`)} className="view-button">View</button>
-                            <button onClick={() => navigate(`/edit/${panel.id}`)} className="edit-button">Edit</button>
-                            <button className="delete-button">Delete</button>
+            {panels.length === 0 ? (
+                <div className="no-panels-message">No solar panels added yet.</div>
+            ) : (
+                <div className={`panel-list ${viewMode}`}>
+                    {filteredPanels.map((panel) => (
+                        <div key={panel.id} className="panel-cardd">
+                            <div>{viewMode === 'grid' && <strong>Name: </strong>}{panel.name}</div>
+                            <div>{viewMode === 'grid' && <strong>Power Rating: </strong>}{panel.powerRating}W</div>
+                            <div>{viewMode === 'grid' && <strong>Efficiency: </strong>}{panel.efficiency}%</div>
+                            <div>{viewMode === 'grid' && <strong>Quantity: </strong>}{panel.quantity}</div>
+                            <div>{viewMode === 'grid' && <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
+                            <div className="panel-actions">
+                                <button onClick={() => navigate(`/view/${panel.id}`)} className="view-button">View</button>
+                                <button onClick={() => navigate(`/edit/${panel.id}`)} className="edit-button">Edit</button>
+                                <button onClick={() => handleDelete(panel.id)} className="delete-button">Delete</button>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
+
         </div>
     );
 };
