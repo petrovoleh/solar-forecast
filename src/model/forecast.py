@@ -10,7 +10,6 @@ from pydantic_model import PVSite
 log = logging.getLogger(__name__)
 
 
-
 def run_forecast(
         site: PVSite, ts: datetime | str = None, nwp_source: str = "icon"
 ):
