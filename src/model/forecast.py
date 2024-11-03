@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def run_forecast(
-        site: PVSite, ts: datetime | str = None, nwp_source: str = "icon"
+        site: PVSite, ts: datetime | str = None, nwp_source: str = "icon", frequency: str="hourly"
 ):
     if ts is None:
         ts = pd.Timestamp.now().round("15min")
@@ -30,7 +30,7 @@ def run_forecast(
         capacity_kwp_original = site.capacity_kwp
 
     # make pv and nwp data from nwp_source
-    nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source)
+    nwp_xr = get_nwp(site=site, ts=ts, nwp_source=nwp_source,frequency=frequency)
     pv_xr = make_pv_data(site=site, ts=ts)
 
     # load and run models
