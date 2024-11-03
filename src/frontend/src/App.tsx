@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
+import PanelForecast from './pages/PanelForecast';
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';  // Import the EditProfile page
@@ -65,6 +66,7 @@ const App: React.FC = () => {
                         <Route path="/add" element={<AddPanel/>}/>
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
+                        <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
 
                     </Routes>
                 </div>

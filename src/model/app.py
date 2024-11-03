@@ -25,7 +25,7 @@ def generate_all_forecasts(
             latitude, longitude, capacity_kwp, init_time=init_time,frequency=frequency
         )
         all_forecasts = pd.concat([all_forecasts, predictions_df])
-        init_time += timedelta(hours=init_time_freq)
+        init_time += timedelta(hours=48)
 
     return all_forecasts
 
