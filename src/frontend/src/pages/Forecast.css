@@ -26,15 +26,22 @@ body {
 
 .forecast-main {
     width: 100%;
-    max-width: 800px;
+    height: 80vh;
+    margin-top: 4vh;
+    /*max-width: 800px;*/
     padding: 1rem;
 }
+.date-selection-wrapper{
+    width: 100%;
+    padding: 1rem;
 
+}
 .date-selection {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1em;
+    width: 600px;
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    /*margin-bottom: 1em;*/
 }
 
 .date-selection label {
@@ -51,6 +58,8 @@ body {
 }
 
 .cta-button {
+    margin:1rem;
+    width: 100px;
     padding: 0.5rem 1.5rem;
     background-color: #00796b;
     color: white;

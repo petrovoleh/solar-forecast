@@ -15,16 +15,11 @@ const PanelForecast: React.FC = () => {
     const token = localStorage.getItem('token');
 
     const [forecastData, setForecastData] = useState<ForecastData[]>([]);
-    const [fromDate, setFromDate] = useState<string>(new Date().toISOString().split('T')[0]);
-    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!token) {
-            setError('Token not found. Please log in.');
-            return;
-        }
-    }, []);
+    const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const fetchForecast = async () => {
         try {
@@ -52,36 +47,73 @@ const PanelForecast: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        if (fromDate && toDate) {
+            fetchForecast();
+        }
+        if (!token) {
+            setError('Token not found. Please log in.');
+            return;
+        }
+    }, [fromDate, toDate, token]);
+
     const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFromDate(e.target.value);
+        const selectedFromDate = e.target.value;
+        const newToDate = new Date(selectedFromDate);
+        newToDate.setDate(newToDate.getDate() + 30);
+
+        setFromDate(selectedFromDate);
+        if (newToDate.toISOString().split('T')[0] < maxToDate) {
+            setToDate(newToDate.toISOString().split('T')[0]);
+        } else {
+            setToDate(maxToDate);
+        }
     };
 
     const handleToDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setToDate(e.target.value);
+        const selectedToDate = e.target.value;
+        const start = new Date(fromDate);
+        const end = new Date(selectedToDate);
+        const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
+
+        if (diffDays <= 30) {
+            setToDate(selectedToDate);
+        } else {
+            setError('The date range should not exceed 30 days.');
+        }
     };
 
     return (
         <div className="panel-forecast">
-            <header className="header">
-                <h1>Panel Forecast for Panel ID: {id}</h1>
-            </header>
-
             <main className="forecast-main">
                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                <div className="date-selection-wrapper">
+                    <div className="date-selection">
+                        <label>
+                            From Date:
+                            <input
+                                type="date"
+                                value={fromDate}
+                                onChange={handleFromDateChange}
+                                max={maxToDate}
+                            />
+                        </label>
+                        <label style={{ marginLeft: '1em' }}>
+                            To Date:
+                            <input
+                                type="date"
+                                value={toDate}
+                                onChange={handleToDateChange}
+                                min={fromDate}
+                                max={maxToDate}
+                            />
+                        </label>
 
-                <div className="date-selection">
-                    <label>
-                        From Date:
-                        <input type="date" value={fromDate} onChange={handleFromDateChange} />
-                    </label>
-                    <label style={{ marginLeft: '1em' }}>
-                        To Date:
-                        <input type="date" value={toDate} onChange={handleToDateChange} />
-                    </label>
-                    <button className="cta-button" onClick={fetchForecast}>OK</button>
+                        <button className="cta-button" onClick={fetchForecast}>OK</button>
+                    </div>
                 </div>
 
-                <ResponsiveContainer width="100%" height={400}>
+                <ResponsiveContainer width="100%" height={800}>
                     <LineChart data={forecastData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                         <XAxis
@@ -94,7 +126,7 @@ const PanelForecast: React.FC = () => {
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
                             contentStyle={{ backgroundColor: '#e0f7fa', borderColor: '#00796b' }}
                         />
-                        <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} />
+                        <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} dot={false} />
                     </LineChart>
                 </ResponsiveContainer>
             </main>

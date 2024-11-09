@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import PanelForecast from './pages/PanelForecast';
+import BarForecast from './pages/BarForecast';
+
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';  // Import the EditProfile page
@@ -24,30 +26,9 @@ interface SolarPanel {
     location: string;
 }
 
-const samplePanels: SolarPanel[] = [
-    {
-        id: 1,
-        name: "Solar Panel 1",
-        description: "High efficiency solar panel",
-        size: "2x1 meters",
-        energyOutputNow: "500W",
-        energyOutputMonth: "300kWh",
-        location: "New York, USA",
-    },
-    {
-        id: 2,
-        name: "Solar Panel 2",
-        description: "Eco-friendly panel",
-        size: "1.8x1 meters",
-        energyOutputNow: "400W",
-        energyOutputMonth: "250kWh",
-        location: "Los Angeles, USA",
-    },
-];
+
 
 const App: React.FC = () => {
-    const [panels, setPanels] = useState(samplePanels);
-
     return (
         <AuthProvider>
             <Router>
@@ -67,6 +48,7 @@ const App: React.FC = () => {
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
                         <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
+                        <Route path="/bar_forecast/:id" element={<BarForecast/>}/>
 
                     </Routes>
                 </div>

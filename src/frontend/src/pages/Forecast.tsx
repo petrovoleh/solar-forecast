@@ -150,9 +150,15 @@ const Forecast: React.FC = () => {
                             <div>{viewMode === 'grid' && <strong>Power Rating: </strong>}{panel.powerRating}W</div>
                             <div>{viewMode === 'grid' && <strong>Efficiency: </strong>}{panel.efficiency}%</div>
                             <div>{viewMode === 'grid' && <strong>Quantity: </strong>}{panel.quantity}</div>
-                            <div>{viewMode === 'grid' && <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
+                            <div>{viewMode === 'grid' &&
+                                <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
                             <div className="panel-actions">
-                                <button onClick={() => navigate(`/panel_forecast/${panel.id}`)} className="view-button">Forecast</button>
+                                <button onClick={() => navigate(`/bar_forecast/${panel.id}`)}
+                                        className="view-button">Weekly forecast
+                                </button>
+                                <button onClick={() => navigate(`/panel_forecast/${panel.id}`)}
+                                        className="view-button">Daily Forecast
+                                </button>
 
                             </div>
                         </div>

@@ -12,21 +12,7 @@ body {
     color: #333;
 }
 
-.header {
-    background-color: #004d40;
-    color: white;
-    text-align: center;
-    padding: 2rem;
-}
 
-.header h1 {
-    font-size: 2.5rem;
-}
-
-.header p {
-    margin: 0;
-    font-size: 1.2rem;
-}
 
 .hero-section {
     background-color: #e0f7fa;
@@ -124,7 +110,7 @@ body {
 }
 
 .footer {
-    height:5vh;
+    height:4vh;
     background-color: #004d40;
     color: white;
     text-align: center;

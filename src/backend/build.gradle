@@ -25,7 +25,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     // Bean Validation API
     implementation 'jakarta.validation:jakarta.validation-api:3.1.0'
-
+    implementation 'org.json:json:20211205'
     // Hibernate Validator (reference implementation)
     implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
 

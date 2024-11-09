@@ -1,4 +1,5 @@
 package com.olehpetrov.backend.controllers;
+import com.olehpetrov.backend.models.DailyEnergyTotal;
 import com.olehpetrov.backend.models.SolarPanel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.SolarPanelService;
@@ -14,9 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/forecast")
@@ -54,7 +58,7 @@ public class ForecastController {
         }
 
         // Calculate capacity in kW (assumes efficiency is in percentage form)
-        double capacity_kwp = (panel.getPowerRating() * (panel.getEfficiency() / 100.0));
+        double capacity_kwp = (panel.getPowerRating()/1000.0 * (panel.getEfficiency() / 100.0));
 
         // Prepare request body for the forecast service
         Map<String, Object> requestBody = new HashMap<>();
@@ -83,4 +87,115 @@ public class ForecastController {
             return ResponseEntity.status(response.getStatusCode()).body("Failed to retrieve forecast.");
         }
     }
+    @GetMapping("/getTotal")
+    public ResponseEntity<String> getTotal(@RequestHeader("Authorization") String token,
+                                           @RequestParam String panelId,
+                                           @RequestParam String from,
+                                           @RequestParam String to) {
+        String username = jwtUtils.extractUsername(token.substring(7));
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+
+        SolarPanel panel = panelService.getPanelById(panelId);
+        if (panel == null || !panel.getUserId().equals(user.getId())) {
+            return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
+        }
+
+        List<DailyEnergyTotal> existingRecords = panelService.getDailyEnergyTotalsByDateRange(panel, from, to);
+        Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
+        logger.info(String.valueOf(existingRecords.size()));
+        logger.info(String.valueOf(existingDates.size()));
+        // Determine which dates are missing from existing records
+        Set<String> allRequestedDates = getDatesInRange(from, to);
+        allRequestedDates.removeAll(existingDates);  // Now only missing dates remain
+
+        if (allRequestedDates.isEmpty()) {
+            JSONArray dailyTotals = new JSONArray();
+            for (DailyEnergyTotal record : existingRecords) {
+                JSONObject dayTotal = new JSONObject();
+                dayTotal.put("date", record.getDate());
+                dayTotal.put("totalEnergy_kwh", record.getTotalEnergy_kwh());
+                dailyTotals.put(dayTotal);
+            }
+            logger.info("Returning cached daily energy totals for user: {}", username);
+            return ResponseEntity.ok(dailyTotals.toString());
+        }
+
+        // If there are missing dates, make an API call to fetch them
+        double capacity_kwp = (panel.getPowerRating() / 1000.0 * (panel.getEfficiency() / 100.0));
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("init_time_freq", 15);
+        requestBody.put("start_datetime", from);
+        requestBody.put("end_datetime", to);
+        requestBody.put("frequency", "15min");
+        requestBody.put("latitude", panel.getLocation().getLat());
+        requestBody.put("longitude", panel.getLocation().getLon());
+        requestBody.put("capacity_kwp", capacity_kwp);
+
+        String url = "http://127.0.0.1:8000/forecast";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            JSONArray forecastData = new JSONArray(response.getBody());
+            Map<String, Double> dailyEnergyMap = new HashMap<>();
+
+            for (int i = 0; i < forecastData.length(); i++) {
+                JSONObject entry = forecastData.getJSONObject(i);
+                String datetime = entry.getString("datetime").split("T")[0];
+                double powerKW = entry.optDouble("power_kw", 0.0);
+                if (allRequestedDates.contains(datetime)) {  // Only add missing dates
+                    dailyEnergyMap.put(datetime, dailyEnergyMap.getOrDefault(datetime, 0.0) + (powerKW * 0.25));
+                }
+            }
+
+            JSONArray dailyTotals = new JSONArray();
+            for (DailyEnergyTotal record : existingRecords) {
+                JSONObject dayTotal = new JSONObject();
+                dayTotal.put("date", record.getDate());
+                dayTotal.put("totalEnergy_kwh", record.getTotalEnergy_kwh());
+                dailyTotals.put(dayTotal);
+            }
+
+            for (Map.Entry<String, Double> entry : dailyEnergyMap.entrySet()) {
+                String date = entry.getKey();
+                double totalEnergy = entry.getValue();
+
+                DailyEnergyTotal newDailyTotal = new DailyEnergyTotal();
+                newDailyTotal.setPanel(panel);
+                newDailyTotal.setDate(date);
+                newDailyTotal.setTotalEnergy_kwh(totalEnergy);
+                panelService.saveDailyEnergyTotal(newDailyTotal);
+
+                JSONObject dayTotal = new JSONObject();
+                dayTotal.put("date", date);
+                dayTotal.put("totalEnergy_kwh", totalEnergy);
+                dailyTotals.put(dayTotal);
+            }
+
+            logger.info("Daily energy totals for user: {}", username);
+            return ResponseEntity.ok(dailyTotals.toString());
+        } else {
+            logger.error("Failed to retrieve forecast for user: {}", username);
+            return ResponseEntity.status(response.getStatusCode()).body("Failed to retrieve forecast.");
+        }
+    }
+    private Set<String> getDatesInRange(String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate.split(" ")[0]);
+        LocalDate end = LocalDate.parse(endDate.split(" ")[0]);
+        Set<String> dates = new HashSet<>();
+        while (!start.isAfter(end)) {
+            dates.add(start.toString());
+            start = start.plusDays(1);
+        }
+        return dates;
+    }
+
+
 }
