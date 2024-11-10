@@ -13,7 +13,7 @@ public class DailyEnergyTotal {
     private String id;
 
     @DBRef
-    private SolarPanel panel;  // Reference to the SolarPanel document
+    private Panel panel;  // Reference to the SolarPanel document
 
     private String date;       // Format: "YYYY-MM-DD"
     private double totalEnergy_kwh;

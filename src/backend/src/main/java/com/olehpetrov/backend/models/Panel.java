@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "panels")
-public class SolarPanel {
+public class Panel {
 
     @Id
     private String id;
@@ -18,10 +18,8 @@ public class SolarPanel {
     private int efficiency;
     private String name;
     private int quantity;
-
     @DBRef
     private Location location;
-
     @DBRef
     private Cluster cluster;
 }

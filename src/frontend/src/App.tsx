@@ -16,17 +16,8 @@ import AddPanel from "./pages/AddPanel";
 import ViewPanel from "./pages/ViewPanel";
 import { AuthProvider } from './context/AuthContext';
 import Forecast from "./pages/Forecast";
-interface SolarPanel {
-    id: number;
-    name: string;
-    description: string;
-    size: string;
-    energyOutputNow: string;
-    energyOutputMonth: string;
-    location: string;
-}
-
-
+import ClusterList from "./pages/ClusterList";
+import AddCluster from "./pages/AddCluster";
 
 const App: React.FC = () => {
     return (
@@ -44,8 +35,11 @@ const App: React.FC = () => {
                         <Route path="/edit-profile" element={<EditProfile/>}/>
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/panelslist" element={<PanelsList/>}/>
+                        <Route path="/clusterlist" element={<ClusterList/>}/>
                         <Route path="/add" element={<AddPanel/>}/>
                         <Route path="/edit/:id" element={<AddPanel/>}/>
+                        <Route path="/add-cluster" element={<AddCluster/>}/>
+                        <Route path="/edit-cluster/:id" element={<AddCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
                         <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
                         <Route path="/bar_forecast/:id" element={<BarForecast/>}/>

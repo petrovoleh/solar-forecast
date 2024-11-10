@@ -1,7 +1,7 @@
 package com.olehpetrov.backend.controllers;
 
 import com.olehpetrov.backend.models.Location;
-import com.olehpetrov.backend.models.SolarPanel;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.LocationService;
 import com.olehpetrov.backend.services.SolarPanelService;
@@ -47,7 +47,7 @@ public class SolarPanelController {
         }
 
         // Create and set up the SolarPanel object
-        SolarPanel panel = new SolarPanel();
+        Panel panel = new Panel();
         panel.setUserId(user.getId());
         panel.setPowerRating(panelRequest.getPowerRating());
         panel.setTemperatureCoefficient(panelRequest.getTemperatureCoefficient());
@@ -92,14 +92,14 @@ public class SolarPanelController {
 
     // Get all panels by user ID
     @GetMapping("/user")
-    public ResponseEntity<List<SolarPanel>> getPanelsByUserId(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<Panel>> getPanelsByUserId(@RequestHeader("Authorization") String token) {
         String username = jwtUtils.extractUsername(token.substring(7)); // Extract username from token
         User user = userService.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
-        List<SolarPanel> panels = panelService.getPanelsByUserId(user.getId());
+        List<Panel> panels = panelService.getPanelsByUserId(user.getId());
         if (panels.isEmpty()) {
             return ResponseEntity.ok().body(null); // Return empty if no panels found
         }
@@ -109,14 +109,14 @@ public class SolarPanelController {
 
     // Get a single panel by panel ID
     @GetMapping("/{panelId}")
-    public ResponseEntity<SolarPanel> getPanelById(@RequestHeader("Authorization") String token, @PathVariable String panelId) {
+    public ResponseEntity<Panel> getPanelById(@RequestHeader("Authorization") String token, @PathVariable String panelId) {
         String username = jwtUtils.extractUsername(token.substring(7)); // Extract username from token
         User user = userService.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
-        SolarPanel panel = panelService.getPanelById(panelId);
+        Panel panel = panelService.getPanelById(panelId);
         if (panel == null || !panel.getUserId().equals(user.getId())) {
             logger.error(String.valueOf(panel));
             return ResponseEntity.status(403).body(null); // Forbidden if panel does not belong to the user
@@ -135,7 +135,7 @@ public class SolarPanelController {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
-        SolarPanel existingPanel = panelService.getPanelById(panelId);
+        Panel existingPanel = panelService.getPanelById(panelId);
 
         if (existingPanel == null || !existingPanel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
@@ -190,7 +190,7 @@ public class SolarPanelController {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
-        SolarPanel existingPanel = panelService.getPanelById(panelId);
+        Panel existingPanel = panelService.getPanelById(panelId);
         if (existingPanel == null || !existingPanel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }

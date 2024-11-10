@@ -1,6 +1,6 @@
 package com.olehpetrov.backend.controllers;
 import com.olehpetrov.backend.models.DailyEnergyTotal;
-import com.olehpetrov.backend.models.SolarPanel;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.SolarPanelService;
 import com.olehpetrov.backend.services.UserService;
@@ -66,7 +66,7 @@ public class ForecastController {
             return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
         }
         // Find the panel by ID and verify ownership
-        SolarPanel panel = panelService.getPanelById(panelId);
+        Panel panel = panelService.getPanelById(panelId);
         if (panel == null || !panel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }
@@ -116,7 +116,7 @@ public class ForecastController {
             logger.error("Date range is out of bounds for user: {}", username);
             return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
         }
-        SolarPanel panel = panelService.getPanelById(panelId);
+        Panel panel = panelService.getPanelById(panelId);
         if (panel == null || !panel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }
