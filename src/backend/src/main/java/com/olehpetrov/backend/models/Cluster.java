@@ -5,23 +5,15 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @Data
-@Document(collection = "panels")
-public class SolarPanel {
-
+@Document(collection = "cluster")
+public class Cluster {
     @Id
     private String id;
-    private String userId;
-    private int powerRating;
-    private int temperatureCoefficient;
-    private int efficiency;
     private String name;
-    private int quantity;
-
+    private String inverter;
+    private Double inverterCOP;
+    private String description;
     @DBRef
     private Location location;
-
-    @DBRef
-    private Cluster cluster;
 }

@@ -38,6 +38,17 @@ public class ForecastController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    private boolean isValidDateRange(String fromDateStr, String toDateStr) {
+        LocalDate fromDate = LocalDate.parse(fromDateStr.split(" ")[0]);
+        LocalDate toDate = LocalDate.parse(toDateStr.split(" ")[0]);
+        LocalDate today = LocalDate.now();
+        LocalDate maxAllowedDate = today.plusDays(13);
+        LocalDate minAllowedDate = LocalDate.of(2020, 1, 1);
+
+        // Ensure `from` date is not before 2020-01-01, and the range is within the next 13 days
+        return !fromDate.isBefore(minAllowedDate) &&  !toDate.isBefore(minAllowedDate) && !fromDate.isAfter(maxAllowedDate) && !toDate.isAfter(maxAllowedDate);
+    }
+
     @PostMapping("/getForecast")
     public ResponseEntity<String> getForecast(@RequestHeader("Authorization") String token,
                                               @RequestParam String panelId,
@@ -50,7 +61,10 @@ public class ForecastController {
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found.");
         }
-
+        if (!isValidDateRange(from, to)) {
+            logger.error("Date range is out of bounds for user: {}", username);
+            return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
+        }
         // Find the panel by ID and verify ownership
         SolarPanel panel = panelService.getPanelById(panelId);
         if (panel == null || !panel.getUserId().equals(user.getId())) {
@@ -98,7 +112,10 @@ public class ForecastController {
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found.");
         }
-
+        if (!isValidDateRange(from, to)) {
+            logger.error("Date range is out of bounds for user: {}", username);
+            return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
+        }
         SolarPanel panel = panelService.getPanelById(panelId);
         if (panel == null || !panel.getUserId().equals(user.getId())) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");

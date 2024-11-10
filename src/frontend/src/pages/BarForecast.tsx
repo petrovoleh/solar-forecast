@@ -13,6 +13,7 @@ const BarForecast: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const [dailyTotals, setDailyTotals] = useState<DailyTotalData[]>([]);
     const [totalEnergySum, setTotalEnergySum] = useState<number>(0);
@@ -82,11 +83,13 @@ const BarForecast: React.FC = () => {
                     <div className="date-selection">
                         <label>
                             From Date:
-                            <input type="date" value={fromDate} onChange={handleFromDateChange} />
+                            <input type="date" value={fromDate} onChange={handleFromDateChange} max={maxToDate}
+                                   min={"2020-01-01"}/>
                         </label>
                         <label style={{ marginLeft: '1em' }}>
                             To Date:
-                            <input type="date" value={toDate} onChange={handleToDateChange} />
+                            <input type="date" value={toDate} onChange={handleToDateChange} max={maxToDate}
+                                   min={fromDate > "2020-01-01" ? fromDate : "2020-01-01"}/>
                         </label>
                         <button className="cta-button" onClick={fetchDailyTotals}>OK</button>
                     </div>

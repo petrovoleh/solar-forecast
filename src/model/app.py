@@ -9,20 +9,18 @@ app = FastAPI()
 
 
 def generate_all_forecasts(
-    init_time_freq: int,
     start: datetime,
     end: datetime,
     latitude: float,
     longitude: float,
     capacity_kwp: float,
-    frequency: str,
 ) -> pd.DataFrame:
 
     all_forecasts = pd.DataFrame()
     init_time = start
     while init_time <= end:
         predictions_df = forecast_for_site(
-            latitude, longitude, capacity_kwp, init_time=init_time,frequency=frequency
+            latitude, longitude, capacity_kwp, init_time=init_time
         )
         all_forecasts = pd.concat([all_forecasts, predictions_df])
         init_time += timedelta(hours=48)
@@ -34,25 +32,23 @@ def forecast_for_site(
     latitude: float,
     longitude: float,
     capacity_kwp: float,
-    frequency: str,
     init_time: datetime = None,
 ) -> pd.DataFrame:
 
     site = PVSite(latitude=latitude, longitude=longitude, capacity_kwp=capacity_kwp)
-    predictions_df = run_forecast(site=site, ts=init_time,frequency=frequency)
+    predictions_df = run_forecast(site=site, ts=init_time)
     predictions_df.reset_index(inplace=True)
     predictions_df.rename(columns={"index": "datetime"}, inplace=True)
     return predictions_df
 
 
 class ForecastRequest(BaseModel):
-    init_time_freq: int
+
     start_datetime: str
     end_datetime: str
     latitude: float
     longitude: float
     capacity_kwp: float
-    frequency: str
 
 
 @app.post("/forecast")
@@ -70,7 +66,7 @@ async def get_forecast(data: ForecastRequest):
     end = datetime.strptime(data.end_datetime, "%Y-%m-%d %H:%M:%S")
 
     forecasts_df = generate_all_forecasts(
-        data.init_time_freq, start, end, data.latitude, data.longitude, data.capacity_kwp, data.frequency
+        start, end, data.latitude, data.longitude, data.capacity_kwp
     )
 
     return forecasts_df.to_dict(orient="records")

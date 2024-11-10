@@ -43,7 +43,7 @@ def get_nwp(site: PVSite, ts: datetime, nwp_source: str = "icon", frequency: str
     ]
 
     start = ts.date()
-    end = start + pd.Timedelta(days=7)
+    end = start + pd.Timedelta(days=2)
 
     url = ""
 

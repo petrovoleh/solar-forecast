@@ -96,6 +96,7 @@ const PanelForecast: React.FC = () => {
                                 value={fromDate}
                                 onChange={handleFromDateChange}
                                 max={maxToDate}
+                                min={"2020-01-01"}
                             />
                         </label>
                         <label style={{ marginLeft: '1em' }}>
@@ -104,7 +105,7 @@ const PanelForecast: React.FC = () => {
                                 type="date"
                                 value={toDate}
                                 onChange={handleToDateChange}
-                                min={fromDate}
+                                min={fromDate > "2020-01-01" ? fromDate : "2020-01-01"}
                                 max={maxToDate}
                             />
                         </label>
