@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import PanelForecast from './pages/PanelForecast';
 import BarForecast from './pages/BarForecast';
+import { Helmet } from 'react-helmet';
 
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
@@ -22,6 +23,9 @@ import AddCluster from "./pages/AddCluster";
 const App: React.FC = () => {
     return (
         <AuthProvider>
+            <Helmet>
+                <title>Solar forecast</title>
+            </Helmet>
             <Router>
                 <Header/>
                 <div className="page-content">
