@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongo:
+    build:
+      context: ./data  # Path to the directory with the Dockerfile for MongoDB
+      dockerfile: Dockerfile  # The actual MongoDB Dockerfile in ./data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_INITDB_DATABASE=mydatabase
+    volumes:
+      - mongo-data:/data/db  # Persist MongoDB data
+    ports:
+      - "27017:27017"
+
+  # Frontend (React) service
+  frontend:
+    build:
+      context: ./frontend  # Path to the directory with the Dockerfile for React
+      dockerfile: Dockerfile  # The React Dockerfile in ./frontend
+    ports:
+      - "3000:3000"  # Expose React app on port 3000
+    depends_on:
+      - mongo  # Ensure MongoDB starts before frontend
+
+  # Backend (FastAPI) service
+  model:
+    build:
+      context: ./model  # Path to the directory with the Dockerfile for FastAPI
+      dockerfile: Dockerfile  # The FastAPI Dockerfile in ./model
+    ports:
+      - "8000:8000"  # Expose FastAPI app on port 8000
+    depends_on:
+      - mongo  # Ensure MongoDB starts before backend
+
+  backend:
+    build:
+      context: ./backend  # Path to the directory with the Dockerfile for FastAPI
+      dockerfile: Dockerfile  # The FastAPI Dockerfile in ./model
+    ports:
+      - "8080:8080"  # Expose FastAPI app on port 8000
+    depends_on:
+      - model  # Ensure MongoDB starts before backend
+volumes:
+  mongo-data:  # Volume for MongoDB to persist data
