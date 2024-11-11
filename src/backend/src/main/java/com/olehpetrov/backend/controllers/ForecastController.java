@@ -85,7 +85,7 @@ public class ForecastController {
         requestBody.put("capacity_kwp", capacity_kwp);
 
         // Send the request to the forecast API
-        String url = "http://127.0.0.1:8000/forecast";
+        String url = "http://model:8000/forecast";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -152,7 +152,7 @@ public class ForecastController {
         requestBody.put("longitude", panel.getLocation().getLon());
         requestBody.put("capacity_kwp", capacity_kwp);
 
-        String url = "http://127.0.0.1:8000/forecast";
+        String url = "http://model:8000/forecast";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

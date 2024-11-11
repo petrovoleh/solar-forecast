@@ -24,7 +24,7 @@ const BarForecast: React.FC = () => {
     const fetchDailyTotals = async () => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `http://backend:8080/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
                 {
                     method: 'GET',
                     headers: {

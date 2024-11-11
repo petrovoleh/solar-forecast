@@ -27,7 +27,7 @@ const Profile: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('token'); // Get token from local storage
-                const response = await fetch('http://localhost:8080/api/user/profile', {
+                const response = await fetch('http://backend:8080/api/user/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}` // Include the JWT token in the request
                     }

@@ -24,7 +24,7 @@ const PanelForecast: React.FC = () => {
     const fetchForecast = async () => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `http://backend:8080/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
                 {
                     method: 'POST',
                     headers: {

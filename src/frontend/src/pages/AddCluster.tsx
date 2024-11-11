@@ -42,7 +42,7 @@ const AddCluster: React.FC = () => {
             const fetchClusterData = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`http://localhost:8080/api/cluster/${id}`, {
+                    const response = await fetch(`http://backend:8080/api/cluster/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
@@ -120,7 +120,7 @@ const AddCluster: React.FC = () => {
         }
 
         try {
-            const response = await fetch(isEditMode ? `http://localhost:8080/api/cluster/${id}` : 'http://localhost:8080/api/cluster/add', {
+            const response = await fetch(isEditMode ? `http://backend:8080/api/cluster/${id}` : 'http://backend:8080/api/cluster/add', {
                 method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
                 headers: {
                     'Content-Type': 'application/json',

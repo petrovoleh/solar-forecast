@@ -48,7 +48,7 @@ const AddPanel: React.FC = () => {
             const fetchPanelData = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`http://localhost:8080/api/panel/${id}`, {
+                    const response = await fetch(`http://backend:8080/api/panel/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
@@ -126,7 +126,7 @@ const AddPanel: React.FC = () => {
         }
 
         try {
-            const response = await fetch(isEditMode ? `http://localhost:8080/api/panel/${id}` : 'http://localhost:8080/api/panel/add', {
+            const response = await fetch(isEditMode ? `http://backend:8080/api/panel/${id}` : 'http://backend:8080/api/panel/add', {
                 method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
                 headers: {
                     'Content-Type': 'application/json',
