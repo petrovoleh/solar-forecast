@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './PanelList.css';
 import { useNavigate } from "react-router-dom";
+import {backend_url} from "../config";
 interface Location {
     country: string;
     city: string;
@@ -30,7 +31,7 @@ const PanelList: React.FC = () => {
         const fetchPanels = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://backend:8080/api/panel/user', {
+                const response = await fetch(`${backend_url}/api/panel/user`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -74,7 +75,7 @@ const PanelList: React.FC = () => {
         if (!token) return;
 
         try {
-            const response = await fetch(`http://backend:8080/api/panel/${id}`, {
+            const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/panel/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

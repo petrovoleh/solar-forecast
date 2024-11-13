@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Import for reading route parameters
 import './AddCluster.css';
-import MapComponent from '../components/MapComponent'; // Import MapComponent
+import MapComponent from '../components/MapComponent';
+import {backend_url} from "../config"; // Import MapComponent
 
 // Define the type for location request
 interface LocationRequest {
@@ -42,7 +43,7 @@ const AddCluster: React.FC = () => {
             const fetchClusterData = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`http://backend:8080/api/cluster/${id}`, {
+                    const response = await fetch(`${backend_url}/api/cluster/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
@@ -120,7 +121,7 @@ const AddCluster: React.FC = () => {
         }
 
         try {
-            const response = await fetch(isEditMode ? `http://backend:8080/api/cluster/${id}` : 'http://backend:8080/api/cluster/add', {
+            const response = await fetch(isEditMode ? `${backend_url}/api/cluster/${id}` : `${backend_url}/api/cluster/add`, {
                 method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
                 headers: {
                     'Content-Type': 'application/json',

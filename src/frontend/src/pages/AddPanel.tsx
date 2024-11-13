@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Import for reading route parameters
 import './AddPanel.css';
-import MapComponent from '../components/MapComponent'; // Import MapComponent
+import MapComponent from '../components/MapComponent';
+import {backend_url} from "../config"; // Import MapComponent
 
 // Define the type for location request
 interface LocationRequest {
@@ -48,7 +49,7 @@ const AddPanel: React.FC = () => {
             const fetchPanelData = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch(`http://backend:8080/api/panel/${id}`, {
+                    const response = await fetch(`${backend_url}/api/panel/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
@@ -126,7 +127,7 @@ const AddPanel: React.FC = () => {
         }
 
         try {
-            const response = await fetch(isEditMode ? `http://backend:8080/api/panel/${id}` : 'http://backend:8080/api/panel/add', {
+            const response = await fetch(isEditMode ? `${backend_url}/api/panel/${id}` : `${backend_url}/api/panel/add`, {
                 method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
                 headers: {
                     'Content-Type': 'application/json',

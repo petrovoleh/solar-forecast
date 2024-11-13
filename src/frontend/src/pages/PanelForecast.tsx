@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import './Forecast.css';
+import {backend_url} from "../config";
 
 interface ForecastData {
     datetime: string;
@@ -24,7 +25,7 @@ const PanelForecast: React.FC = () => {
     const fetchForecast = async () => {
         try {
             const response = await fetch(
-                `http://backend:8080/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
                 {
                     method: 'POST',
                     headers: {

@@ -5,7 +5,6 @@ import SignIn from './pages/SignIn';
 import PanelForecast from './pages/PanelForecast';
 import BarForecast from './pages/BarForecast';
 import { Helmet } from 'react-helmet';
-
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';  // Import the EditProfile page

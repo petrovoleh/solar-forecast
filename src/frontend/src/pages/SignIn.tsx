@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Auth.css';
 import { useAuth } from '../context/AuthContext';
+import {backend_url} from "../config";
 
 interface SignInFormState {
     emailOrUsername: string;
@@ -55,7 +56,7 @@ const SignIn: React.FC = () => {
         e.preventDefault();
         if (validate()) {
             try {
-                const response = await fetch('http://backend:8080/api/auth/signin', {
+                const response = await fetch(`${backend_url}/api/auth/signin`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

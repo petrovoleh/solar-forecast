@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ClusterList.css';
 import { useNavigate } from "react-router-dom";
+import {backend_url} from "../config";
 
 interface Location {
     country: string;
@@ -28,7 +29,7 @@ const ClusterList: React.FC = () => {
         const fetchClusters = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://backend:8080/api/cluster/user', {
+                const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/cluster/user`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -69,7 +70,7 @@ const ClusterList: React.FC = () => {
         if (!token) return;
 
         try {
-            const response = await fetch(`http://backend:8080/api/cluster/${id}`, {
+            const response = await fetch(`${backend_url}/api/cluster/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

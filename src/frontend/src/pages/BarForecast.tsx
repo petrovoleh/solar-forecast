@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import './Forecast.css';
+import {backend_url} from "../config";
 
 interface DailyTotalData {
     date: string;
@@ -24,7 +25,7 @@ const BarForecast: React.FC = () => {
     const fetchDailyTotals = async () => {
         try {
             const response = await fetch(
-                `http://backend:8080/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
                 {
                     method: 'GET',
                     headers: {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './EditProfile.css'; // Спільний CSS для профілю
-import MapComponent from '../components/MapComponent'; // Імпорт компонента з мапою
+import MapComponent from '../components/MapComponent';
+import {backend_url} from "../config"; // Імпорт компонента з мапою
 
 interface Address {
     country: string;
@@ -28,7 +29,7 @@ const EditProfile: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('token'); // Get token from local storage
-                const response = await fetch('http://backend:8080/api/user/profile', {
+                const response = await fetch(`${backend_url}/api/user/profile`, {
                     headers: {
                         'Authorization': `Bearer ${token}` // Include the JWT token in the request
                     }
@@ -83,7 +84,7 @@ const EditProfile: React.FC = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
 
-        fetch('http://backend:8080/api/user/update', {
+        fetch(`${backend_url}/api/user/update`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
