@@ -75,3 +75,8 @@ typings/
 # FuseBox cache
 .fusebox/
 src/model/.cache.sqlite
+src/backend/src/main/resources/application.properties
+src/backend/src/main/resources/application.properties
+
+
+src/frontend/dist/
