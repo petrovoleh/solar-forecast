@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Import for reading route parameters
+import { useParams } from 'react-router-dom';
 import './AddCluster.css';
 import MapComponent from '../components/MapComponent';
-import {backend_url} from "../config"; // Import MapComponent
+import { backend_url } from "../config";
 
-// Define the type for location request
 interface LocationRequest {
     lat: number;
     lon: number;
@@ -13,16 +12,23 @@ interface LocationRequest {
     country: string;
 }
 
-// Define the type for the cluster form data
 interface ClusterFormData {
     name: string;
     description: string;
     location?: LocationRequest;
+    inverterId?: string; // Add inverterId to ClusterFormData
+}
+
+interface Inverter {
+    id: string;
+    name: string;
 }
 
 const AddCluster: React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Extract the ID from the route
-    const isEditMode = Boolean(id); // Determine if we're in edit mode based on the presence of id
+    const { id } = useParams<{ id: string }>();
+    const isEditMode = Boolean(id);
+
+    const [inverters, setInverters] = useState<Inverter[]>([]); // State for list of inverters
     const [formData, setFormData] = useState<ClusterFormData>({
         name: '',
         description: '',
@@ -32,10 +38,35 @@ const AddCluster: React.FC = () => {
             city: '',
             district: '',
             country: ''
-        }
+        },
+        inverterId: '' // Initialize selected inverter ID
     });
-
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
+
+    // Fetch the list of inverters on component mount
+    useEffect(() => {
+        const fetchInverters = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${backend_url}/api/inverter/all`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const invertersData = await response.json();
+                    setInverters(invertersData); // Set the inverter list
+                    console.log(invertersData)
+                } else {
+                    console.error('Failed to fetch inverters');
+                }
+            } catch (error) {
+                console.error('Error fetching inverters:', error);
+            }
+        };
+
+        fetchInverters();
+    }, []);
 
     // Fetch existing cluster data if in edit mode
     useEffect(() => {
@@ -50,7 +81,11 @@ const AddCluster: React.FC = () => {
                     });
                     if (response.ok) {
                         const clusterData = await response.json();
-                        setFormData(clusterData); // Populate form with existing cluster data
+                        setFormData({
+                            ...clusterData,
+                            inverterId:clusterData.inverter?.id || ''
+                        });
+                        console.log(clusterData)
                     } else {
                         setResponseMessage('Failed to fetch cluster data.');
                     }
@@ -121,14 +156,17 @@ const AddCluster: React.FC = () => {
         }
 
         try {
-            const response = await fetch(isEditMode ? `${backend_url}/api/cluster/${id}` : `${backend_url}/api/cluster/add`, {
-                method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await fetch(
+                isEditMode ? `${backend_url}/api/cluster/${id}` : `${backend_url}/api/cluster/add`,
+                {
+                    method: isEditMode ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
 
             if (response.ok) {
                 setResponseMessage(isEditMode ? 'Cluster updated successfully!' : 'Cluster added successfully!');
@@ -144,7 +182,7 @@ const AddCluster: React.FC = () => {
 
     return (
         <div className="cluster-container">
-            <div className="cluster-card">
+            <div className="cluster-card2">
                 <h2>{isEditMode ? 'Edit Cluster' : 'Add a Cluster'}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="cluster-info">
@@ -170,6 +208,30 @@ const AddCluster: React.FC = () => {
                             />
                         </div>
                     </div>
+
+                    {/* Inverter Selection Dropdown */}
+                    <div className="info-item">
+                        <label>Inverter:</label>
+                        <select
+                            required
+                            name="inverterId"
+                            value={formData.inverterId || ''} // Default to empty if no inverter selected
+                            onChange={(e) =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    inverterId: e.target.value
+                                }))
+                            }
+                        >
+                            <option value="">Select an Inverter</option>
+                            {inverters.map((inverter) => (
+                                <option key={inverter.id} value={inverter.id}>
+                                    {inverter.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     {/* Manual Address Input */}
                     <div className="location-manual-input">
                         <div className="info-item">

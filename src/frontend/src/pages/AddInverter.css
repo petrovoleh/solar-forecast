@@ -1,0 +1,85 @@
+.inverter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f9;
+    height: 100%;
+}
+
+.inverter-card {
+    margin-top: 80px;
+    margin-bottom: 40px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: left;
+}
+
+.inverter-card h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #004d40;
+    margin-bottom: 1.5rem;
+}
+
+.inverter-info {
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6e6e73;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-item input {
+    width: 90%;
+    padding: 0.9rem;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.info-item input:focus {
+    border-color: #00796b;
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
+}
+
+.inverter-button {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #00796b;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.inverter-button:hover {
+    background-color: #004d40;
+}
+
+@media (max-width: 500px) {
+    .inverter-card {
+        padding: 1.5rem;
+    }
+
+    .inverter-card h2 {
+        font-size: 20px;
+    }
+}

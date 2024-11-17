@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Auth.css';
 import { useAuth } from '../context/AuthContext';
 import {backend_url} from "../config";
+import { useNavigate } from 'react-router-dom';
 
 interface SignInFormState {
     emailOrUsername: string;
@@ -14,6 +15,7 @@ interface ValidationErrors {
 }
 
 const SignIn: React.FC = () => {
+    const navigate = useNavigate();
     const [formState, setFormState] = useState<SignInFormState>({
         emailOrUsername: '', // Accepts either email or username
         password: ''
@@ -87,6 +89,8 @@ const SignIn: React.FC = () => {
                         setIsLoggedIn(true);
                         setMessage('Sign In Successful');
                     }
+                    navigate('/profile');
+
                 } else {
                     // Handle errors when the response is not ok
                     if (contentType && contentType.includes('application/json')) {

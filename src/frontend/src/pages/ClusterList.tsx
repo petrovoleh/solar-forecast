@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './ClusterList.css';
 import { useNavigate } from "react-router-dom";
-import {backend_url} from "../config";
+import { backend_url } from "../config";
 
 interface Location {
+    id: string;
     country: string;
     city: string;
     district: string;
@@ -11,11 +12,20 @@ interface Location {
     lon?: number;
 }
 
+interface Inverter {
+    id: string;
+    name: string;
+    manufacturer: string;
+    efficiency: number;
+    capacity: number;
+}
+
 interface Cluster {
     id: string;
     name: string;
     description: string;
     location: Location;
+    inverter: Inverter;
 }
 
 const ClusterList: React.FC = () => {
@@ -40,6 +50,7 @@ const ClusterList: React.FC = () => {
 
                     if (text) {
                         const data = JSON.parse(text);
+                        console.log('Fetched Clusters:', data); // Log the response
                         setClusters(data);
                     } else {
                         setClusters([]);
@@ -118,7 +129,6 @@ const ClusterList: React.FC = () => {
                     <span>Sort by:</span>
                     <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name</button>
                     <button onClick={() => handleSort('description')} className={sortKey === 'description' ? 'active' : ''}>Description</button>
-                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>Location</button>
                 </div>
             </div>
 
@@ -127,6 +137,8 @@ const ClusterList: React.FC = () => {
                     <div>Name</div>
                     <div>Description</div>
                     <div>Location</div>
+                    <div>Inverter</div>
+                    <div>Efficiency</div>
                     <div>Actions</div>
                 </div>
             )}
@@ -139,11 +151,25 @@ const ClusterList: React.FC = () => {
                         <div key={cluster.id} className="cluster-card">
                             <div>{viewMode === 'grid' && <strong>Name: </strong>}{cluster.name}</div>
                             <div>{viewMode === 'grid' && <strong>Description: </strong>}{cluster.description}</div>
-                            <div>{viewMode === 'grid' && <strong>Location: </strong>}{cluster.location.city}, {cluster.location.country}</div>
+                            <div>{viewMode === 'grid' &&
+                                <strong>Location: </strong>}{cluster.location.city}, {cluster.location.country}</div>
+                            <div>
+                                {viewMode === 'grid' && <strong>Inverter: </strong>}
+                                {cluster.inverter?.name ? `${cluster.inverter.name}%` : 'N/A'}
+                            </div>
+                            <div>
+                                {viewMode === 'grid' && <strong>Inverter Efficiency: </strong>}
+                                {cluster.inverter?.efficiency ? `${cluster.inverter.efficiency}%` : 'N/A'}
+                            </div>
                             <div className="cluster-actions">
-                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)} className="view-button">View</button>
-                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)} className="edit-button">Edit</button>
-                                <button onClick={() => handleDelete(cluster.id)} className="delete-button">Delete</button>
+                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)}
+                                        className="view-button">View
+                                </button>
+                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)}
+                                        className="edit-button">Edit
+                                </button>
+                                <button onClick={() => handleDelete(cluster.id)} className="delete-button">Delete
+                                </button>
                             </div>
                         </div>
                     ))}

@@ -18,11 +18,13 @@ const Header: React.FC = () => {
                             <li><Link to="/profile">Profile</Link></li>
                             <li><Link to="/dashboard">Dashboard</Link></li>
                             <li><Link to="/panelslist">My Panels</Link></li>
+                            <li><Link to="/clusterlist">My Clusters</Link></li>
+
                             <li><Link to="/forecast">Forecast</Link></li>
                         </>
                     ) : (
                         <>
-                            <li><Link to="/signin">Sign In</Link></li>
+                        <li><Link to="/signin">Sign In</Link></li>
                             <li><Link to="/signup">Sign Up</Link></li>
                         </>
                     )}

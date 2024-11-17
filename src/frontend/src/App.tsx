@@ -18,6 +18,8 @@ import { AuthProvider } from './context/AuthContext';
 import Forecast from "./pages/Forecast";
 import ClusterList from "./pages/ClusterList";
 import AddCluster from "./pages/AddCluster";
+import NotFound from "./pages/NotFound";
+import AddInverter from "./pages/AddInverter";
 
 const App: React.FC = () => {
     return (
@@ -42,11 +44,13 @@ const App: React.FC = () => {
                         <Route path="/add" element={<AddPanel/>}/>
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/add-cluster" element={<AddCluster/>}/>
+                        <Route path="/add-inverter" element={<AddInverter/>}/>
+
                         <Route path="/edit-cluster/:id" element={<AddCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
                         <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
                         <Route path="/bar_forecast/:id" element={<BarForecast/>}/>
-
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </div>
                 <footer className="footer">

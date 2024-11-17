@@ -122,3 +122,31 @@
         font-size: 20px;
     }
 }
+.info-item select {
+    width: 90%; /* Same width as input fields */
+    padding: 0.9rem; /* Consistent padding */
+    border: 1px solid #d2d2d7; /* Border similar to input fields */
+    border-radius: 12px; /* Rounded corners */
+    background-color: #f9f9f9; /* Light gray background */
+    transition: border-color 0.2s ease; /* Smooth transition */
+    font-size: 14px; /* Consistent font size */
+    color: #6e6e73; /* Text color */
+}
+
+.info-item select:focus {
+    border-color: #00796b; /* Highlight border on focus */
+    outline: none;
+    background-color: white; /* White background on focus */
+    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1); /* Subtle shadow */
+}
+
+.info-item select option {
+    color: #6e6e73; /* Text color for dropdown options */
+    background-color: #f9f9f9; /* Background for options */
+}
+
+/* Add hover effect for consistency */
+.info-item select:hover {
+    border-color: #00796b;
+}
+

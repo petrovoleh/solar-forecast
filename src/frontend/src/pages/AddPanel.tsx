@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Import for reading route parameters
 import './AddPanel.css';
 import MapComponent from '../components/MapComponent';
-import {backend_url} from "../config"; // Import MapComponent
+import { backend_url } from "../config"; // Import MapComponent
+
+// Define the type for cluster
+interface Cluster {
+    id: string;
+    name: string;
+    location: LocationRequest; // Address is of the same type as in panel
+}
+
 
 // Define the type for location request
 interface LocationRequest {
@@ -21,6 +29,7 @@ interface PanelFormData {
     efficiency: number;
     quantity: number;
     location?: LocationRequest;
+    clusterId?: string; // Add clusterId to the form data
 }
 
 const AddPanel: React.FC = () => {
@@ -40,11 +49,32 @@ const AddPanel: React.FC = () => {
             country: ''
         }
     });
-
+    const [clusters, setClusters] = useState<Cluster[]>([]); // State to store clusters
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
-    // Fetch existing panel data if in edit mode
+    // Fetch clusters and existing panel data if in edit mode
     useEffect(() => {
+        const fetchClusters = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${backend_url}/api/cluster/user`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const clusterData = await response.json();
+                    setClusters(clusterData);
+                } else {
+                    setResponseMessage('Failed to fetch clusters.');
+                }
+            } catch (error) {
+                setResponseMessage('An error occurred while fetching clusters.');
+            }
+        };
+
+        fetchClusters();
+
         if (isEditMode) {
             const fetchPanelData = async () => {
                 try {
@@ -56,7 +86,10 @@ const AddPanel: React.FC = () => {
                     });
                     if (response.ok) {
                         const panelData = await response.json();
-                        setFormData(panelData); // Populate form with existing panel data
+                        setFormData({
+                            ...panelData,
+                            clusterId: panelData.cluster?.id || '', // Pre-select the cluster if it exists
+                        });
                     } else {
                         setResponseMessage('Failed to fetch panel data.');
                     }
@@ -67,6 +100,7 @@ const AddPanel: React.FC = () => {
             fetchPanelData();
         }
     }, [id, isEditMode]);
+    const isClusterSelected = Boolean(formData.clusterId);
 
     // Update form state on input change for non-location data
     const handleInputChange = (
@@ -78,6 +112,27 @@ const AddPanel: React.FC = () => {
             [name]: name === 'powerRating' || name === 'temperatureCoefficient' || name === 'efficiency' || name === 'quantity' ? parseInt(value) : value
         }));
     };
+
+    // Handle cluster selection
+    const handleClusterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
+
+        // Find the selected cluster
+        const selectedCluster = clusters.find((cluster) => cluster.id === value);
+
+        setFormData((prevState) => ({
+            ...prevState,
+            clusterId: value,
+            location: selectedCluster ? { ...selectedCluster.location } : {
+                lat: 0,
+                lon: 0,
+                country: '',
+                city: '',
+                district: '',
+            },
+        }));
+    };
+
 
     // Function to handle map location changes (lat, lon)
     const handleLocationChange = (lat: number, lon: number) => {
@@ -149,123 +204,151 @@ const AddPanel: React.FC = () => {
     };
 
     return (
-        <div className="panel-container">
-            <div className="panel-card">
-                <h2>{isEditMode ? 'Edit Solar Panel' : 'Add a Solar Panel'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="panel-info">
-                        <div className="info-item">
-                            <label>Panel Name:</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter panel name"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>Power Rating (W):</label>
-                            <input
-                                type="number"
-                                name="powerRating"
-                                value={formData.powerRating}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter power rating"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>Temperature Coefficient (%/°C):</label>
-                            <input
-                                type="number"
-                                name="temperatureCoefficient"
-                                value={formData.temperatureCoefficient}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter temperature coefficient"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>Efficiency (%):</label>
-                            <input
-                                type="number"
-                                name="efficiency"
-                                value={formData.efficiency}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter efficiency"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>Quantity:</label>
-                            <input
-                                type="number"
-                                name="quantity"
-                                value={formData.quantity}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter quantity"
-                            />
-                        </div>
-                    </div>
-                    {/* Manual Address Input */}
-                    <div className="location-manual-input">
-                        <div className="info-item">
-                            <label>Country:</label>
-                            <input
-                                type="text"
-                                name="country"
-                                value={formData.location?.country || ''}
-                                onChange={handleAddressManualChange}
-                                placeholder="Enter country"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>City:</label>
-                            <input
-                                type="text"
-                                name="city"
-                                value={formData.location?.city || ''}
-                                onChange={handleAddressManualChange}
-                                placeholder="Enter city"
-                            />
-                        </div>
-                        <div className="info-item">
-                            <label>District:</label>
-                            <input
-                                type="text"
-                                name="district"
-                                value={formData.location?.district || ''}
-                                onChange={handleAddressManualChange}
-                                placeholder="Enter district"
-                            />
-                        </div>
-                    </div>
+        <>
+            <div className="panel-container">
+                <div className="panel-card">
+                    <h2>{isEditMode ? 'Edit Solar Panel' : 'Add a Solar Panel'}</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="panel-info">
+                            <div className="info-item">
+                                <label>Panel Name:</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Enter panel name"
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>Power Rating (W):</label>
+                                <input
+                                    type="number"
+                                    name="powerRating"
+                                    value={formData.powerRating}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Enter power rating"
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>Temperature Coefficient (%/°C):</label>
+                                <input
+                                    type="number"
+                                    name="temperatureCoefficient"
+                                    value={formData.temperatureCoefficient}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Enter temperature coefficient"
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>Efficiency (%):</label>
+                                <input
+                                    type="number"
+                                    name="efficiency"
+                                    value={formData.efficiency}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Enter efficiency"
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>Quantity:</label>
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    value={formData.quantity}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Enter quantity"
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>Cluster:</label>
 
-                    <button type="submit" className="panel-button">{isEditMode ? 'Update Panel' : 'Add Panel'}</button>
-                    {responseMessage && <p>{responseMessage}</p>}
-                </form>
+                                    <select
+                                        name="clusterId"
+                                        value={formData.clusterId || ''}
+                                        onChange={handleClusterChange}
+                                    >
+                                        <option value="" disabled={!isEditMode}>Select a cluster</option>
+                                        {/* Option to select None */}
+                                        {clusters.map((cluster) => (
+                                            <option key={cluster.id} value={cluster.id}>
+                                                {cluster.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                        </div>
+
+                        {/* Manual Address Input */}
+                        <div className="location-manual-input">
+                            <div className="info-item">
+                                <label>Country:</label>
+                                <input
+                                    type="text"
+                                    name="country"
+                                    value={formData.location?.country || ''}
+                                    onChange={handleAddressManualChange}
+                                    placeholder="Enter country"
+                                    disabled={isClusterSelected} // Disable if cluster is selected
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>City:</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    value={formData.location?.city || ''}
+                                    onChange={handleAddressManualChange}
+                                    placeholder="Enter city"
+                                    disabled={isClusterSelected}
+                                />
+                            </div>
+                            <div className="info-item">
+                                <label>District:</label>
+                                <input
+                                    type="text"
+                                    name="district"
+                                    value={formData.location?.district || ''}
+                                    onChange={handleAddressManualChange}
+                                    placeholder="Enter district"
+                                    disabled={isClusterSelected}
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* Submit Button */}
+                        <button type="submit" className="btn-submit">
+                            {isEditMode ? 'Update Panel' : 'Add Panel'}
+                        </button>
+                    </form>
+                    {responseMessage && <div className="response-message">{responseMessage}</div>}
+                </div>
+                <div className="panel-map-container">
+                    <h2 className="location_header">Select location on the map</h2>
+                    <MapComponent
+                        onLocationChange={handleLocationChange}
+                        address={formData.location || {
+                            country: "Lithuania",
+                            city: "Vilnius",
+                            district: "Vilnius County",
+                        }}
+                        onAddressChange={handleAddressChange}
+                        lat={formData.location?.lat || 54.6872}
+                        lon={formData.location?.lon || 25.2797}
+                    />
+                </div>
             </div>
 
-            {/* Right side: Map */}
-            <div className="panel-map-container">
-                <h2 className="location_header">Select location on the map</h2>
-                <MapComponent
-                    onLocationChange={handleLocationChange}
-                    address={formData.location || {
-                        country: "Lithuania",
-                        city: "Vilnius",
-                        district: "Vilnius County",
-                    }}
-                    onAddressChange={handleAddressChange}
-                    lat={formData.location?.lat || 54.6872} // Default latitude (Vilnius)
-                    lon={formData.location?.lon || 25.2797} // Default longitude (Vilnius)
-                />
-            </div>
-        </div>
-    );
+        </>
+    )
+        ;
 };
 
 export default AddPanel;

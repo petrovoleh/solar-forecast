@@ -1,8 +1,11 @@
 package com.olehpetrov.backend.controllers;
 
 import com.olehpetrov.backend.models.Cluster;
+import com.olehpetrov.backend.models.Inverter;
+import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.ClusterService;
+import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
 import org.slf4j.Logger;
@@ -10,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.olehpetrov.backend.services.LocationService;
 
 import java.util.List;
 
@@ -22,16 +26,21 @@ public class ClusterController {
 
     @Autowired
     private ClusterService clusterService;
-
+    @Autowired
+    private InverterService inverterService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LocationService locationService;
 
     @Autowired
     private JwtUtils jwtUtils;
 
     // Add a new cluster
     @PostMapping("/add")
-    public ResponseEntity<String> addCluster(@RequestHeader("Authorization") String token, @RequestBody Cluster clusterRequest) {
+    public ResponseEntity<String> addCluster(@RequestHeader("Authorization") String token,
+                                             @RequestBody UpdateClusterRequest clusterRequest) {
+        // Extract username from token
         String username = jwtUtils.extractUsername(token.substring(7));
         User user = userService.findByUsername(username);
 
@@ -39,11 +48,59 @@ public class ClusterController {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
-        clusterService.addCluster(clusterRequest);
+        // Create and set up the Cluster object
+        Cluster cluster = new Cluster();
+        cluster.setUserId(user.getId());
+        cluster.setName(clusterRequest.getName());
+        cluster.setDescription(clusterRequest.getDescription());
+
+        // Handle location
+        if (clusterRequest.getLocation() != null) {
+            Location location = handleLocation(clusterRequest.getLocation(), user);
+            cluster.setLocation(location);
+        }
+
+        // Handle inverter
+        if (clusterRequest.getInverterId() != null) {
+            Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
+            if (inverter == null) {
+                return ResponseEntity.badRequest().body("Invalid inverter ID.");
+            }
+            cluster.setInverter(inverter);
+        }
+
+        // Save the cluster
+        clusterService.addCluster(cluster);
         logger.info("Cluster added successfully for user: {}", username);
+
         return ResponseEntity.ok("Cluster added successfully.");
     }
 
+    private Location handleLocation(LocationRequest locationRequest, User user) {
+        Location location;
+
+        if (user.getLocation() != null) {
+            location = user.getLocation(); // Existing location
+            // Update the existing location fields
+            location.setLat(locationRequest.getLat());
+            location.setLon(locationRequest.getLon());
+            location.setCity(locationRequest.getCity());
+            location.setDistrict(locationRequest.getDistrict());
+            location.setCountry(locationRequest.getCountry());
+        } else {
+            // Create a new location if the user does not have one
+            location = new Location();
+            location.setLat(locationRequest.getLat());
+            location.setLon(locationRequest.getLon());
+            location.setCity(locationRequest.getCity());
+            location.setDistrict(locationRequest.getDistrict());
+            location.setCountry(locationRequest.getCountry());
+        }
+
+        // Save or update the location
+        locationService.register(location);
+        return location;
+    }
     // Get all clusters by user ID
     @GetMapping("/user")
     public ResponseEntity<List<Cluster>> getClustersByUserId(@RequestHeader("Authorization") String token) {
@@ -76,11 +133,11 @@ public class ClusterController {
         return ResponseEntity.ok(cluster);
     }
 
-    // Update an existing cluster
+    // Update an existing cluster with additional location and inverter update handling
     @PutMapping("/{clusterId}")
     public ResponseEntity<String> updateCluster(@RequestHeader("Authorization") String token,
                                                 @PathVariable String clusterId,
-                                                @RequestBody Cluster clusterRequest) {
+                                                @RequestBody UpdateClusterRequest clusterRequest) {
         String username = jwtUtils.extractUsername(token.substring(7));
         User user = userService.findByUsername(username);
 
@@ -94,15 +151,35 @@ public class ClusterController {
         }
 
         // Update fields
-        existingCluster.setName(clusterRequest.getName());
-        existingCluster.setDescription(clusterRequest.getDescription());
-        existingCluster.setInverter(clusterRequest.getInverter());
-        existingCluster.setLocation(clusterRequest.getLocation());
+        if (clusterRequest.getName() != null) {
+            existingCluster.setName(clusterRequest.getName());
+        }
+        if (clusterRequest.getDescription() != null) {
+            existingCluster.setDescription(clusterRequest.getDescription());
+        }
 
+        // Handle location update
+        if (clusterRequest.getLocation() != null) {
+            Location updatedLocation = handleLocation(clusterRequest.getLocation(), user);
+            existingCluster.setLocation(updatedLocation);
+        }
+
+        // Handle inverter update
+        if (clusterRequest.getInverterId() != null) {
+            Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
+            if (inverter == null) {
+                return ResponseEntity.badRequest().body("Invalid inverter ID.");
+            }
+            existingCluster.setInverter(inverter);
+        }
+
+        // Save the updated cluster
         clusterService.updateCluster(existingCluster);
         logger.info("Cluster updated successfully for user: {}", username);
+
         return ResponseEntity.ok("Cluster updated successfully.");
     }
+
 
     // Delete an existing cluster
     @DeleteMapping("/{clusterId}")
@@ -122,5 +199,95 @@ public class ClusterController {
         clusterService.deleteCluster(clusterId);
         logger.info("Cluster deleted successfully for user: {}", username);
         return ResponseEntity.ok("Cluster deleted successfully.");
+    }
+
+    public static class UpdateClusterRequest {
+        private String name;
+        private String description;
+        private String inverterId;
+        private LocationRequest location;
+
+        // Getters and setters
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getInverterId() {
+            return inverterId;
+        }
+
+        public void setInverterId(String inverterId) {
+            this.inverterId = inverterId;
+        }
+
+        public LocationRequest getLocation() {
+            return location;
+        }
+
+        public void setLocation(LocationRequest location) {
+            this.location = location;
+        }
+    }
+    public static class LocationRequest {
+        private double lat;
+        private double lon;
+        private String city;
+        private String district;
+        private String country;
+
+        // Getters and setters
+
+        public double getLat() {
+            return lat;
+        }
+
+        public void setLat(double lat) {
+            this.lat = lat;
+        }
+
+        public double getLon() {
+            return lon;
+        }
+
+        public void setLon(double lon) {
+            this.lon = lon;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public String getDistrict() {
+            return district;
+        }
+
+        public void setDistrict(String district) {
+            this.district = district;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public void setCountry(String country) {
+            this.country = country;
+        }
     }
 }

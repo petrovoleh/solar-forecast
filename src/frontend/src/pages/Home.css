@@ -121,3 +121,41 @@ body {
 .footer-links a:hover {
     text-decoration: underline;
 }
+
+
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    color: #333;
+}
+
+.not-found-container h1 {
+    font-size: 3rem;
+    color: #004d40;
+    margin-bottom: 1rem;
+}
+
+.not-found-container p {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.not-found-container .btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #00796b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.not-found-container .btn:hover {
+    background-color: #004d40;
+}

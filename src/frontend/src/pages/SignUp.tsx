@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './Auth.css';
 import { useAuth } from '../context/AuthContext';
 import {backend_url} from "../config";
+import { useNavigate } from 'react-router-dom';
+
 
 interface SignUpFormState {
     name: string;
@@ -24,6 +26,8 @@ const SignUp: React.FC = () => {
         password: '',
         confirmPassword: ''
     });
+    const navigate = useNavigate();
+
     const { setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [message, setMessage] = useState<string | null>(null); // New state to store success/error message
@@ -88,6 +92,7 @@ const SignUp: React.FC = () => {
                         setIsLoggedIn(true);
                         setMessage('Sign Up Successful');
                     }
+                    navigate('/profile');
                 } else {
                     // Handle errors when the response is not ok
                     if (contentType && contentType.includes('application/json')) {

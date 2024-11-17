@@ -17,8 +17,13 @@ interface SolarPanel {
     temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
-    location: Location; // Updated with correct structure
+    location: Location;
+    cluster?: { // Add cluster field
+        id: string;
+        name: string;
+    };
 }
+
 
 const PanelList: React.FC = () => {
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
@@ -136,6 +141,7 @@ const PanelList: React.FC = () => {
                     <div>Power Rating</div>
                     <div>Efficiency</div>
                     <div>Quantity</div>
+                    <div>Cluster</div>
                     <div>Location</div>
                     <div>Actions</div>
                 </div>
@@ -151,10 +157,15 @@ const PanelList: React.FC = () => {
                             <div>{viewMode === 'grid' && <strong>Power Rating: </strong>}{panel.powerRating}W</div>
                             <div>{viewMode === 'grid' && <strong>Efficiency: </strong>}{panel.efficiency}%</div>
                             <div>{viewMode === 'grid' && <strong>Quantity: </strong>}{panel.quantity}</div>
-                            <div>{viewMode === 'grid' && <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
+                            <div>{viewMode === 'grid' && <strong>Cluster: </strong>}{panel.cluster?.name}</div>
+
+                            <div>{viewMode === 'grid' &&
+                                <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
                             <div className="panel-actions">
-                                <button onClick={() => navigate(`/view/${panel.id}`)} className="view-button">View</button>
-                                <button onClick={() => navigate(`/edit/${panel.id}`)} className="edit-button">Edit</button>
+                                <button onClick={() => navigate(`/view/${panel.id}`)} className="view-button">View
+                                </button>
+                                <button onClick={() => navigate(`/edit/${panel.id}`)} className="edit-button">Edit
+                                </button>
                                 <button onClick={() => handleDelete(panel.id)} className="delete-button">Delete</button>
                             </div>
                         </div>

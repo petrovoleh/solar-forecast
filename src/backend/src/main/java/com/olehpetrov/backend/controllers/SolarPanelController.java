@@ -1,8 +1,10 @@
 package com.olehpetrov.backend.controllers;
 
+import com.olehpetrov.backend.models.Cluster;
 import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.services.ClusterService;
 import com.olehpetrov.backend.services.LocationService;
 import com.olehpetrov.backend.services.SolarPanelService;
 import com.olehpetrov.backend.services.UserService;
@@ -26,8 +28,12 @@ public class SolarPanelController {
 
     @Autowired
     private SolarPanelService panelService;
+
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private ClusterService clusterService;
 
     @Autowired
     private UserService userService;
@@ -54,7 +60,13 @@ public class SolarPanelController {
         panel.setEfficiency(panelRequest.getEfficiency());
         panel.setName(panelRequest.getName());
         panel.setQuantity(panelRequest.getQuantity());
-
+        if (panelRequest.getClusterId() != null) {
+            Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
+            if (cluster == null) {
+                return ResponseEntity.badRequest().body("Invalid cluster ID.");
+            }
+            panel.setCluster(cluster);
+        }
         // Handle location
         if (panelRequest.getUserLocation() != null) {
             Location location;
@@ -211,6 +223,7 @@ public class SolarPanelController {
         private String name;
         private int quantity;
         private UserController.LocationRequest location; // Added field for location
+        private String clusterId;
 
         // Getters and Setters
 
@@ -276,6 +289,13 @@ public class SolarPanelController {
 
         public void setLocation(UserController.LocationRequest location) {
             this.location = location;
+        }
+        public String getClusterId() {
+            return clusterId;
+        }
+
+        public void setClusterId(String clusterId) {
+            this.clusterId = clusterId;
         }
     }
 
