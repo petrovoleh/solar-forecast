@@ -9,7 +9,7 @@
 }
 
 /* Cluster Card Styles */
-.cluster-card {
+.cluster-view-container {
     background-color: white;
     padding: 2rem;
     border-radius: 12px;
@@ -21,7 +21,7 @@
 }
 
 /* Title */
-.cluster-card h2 {
+.cluster-view-container h2 {
     font-size: 24px;
     font-weight: 600;
     color: #004d40; /* Changed to match overall theme */
@@ -89,12 +89,12 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 500px) {
-    .cluster-card {
+    .cluster-view-container {
         padding: 1.5rem;
         margin-right: 0; /* Remove margin on small screens */
     }
 
-    .cluster-card h2 {
+    .cluster-view-container h2 {
         font-size: 22px;
     }
 

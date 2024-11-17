@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Import for reading route parameters
-import './AddPanel.css';
 import MapComponent from '../components/MapComponent';
 import { backend_url } from "../config"; // Import MapComponent
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './AddInverter.css';
 import { backend_url } from "../config";
 
 interface InverterFormData {

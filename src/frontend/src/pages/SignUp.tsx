@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Auth.css';
 import { useAuth } from '../context/AuthContext';
 import { backend_url } from "../config";
 import { useNavigate } from 'react-router-dom';

@@ -1,17 +1,3 @@
-/* PanelList.css */
-
-/* Panel list container */
-.panel-list-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    height: calc(93vh - 60px);
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 /* Panel controls and header */
 .panel-list-header {
     margin-top: 60px;

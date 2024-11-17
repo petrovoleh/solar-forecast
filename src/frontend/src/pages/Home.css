@@ -110,11 +110,14 @@ body {
 }
 
 .footer {
-    height:4vh;
+    height:25px;
     background-color: #004d40;
     color: white;
     text-align: center;
     padding: 1vh;
+}
+.footer p {
+    margin-top: 5px;
 }
 
 

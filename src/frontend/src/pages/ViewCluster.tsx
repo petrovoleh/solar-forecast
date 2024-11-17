@@ -118,7 +118,7 @@ const ViewCluster: React.FC = () => {
     }
 
     return (
-        <div className="cluster-view-container">
+        <div className="cluster-view-container ">
             <div className="cluster-details">
                 <h1>Cluster: {cluster.name}</h1>
                 <p><strong>Description:</strong> {cluster.description}</p>

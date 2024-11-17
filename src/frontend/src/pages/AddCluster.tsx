@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './AddCluster.css';
 import MapComponent from '../components/MapComponent';
 import { backend_url } from "../config";
 
@@ -56,7 +55,7 @@ const AddCluster: React.FC = () => {
                 if (response.ok) {
                     const invertersData = await response.json();
                     setInverters(invertersData); // Set the inverter list
-                    console.log(invertersData)
+
                 } else {
                     console.error('Failed to fetch inverters');
                 }
@@ -85,7 +84,6 @@ const AddCluster: React.FC = () => {
                             ...clusterData,
                             inverterId:clusterData.inverter?.id || ''
                         });
-                        console.log(clusterData)
                     } else {
                         setResponseMessage('Failed to fetch cluster data.');
                     }

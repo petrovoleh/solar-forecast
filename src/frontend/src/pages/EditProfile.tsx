@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './EditProfile.css'; // Спільний CSS для профілю
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config"; // Імпорт компонента з мапою
 
@@ -40,7 +39,6 @@ const EditProfile: React.FC = () => {
                 }
 
                 const data = await response.json();
-                console.log(data)
                 setUser(data); // Now data contains both user info and address
             } catch (err) {
                 setError('Error fetching profile data');
@@ -93,7 +91,6 @@ const EditProfile: React.FC = () => {
             body: JSON.stringify(user), // Відправка нових даних користувача
         }).then((response) => {
             if (response.ok) {
-                console.log('Profile updated:', user);
                 navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
             } else {
                 console.error('Error updating profile');

@@ -50,7 +50,6 @@ const ClusterList: React.FC = () => {
 
                     if (text) {
                         const data = JSON.parse(text);
-                        console.log('Fetched Clusters:', data); // Log the response
                         setClusters(data);
                     } else {
                         setClusters([]);
