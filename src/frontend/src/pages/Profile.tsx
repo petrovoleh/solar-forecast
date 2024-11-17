@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfirmationModal from '../components/ConfirmationModal'; // Import the custom modal
+import ConfirmationModal from '../components/ConfirmationModal';
 import { useAuth } from '../context/AuthContext';
-import {backend_url} from "../config";
+import { backend_url } from "../config";
+import { useTranslation } from 'react-i18next'; // Import the useTranslation hook
 
 interface Address {
     country: string;
@@ -17,20 +18,21 @@ interface User {
 }
 
 const Profile: React.FC = () => {
+    const { t } = useTranslation(); // Use the useTranslation hook
     const navigate = useNavigate();
-    const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
+    const [isModalOpen, setModalOpen] = useState(false);
     const { setIsLoggedIn } = useAuth();
-    const [user, setUser] = useState<User | null>(null); // State to store user data
-    const [loading, setLoading] = useState<boolean>(true); // State for loading status
-    const [error, setError] = useState<string | null>(null); // State to store errors
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('token'); // Get token from local storage
+                const token = localStorage.getItem('token');
                 const response = await fetch(`${backend_url}/api/user/profile`, {
                     headers: {
-                        'Authorization': `Bearer ${token}` // Include the JWT token in the request
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -39,81 +41,81 @@ const Profile: React.FC = () => {
                 }
 
                 const data = await response.json();
-                console.log(data)
-                setUser(data); // Now data contains both user info and location
+                setUser(data);
             } catch (err) {
-                setError('Error fetching profile data');
+                setError(t('profile.error')); // Use translation for error message
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProfile();
-    }, []);
-
+    }, [t]);
 
     const handleEditClick = () => {
-        navigate('/edit-profile');  // Navigate to EditProfile page
+        navigate('/edit-profile');
     };
 
     const handleExitClick = () => {
-        setModalOpen(true); // Open the modal
+        setModalOpen(true);
     };
 
     const handleConfirmExit = () => {
-        localStorage.removeItem('token'); // Remove the token from local storage
+        localStorage.removeItem('token');
         setIsLoggedIn(false);
-        navigate('/'); // Navigate to home page
+        navigate('/');
     };
 
     const handleCloseModal = () => {
-        setModalOpen(false); // Close the modal
+        setModalOpen(false);
     };
 
-    // Function to display location or "Not set"
     const displayAddress = (location: Address | null | undefined) => {
         if (!location || (!location.country && !location.city && !location.district)) {
-            return 'Not set';
+            return t('profile.notSet'); // Use translation for "Not set"
         }
         return `${location.district || ''}, ${location.city || ''}, ${location.country || ''}`.trim().replace(/,\s*$/, '');
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Show loading spinner or text while fetching data
+        return <div>{t('profile.loading')}</div>; // Use translation for loading text
     }
 
     if (error) {
-        return <div>{error}</div>; // Show error if there's an issue fetching the data
+        return <div>{error}</div>;
     }
 
     return (
         <div className="profile-container">
             <div className="profile-card">
-                <h2>Profile</h2>
+                <h2>{t('profile.title')}</h2> {/* Use translation for title */}
                 <div className="profile-info">
                     <div className="info-item">
-                        <label>Name:</label>
-                        <p>{user?.username || 'Not set'}</p> {/* Display 'Not set' if name is missing */}
+                        <label>{t('profile.name')}:</label> {/* Use translation for "Name" */}
+                        <p>{user?.username || t('profile.notSet')}</p>
                     </div>
                     <div className="info-item">
-                        <label>Email:</label>
-                        <p>{user?.email || 'Not set'}</p> {/* Display 'Not set' if email is missing */}
+                        <label>{t('profile.email')}:</label> {/* Use translation for "Email" */}
+                        <p>{user?.email || t('profile.notSet')}</p>
                     </div>
                     <div className="info-item">
-                        <label>Address:</label>
-                        <p>{displayAddress(user?.location)}</p> {/* Display formatted location */}
+                        <label>{t('profile.address')}:</label> {/* Use translation for "Address" */}
+                        <p>{displayAddress(user?.location)}</p>
                     </div>
                 </div>
-                <button className="edit-button" onClick={handleEditClick}>Edit Profile</button>
-                <button className="exit-button" onClick={handleExitClick}>Exit</button>
+                <button className="edit-button" onClick={handleEditClick}>
+                    {t('profile.edit')} {/* Use translation for "Edit Profile" */}
+                </button>
+                <button className="exit-button" onClick={handleExitClick}>
+                    {t('profile.exit')} {/* Use translation for "Exit" */}
+                </button>
             </div>
 
-            {/* Render the confirmation modal */}
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 onConfirm={handleConfirmExit}
-                message="Are you sure you want to exit?"
+                message={t('profile.confirmExitMessage')} // Use translation for modal message
             />
         </div>
     );

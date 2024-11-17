@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './Auth.css';
 import { useAuth } from '../context/AuthContext';
-import {backend_url} from "../config";
+import { backend_url } from "../config";
 import { useNavigate } from 'react-router-dom';
-
+import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 interface SignUpFormState {
     name: string;
@@ -20,6 +20,7 @@ interface ValidationErrors {
 }
 
 const SignUp: React.FC = () => {
+    const { t } = useTranslation(); // Initialize the useTranslation hook
     const [formState, setFormState] = useState<SignUpFormState>({
         name: '',
         email: '',
@@ -27,20 +28,19 @@ const SignUp: React.FC = () => {
         confirmPassword: ''
     });
     const navigate = useNavigate();
-
     const { setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [message, setMessage] = useState<string | null>(null); // New state to store success/error message
+    const [message, setMessage] = useState<string | null>(null);
 
     const validate = (): boolean => {
         const newErrors: ValidationErrors = {};
-        if (!formState.name) newErrors.name = 'Name is required';
-        if (!formState.email) newErrors.email = 'Email is required';
-        else if (!/\S+@\S+\.\S+/.test(formState.email)) newErrors.email = 'Email is invalid';
-        if (!formState.password) newErrors.password = 'Password is required';
-        else if (formState.password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
+        if (!formState.name) newErrors.name = t('signUp.nameError');
+        if (!formState.email) newErrors.email = t('signUp.emailError');
+        else if (!/\S+@\S+\.\S+/.test(formState.email)) newErrors.email = t('signUp.emailInvalidError');
+        if (!formState.password) newErrors.password = t('signUp.passwordError');
+        else if (formState.password.length < 6) newErrors.password = t('signUp.passwordLengthError');
         if (formState.password !== formState.confirmPassword)
-            newErrors.confirmPassword = 'Passwords do not match';
+            newErrors.confirmPassword = t('signUp.confirmPasswordError');
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -59,9 +59,7 @@ const SignUp: React.FC = () => {
             try {
                 const response = await fetch(`${backend_url}/api/auth/signup`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: formState.name,
                         email: formState.email,
@@ -69,55 +67,46 @@ const SignUp: React.FC = () => {
                     })
                 });
 
-                // Check if the response is JSON by looking at the Content-Type header
                 const contentType = response.headers.get('Content-Type');
 
                 if (response.ok) {
-                    // If the response is JSON, parse it
                     if (contentType && contentType.includes('application/json')) {
                         const result = await response.json();
-
                         if (result.token) {
-                            // Store the token in localStorage
                             localStorage.setItem('token', result.token);
                             localStorage.setItem("expirationDate", result.expirationDate);
-
                         }
                         setIsLoggedIn(true);
-                        setMessage('Sign Up Successful');
+                        setMessage(t('signUp.signUpSuccess'));
                     } else {
-                        // If the response is not JSON, read it as text
                         const result = await response.text();
                         localStorage.setItem('token', result);
                         setIsLoggedIn(true);
-                        setMessage('Sign Up Successful');
+                        setMessage(t('signUp.signUpSuccess'));
                     }
                     navigate('/profile');
                 } else {
-                    // Handle errors when the response is not ok
                     if (contentType && contentType.includes('application/json')) {
                         const error = await response.json();
-                        setMessage('Sign Up Failed: ' + error.message);
+                        setMessage(`${t('signUp.signUpFailed')}: ${error.message}`);
                     } else {
                         const error = await response.text();
-                        setMessage('Sign Up Failed: ' + error);
+                        setMessage(`${t('signUp.signUpFailed')}: ${error}`);
                     }
                 }
             } catch (error) {
-                setMessage('An error occurred: ' + (error as Error).message);
+                setMessage(`${t('signUp.errorOccurred')} ${(error as Error).message}`);
             }
         }
     };
 
-
     return (
         <div className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
-                <h2>Sign Up</h2>
+                <h2>{t('signUp.title')}</h2>
 
-                {/* Name Input */}
                 <div className="form-group">
-                    <label>Name</label>
+                    <label>{t('signUp.name')}</label>
                     <input
                         type="text"
                         name="name"
@@ -128,9 +117,8 @@ const SignUp: React.FC = () => {
                     {errors.name && <span className="error-message">{errors.name}</span>}
                 </div>
 
-                {/* Email Input */}
                 <div className="form-group">
-                    <label>Email</label>
+                    <label>{t('signUp.email')}</label>
                     <input
                         type="email"
                         name="email"
@@ -141,9 +129,8 @@ const SignUp: React.FC = () => {
                     {errors.email && <span className="error-message">{errors.email}</span>}
                 </div>
 
-                {/* Password Input */}
                 <div className="form-group">
-                    <label>Password</label>
+                    <label>{t('signUp.password')}</label>
                     <input
                         type="password"
                         name="password"
@@ -154,9 +141,8 @@ const SignUp: React.FC = () => {
                     {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
-                {/* Confirm Password Input */}
                 <div className="form-group">
-                    <label>Confirm Password</label>
+                    <label>{t('signUp.confirmPassword')}</label>
                     <input
                         type="password"
                         name="confirmPassword"
@@ -167,9 +153,8 @@ const SignUp: React.FC = () => {
                     {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
                 </div>
 
-                <button type="submit" className="btn">Sign Up</button>
+                <button type="submit" className="btn">{t('signUp.submitButton')}</button>
 
-                {/* Display success or error message */}
                 {message && <p className="result-message">{message}</p>}
             </form>
         </div>

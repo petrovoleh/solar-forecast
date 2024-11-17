@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './Auth.css';
 import { useAuth } from '../context/AuthContext';
-import {backend_url} from "../config";
+import { backend_url } from "../config";
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 interface SignInFormState {
     emailOrUsername: string;
@@ -15,31 +16,29 @@ interface ValidationErrors {
 }
 
 const SignIn: React.FC = () => {
+    const { t } = useTranslation(); // Initialize the useTranslation hook
     const navigate = useNavigate();
     const [formState, setFormState] = useState<SignInFormState>({
-        emailOrUsername: '', // Accepts either email or username
+        emailOrUsername: '',
         password: ''
     });
     const { setIsLoggedIn } = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [message, setMessage] = useState<string | null>(null); // To store success or error messages
+    const [message, setMessage] = useState<string | null>(null);
 
     const validate = (): boolean => {
         const newErrors: ValidationErrors = {};
 
-        // Validation for either email or username
         if (!formState.emailOrUsername) {
-            newErrors.emailOrUsername = 'Email or username is required';
+            newErrors.emailOrUsername = t('signIn.emailOrUsernameError');
         } else if (!/\S+@\S+\.\S+/.test(formState.emailOrUsername) && formState.emailOrUsername.includes('@')) {
-            // If it's an email (contains '@'), validate it
-            newErrors.emailOrUsername = 'Email is invalid';
+            newErrors.emailOrUsername = t('signIn.emailInvalidError');
         }
 
-        // Password validation
         if (!formState.password) {
-            newErrors.password = 'Password is required';
+            newErrors.password = t('signIn.passwordError');
         } else if (formState.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long';
+            newErrors.password = t('signIn.passwordLengthError');
         }
 
         setErrors(newErrors);
@@ -60,11 +59,9 @@ const SignIn: React.FC = () => {
             try {
                 const response = await fetch(`${backend_url}/api/auth/signin`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: formState.emailOrUsername, // Send either email or username
+                        username: formState.emailOrUsername,
                         password: formState.password
                     })
                 });
@@ -74,35 +71,30 @@ const SignIn: React.FC = () => {
                 if (response.ok) {
                     if (contentType && contentType.includes('application/json')) {
                         const result = await response.json();
-
-                        // Assuming result contains a token
                         if (result.token) {
-                            // Store the token in localStorage
                             localStorage.setItem('token', result.token);
                             localStorage.setItem("expirationDate", result.expirationDate);
                         }
                         setIsLoggedIn(true);
-                        setMessage('Sign In Successful');
+                        setMessage(t('signIn.signInSuccess'));
                     } else {
                         const result = await response.text();
                         localStorage.setItem('token', result);
                         setIsLoggedIn(true);
-                        setMessage('Sign In Successful');
+                        setMessage(t('signIn.signInSuccess'));
                     }
                     navigate('/profile');
-
                 } else {
-                    // Handle errors when the response is not ok
                     if (contentType && contentType.includes('application/json')) {
                         const error = await response.json();
-                        setMessage('Sign In Failed: ' + error.message);
+                        setMessage(`${t('signIn.signInFailed')}: ${error.message}`);
                     } else {
                         const error = await response.text();
-                        setMessage('Sign In Failed: ' + error);
+                        setMessage(`${t('signIn.signInFailed')}: ${error}`);
                     }
                 }
             } catch (error) {
-                setMessage('An error occurred: ' + (error as Error).message);
+                setMessage(`${t('signIn.errorOccurred')} ${(error as Error).message}`);
             }
         }
     };
@@ -110,11 +102,10 @@ const SignIn: React.FC = () => {
     return (
         <div className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
-                <h2>Sign In</h2>
+                <h2>{t('signIn.title')}</h2>
 
-                {/* Email or Username Input */}
                 <div className="form-group">
-                    <label>Email or Username</label>
+                    <label>{t('signIn.emailOrUsername')}</label>
                     <input
                         type="text"
                         name="emailOrUsername"
@@ -125,9 +116,8 @@ const SignIn: React.FC = () => {
                     {errors.emailOrUsername && <span className="error-message">{errors.emailOrUsername}</span>}
                 </div>
 
-                {/* Password Input */}
                 <div className="form-group">
-                    <label>Password</label>
+                    <label>{t('signIn.password')}</label>
                     <input
                         type="password"
                         name="password"
@@ -138,9 +128,8 @@ const SignIn: React.FC = () => {
                     {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
-                <button type="submit" className="btn">Sign In</button>
+                <button type="submit" className="btn">{t('signIn.submitButton')}</button>
 
-                {/* Display success or error message */}
                 {message && <p className="result-message">{message}</p>}
             </form>
         </div>

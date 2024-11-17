@@ -1,0 +1,54 @@
+{
+  "signIn": {
+    "title": "Увійти",
+    "emailOrUsername": "Електронна пошта або ім'я користувача",
+    "emailOrUsernameError": "Електронна пошта або ім'я користувача обов'язкові",
+    "emailInvalidError": "Електронна пошта недійсна",
+    "password": "Пароль",
+    "passwordError": "Пароль обов'язковий",
+    "passwordLengthError": "Пароль повинен містити щонайменше 8 символів",
+    "submitButton": "Увійти",
+    "signInSuccess": "Вхід успішний",
+    "signInFailed": "Вхід не вдався",
+    "errorOccurred": "Сталася помилка: "
+  },
+  "signUp": {
+    "title": "Реєстрація",
+    "name": "Ім'я",
+    "nameError": "Ім'я обов'язкове",
+    "email": "Електронна пошта",
+    "emailError": "Електронна пошта обов'язкова",
+    "emailInvalidError": "Електронна пошта недійсна",
+    "password": "Пароль",
+    "passwordError": "Пароль обов'язковий",
+    "passwordLengthError": "Пароль повинен містити щонайменше 6 символів",
+    "confirmPassword": "Підтвердьте пароль",
+    "confirmPasswordError": "Паролі не співпадають",
+    "submitButton": "Зареєструватися",
+    "signUpSuccess": "Реєстрація успішна",
+    "signUpFailed": "Реєстрація не вдалася",
+    "errorOccurred": "Сталася помилка: "
+  },
+  "profile": {
+    "title": "Профіль",
+    "name": "Ім'я",
+    "email": "Електронна пошта",
+    "address": "Адреса",
+    "edit": "Редагувати профіль",
+    "exit": "Вийти",
+    "loading": "Завантаження...",
+    "error": "Помилка отримання даних профілю",
+    "notSet": "Не встановлено",
+    "confirmExitMessage": "Ви впевнені, що хочете вийти?"
+  },
+  "nav": {
+    "home": "Головна",
+    "profile": "Профіль",
+    "dashboard": "Панель управління",
+    "myPanels": "Мої панелі",
+    "myClusters": "Мої кластери",
+    "forecast": "Прогноз",
+    "signIn": "Увійти",
+    "signUp": "Зареєструватися"
+  }
+}

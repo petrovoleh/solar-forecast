@@ -28,7 +28,8 @@ import java.util.stream.Collectors;
 public class ForecastController {
 
     private static final Logger logger = LoggerFactory.getLogger(ForecastController.class);
-
+//    private final String url = "http://model:8000/forecast";
+    private final String url = "http://localhost:8000/forecast";
     @Autowired
     private SolarPanelService panelService;
 
@@ -85,7 +86,7 @@ public class ForecastController {
         requestBody.put("capacity_kwp", capacity_kwp);
 
         // Send the request to the forecast API
-        String url = "http://model:8000/forecast";
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -152,7 +153,6 @@ public class ForecastController {
         requestBody.put("longitude", panel.getLocation().getLon());
         requestBody.put("capacity_kwp", capacity_kwp);
 
-        String url = "http://model:8000/forecast";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

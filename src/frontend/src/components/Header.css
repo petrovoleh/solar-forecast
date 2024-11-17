@@ -14,8 +14,11 @@
     align-items: center;
 }
 .nav {
-    display: flex;
-    align-items: center;
+    width: 98%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center; /* Keeps items vertically centered */
+    justify-items: stretch; /* Ensure the items stretch to fill the grid area */
 }
 
 .nav-links {
@@ -37,3 +40,24 @@
 .nav-links li a:hover {
     color: #61dafb;
 }
+/* LanguageSwitcher.css */
+.language-switcher {
+    margin-left: auto; /* Pushes the language switcher to the right */
+    display: flex;
+    gap: 10px;}
+
+.language-button {
+    background-color: #00796b;
+    color: white;
+    margin-top: 0;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.language-button:hover {
+    background-color: #004d40;
+}
+

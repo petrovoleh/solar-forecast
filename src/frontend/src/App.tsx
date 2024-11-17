@@ -20,6 +20,8 @@ import ClusterList from "./pages/ClusterList";
 import AddCluster from "./pages/AddCluster";
 import NotFound from "./pages/NotFound";
 import AddInverter from "./pages/AddInverter";
+import './i18n'; // Import the i18n configuration
+
 
 const App: React.FC = () => {
     return (

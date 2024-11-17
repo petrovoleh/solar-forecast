@@ -65,16 +65,30 @@ const ClusterList: React.FC = () => {
         fetchClusters();
     }, []);
 
-    const handleSort = (key: keyof Cluster) => {
+    const handleSort = (key: keyof Cluster | 'location' | 'inverter' | 'efficiency') => {
         const sortedClusters = [...clusters].sort((a, b) => {
-            if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+            if (key === 'name' || key === 'description') {
                 return (a[key] as string).localeCompare(b[key] as string);
+            } else if (key === 'location') {
+                // Sort by city, then country, then district
+                return (
+                    a.location.city.localeCompare(b.location.city) ||
+                    a.location.country.localeCompare(b.location.country) ||
+                    a.location.district.localeCompare(b.location.district)
+                );
+            } else if (key === 'inverter') {
+                // Sort by inverter name
+                return a.inverter.name.localeCompare(b.inverter.name);
+            } else if (key === 'efficiency') {
+                // Sort by inverter efficiency (numeric)
+                return a.inverter.efficiency - b.inverter.efficiency;
             }
             return 0;
         });
         setClusters(sortedClusters);
-        setSortKey(key);
+        setSortKey(key as keyof Cluster); // Adjust sortKey state for UI indication
     };
+
 
     const handleDelete = async (id: string) => {
         const token = localStorage.getItem('token');
@@ -127,9 +141,17 @@ const ClusterList: React.FC = () => {
                 </div>
                 <div className="cluster-sort-options">
                     <span>Sort by:</span>
-                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name</button>
-                    <button onClick={() => handleSort('description')} className={sortKey === 'description' ? 'active' : ''}>Description</button>
+                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name
+                    </button>
+                    <button onClick={() => handleSort('location')}
+                            className={sortKey === 'location' ? 'active' : ''}>Location
+                    </button>
+                    <button onClick={() => handleSort('inverter')}
+                            className={sortKey === 'inverter' ? 'active' : ''}>Inverter
+                    </button>
+
                 </div>
+
             </div>
 
             {viewMode === 'list' && (

@@ -1,0 +1,54 @@
+{
+  "signIn": {
+    "title": "Prisijungti",
+    "emailOrUsername": "El. paštas arba vartotojo vardas",
+    "emailOrUsernameError": "El. paštas arba vartotojo vardas yra privalomas",
+    "emailInvalidError": "El. pašto adresas yra neteisingas",
+    "password": "Slaptažodis",
+    "passwordError": "Slaptažodis yra privalomas",
+    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis nei 8 simboliai",
+    "submitButton": "Prisijungti",
+    "signInSuccess": "Prisijungimas sėkmingas",
+    "signInFailed": "Prisijungimas nepavyko",
+    "errorOccurred": "Įvyko klaida: "
+  },
+  "signUp": {
+    "title": "Registruotis",
+    "name": "Vardas",
+    "nameError": "Vardas yra privalomas",
+    "email": "El. paštas",
+    "emailError": "El. paštas yra privalomas",
+    "emailInvalidError": "El. paštas yra neteisingas",
+    "password": "Slaptažodis",
+    "passwordError": "Slaptažodis yra privalomas",
+    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis nei 6 simboliai",
+    "confirmPassword": "Patvirtinkite slaptažodį",
+    "confirmPasswordError": "Slaptažodžiai nesutampa",
+    "submitButton": "Registruotis",
+    "signUpSuccess": "Registracija sėkminga",
+    "signUpFailed": "Registracija nepavyko",
+    "errorOccurred": "Įvyko klaida: "
+  },
+  "profile": {
+    "title": "Profilis",
+    "name": "Vardas",
+    "email": "El. paštas",
+    "address": "Adresas",
+    "edit": "Redaguoti profilį",
+    "exit": "Išeiti",
+    "loading": "Kraunasi...",
+    "error": "Klaida gaunant profilio duomenis",
+    "notSet": "Nenustatyta",
+    "confirmExitMessage": "Ar tikrai norite išeiti?"
+  },
+  "nav": {
+    "home": "Pagrindinis",
+    "profile": "Profilis",
+    "dashboard": "Prietaisų skydelis",
+    "myPanels": "Mano plokštės",
+    "myClusters": "Mano klasteriai",
+    "forecast": "Prognozė",
+    "signIn": "Prisijungti",
+    "signUp": "Registruotis"
+  }
+}

@@ -13,16 +13,14 @@ interface Location {
 interface SolarPanel {
     id: string;
     name: string;
-    powerRating: number;
-    temperatureCoefficient: number;
-    efficiency: number;
-    quantity: number;
-    location: Location; // Updated with correct structure
+    type: 'panel' | 'cluster';
+    location: Location;
 }
 
 const Forecast: React.FC = () => {
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     const [panels, setPanels] = useState<SolarPanel[]>([]);
+    const [clusters, setClusters] = useState<SolarPanel[]>([]);  // Store clusters in a separate state
     const [sortKey, setSortKey] = useState<keyof SolarPanel>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
@@ -56,51 +54,60 @@ const Forecast: React.FC = () => {
         };
         fetchPanels();
     }, []);
+    useEffect(() => {
+        const fetchClusters = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/cluster/user`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
+                if (response.ok) {
+                    const text = await response.text();
+
+                    if (text) {
+                        const data = JSON.parse(text);
+                        console.log('Fetched Clusters:', data); // Log the response
+                        setClusters(data);
+                    } else {
+                        setClusters([]);
+
+                    }
+                } else {
+                    console.error("Failed to fetch clusters:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error fetching clusters:", error);
+            }
+        };
+        fetchClusters();
+    }, []);
 
     const handleSort = (key: keyof SolarPanel) => {
         const sortedPanels = [...panels].sort((a, b) => {
             if (typeof a[key] === 'string' && typeof b[key] === 'string') {
                 return (a[key] as string).localeCompare(b[key] as string);
-            } else if (typeof a[key] === 'number' && typeof b[key] === 'number') {
-                return (a[key] as number) - (b[key] as number);
             }
             return 0;
         });
         setPanels(sortedPanels);
         setSortKey(key);
     };
-    const handleDelete = async (id: string) => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        try {
-            const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/panel/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (response.ok) {
-                setPanels(panels.filter(panel => panel.id !== id)); // Remove deleted panel from the state
-            } else {
-                console.error("Failed to delete panel:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error deleting panel:", error);
-        }
-    };
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value);
     };
+    const combinedData = [...panels.map(panel => ({ ...panel, type: 'panel' })), ...clusters.map(cluster => ({ ...cluster, type: 'cluster' }))];
 
-    const filteredPanels = panels.filter((panel) =>
-        panel.name.toLowerCase().includes(filter.toLowerCase()) ||
-        panel.location.city.toLowerCase().includes(filter.toLowerCase()) ||
-        panel.location.country.toLowerCase().includes(filter.toLowerCase()) ||
-        panel.location.district.toLowerCase().includes(filter.toLowerCase())
+    const filteredPanels = combinedData.filter((item) =>
+        (item.name && item.name.toLowerCase().includes(filter.toLowerCase())) ||
+        (item.location?.city && item.location.city.toLowerCase().includes(filter.toLowerCase())) ||
+        (item.location?.country && item.location.country.toLowerCase().includes(filter.toLowerCase())) ||
+        (item.location?.district && item.location.district.toLowerCase().includes(filter.toLowerCase()))
     );
+
 
     return (
         <div className="panel-list-container">
@@ -122,9 +129,7 @@ const Forecast: React.FC = () => {
                 <div className="panel-sort-options">
                     <span>Sort by:</span>
                     <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name</button>
-                    <button onClick={() => handleSort('powerRating')} className={sortKey === 'powerRating' ? 'active' : ''}>Power Rating</button>
-                    <button onClick={() => handleSort('efficiency')} className={sortKey === 'efficiency' ? 'active' : ''}>Efficiency</button>
-                    <button onClick={() => handleSort('quantity')} className={sortKey === 'quantity' ? 'active' : ''}>Quantity</button>
+
                     <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>Location</button>
                 </div>
             </div>
@@ -133,37 +138,35 @@ const Forecast: React.FC = () => {
             {viewMode === 'list' && (
                 <div className="panel-list-headers">
                     <div>Name</div>
-                    <div>Power Rating</div>
-                    <div>Efficiency</div>
-                    <div>Quantity</div>
                     <div>Location</div>
+                    <div>Type</div>
                     <div>Actions</div>
                 </div>
             )}
 
-            {panels.length === 0 ? (
+            {filteredPanels.length === 0 ? (
                 <div className="no-panels-message">No solar panels added yet.</div>
             ) : (
                 <div className={`panel-list ${viewMode}`}>
                     {filteredPanels.map((panel) => (
                         <div key={panel.id} className="panel-cardd">
                             <div>{viewMode === 'grid' && <strong>Name: </strong>}{panel.name}</div>
-                            <div>{viewMode === 'grid' && <strong>Power Rating: </strong>}{panel.powerRating}W</div>
-                            <div>{viewMode === 'grid' && <strong>Efficiency: </strong>}{panel.efficiency}%</div>
-                            <div>{viewMode === 'grid' && <strong>Quantity: </strong>}{panel.quantity}</div>
                             <div>{viewMode === 'grid' &&
                                 <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
-                            <div className="panel-actions">
-                                <button onClick={() => navigate(`/bar_forecast/${panel.id}`)}
-                                        className="view-button">Weekly forecast
-                                </button>
-                                <button onClick={() => navigate(`/panel_forecast/${panel.id}`)}
-                                        className="view-button">Daily Forecast
-                                </button>
+                            <div>{viewMode === 'grid' &&
+                                <strong>Type: </strong>}{panel.type}</div>
 
-                            </div>
+                                <div className="panel-actions">
+                                <button onClick={() => navigate(`/bar_forecast/${panel.id}`)}
+                                className="view-button">Weekly forecast
+                            </button>
+                            <button onClick={() => navigate(`/panel_forecast/${panel.id}`)}
+                                    className="view-button">Daily Forecast
+                            </button>
+
                         </div>
-                    ))}
+                        </div>
+                        ))}
                 </div>
             )}
 

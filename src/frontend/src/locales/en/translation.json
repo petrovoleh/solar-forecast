@@ -1,0 +1,57 @@
+
+{
+"signIn": {
+"title": "Sign In",
+"emailOrUsername": "Email or Username",
+"emailOrUsernameError": "Email or username is required",
+"emailInvalidError": "Email is invalid",
+"password": "Password",
+"passwordError": "Password is required",
+"passwordLengthError": "Password must be at least 8 characters long",
+"submitButton": "Sign In",
+"signInSuccess": "Sign In Successful",
+"signInFailed": "Sign In Failed",
+"errorOccurred": "An error occurred: "
+},
+  "signUp": {
+    "title": "Sign Up",
+    "name": "Name",
+    "nameError": "Name is required",
+    "email": "Email",
+    "emailError": "Email is required",
+    "emailInvalidError": "Email is invalid",
+    "password": "Password",
+    "passwordError": "Password is required",
+    "passwordLengthError": "Password must be at least 6 characters long",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordError": "Passwords do not match",
+    "submitButton": "Sign Up",
+    "signUpSuccess": "Sign Up Successful",
+    "signUpFailed": "Sign Up Failed",
+    "errorOccurred": "An error occurred: "
+  },
+  "profile": {
+    "title": "Profile",
+    "name": "Name",
+    "email": "Email",
+    "address": "Address",
+    "edit": "Edit Profile",
+    "exit": "Exit",
+    "loading": "Loading...",
+    "error": "Error fetching profile data",
+    "notSet": "Not set",
+    "confirmExitMessage": "Are you sure you want to exit?"
+  },
+"nav":{
+  "home": "Home",
+  "profile": "Profile",
+  "dashboard": "Dashboard",
+  "myPanels": "My Panels",
+  "myClusters": "My Clusters",
+  "forecast": "Forecast",
+  "signIn": "Sign In",
+  "signUp": "Sign Up"
+}
+
+}
+
