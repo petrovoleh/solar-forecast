@@ -185,7 +185,13 @@ public class SolarPanelController {
                 existingPanel.setLocation(location); // Associate the new location with the panel
             }
         }
-
+        if (panelRequest.getClusterId() != null) {
+            Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
+            if (cluster == null) {
+                return ResponseEntity.badRequest().body("Invalid cluster ID.");
+            }
+            existingPanel.setCluster(cluster); // Update the panel's cluster
+        }
         // Update the panel in the service
         panelService.addPanel(existingPanel);
         logger.info("Panel updated successfully for user: {}", username);

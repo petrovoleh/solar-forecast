@@ -1,0 +1,105 @@
+/* View Cluster Page Container */
+.cluster-container {
+    flex: 1;
+    display: flex; /* Use flexbox to arrange items */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: calc(93vh - 60px);
+    background-color: #f4f4f9; /* Slightly adjusted for consistency */
+}
+
+/* Cluster Card Styles */
+.cluster-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: left;
+    margin-right: 20px; /* Add some space between the card and other content */
+}
+
+/* Title */
+.cluster-card h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #004d40; /* Changed to match overall theme */
+    margin-bottom: 1.5rem;
+}
+
+/* Cluster Information Styles */
+.cluster-info {
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6e6e73;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-item p {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+/* Action Buttons Styles */
+.view-button {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #00796b; /* Matches theme */
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.view-button:hover {
+    background-color: #004d40; /* Darker shade for hover effect */
+}
+
+.delete-button {
+    width: 100%;
+    padding: 0.9rem;
+    margin-top: 1rem;
+    background-color: #970000; /* Matches theme */
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: #4d0000; /* Darker shade for hover effect */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 500px) {
+    .cluster-card {
+        padding: 1.5rem;
+        margin-right: 0; /* Remove margin on small screens */
+    }
+
+    .cluster-card h2 {
+        font-size: 22px;
+    }
+
+    .view-button,
+    .delete-button {
+        padding: 0.75rem;
+    }
+}

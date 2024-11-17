@@ -18,7 +18,7 @@ interface SolarPanel {
     efficiency: number;
     quantity: number;
     location: Location;
-    cluster?: { // Add cluster field
+    cluster?: {
         id: string;
         name: string;
     };
