@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Import for reading route parameters
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom'; // Import for reading route parameters
 import MapComponent from '../components/MapComponent';
-import { backend_url } from "../config"; // Import MapComponent
+import {backend_url} from "../config"; // Import MapComponent
 
 // Define the type for cluster
 interface Cluster {
@@ -32,7 +32,7 @@ interface PanelFormData {
 }
 
 const AddPanel: React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Extract the ID from the route
+    const {id} = useParams<{ id: string }>(); // Extract the ID from the route
     const isEditMode = Boolean(id); // Determine if we're in edit mode based on presence of id
     const [formData, setFormData] = useState<PanelFormData>({
         name: '',
@@ -105,7 +105,7 @@ const AddPanel: React.FC = () => {
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [name]: name === 'powerRating' || name === 'temperatureCoefficient' || name === 'efficiency' || name === 'quantity' ? parseInt(value) : value
@@ -114,7 +114,7 @@ const AddPanel: React.FC = () => {
 
     // Handle cluster selection
     const handleClusterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { value } = e.target;
+        const {value} = e.target;
 
         // Find the selected cluster
         const selectedCluster = clusters.find((cluster) => cluster.id === value);
@@ -122,7 +122,7 @@ const AddPanel: React.FC = () => {
         setFormData((prevState) => ({
             ...prevState,
             clusterId: value,
-            location: selectedCluster ? { ...selectedCluster.location } : {
+            location: selectedCluster ? {...selectedCluster.location} : {
                 lat: 0,
                 lon: 0,
                 country: '',
@@ -160,7 +160,7 @@ const AddPanel: React.FC = () => {
     const handleAddressManualChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             location: {
@@ -267,20 +267,20 @@ const AddPanel: React.FC = () => {
                             <div className="info-item">
                                 <label>Cluster:</label>
 
-                                    <select
-                                        name="clusterId"
-                                        value={formData.clusterId || ''}
-                                        onChange={handleClusterChange}
-                                    >
-                                        <option value="" disabled={!isEditMode}>Select a cluster</option>
-                                        {/* Option to select None */}
-                                        {clusters.map((cluster) => (
-                                            <option key={cluster.id} value={cluster.id}>
-                                                {cluster.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <select
+                                    name="clusterId"
+                                    value={formData.clusterId || ''}
+                                    onChange={handleClusterChange}
+                                >
+                                    <option value="" disabled={!isEditMode}>Select a cluster</option>
+                                    {/* Option to select None */}
+                                    {clusters.map((cluster) => (
+                                        <option key={cluster.id} value={cluster.id}>
+                                            {cluster.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
                         </div>
 

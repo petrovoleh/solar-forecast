@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import './Home.css';
 
 const Home: React.FC = () => {
@@ -8,7 +8,8 @@ const Home: React.FC = () => {
 
             <section className="hero-section">
                 <h2>Harness the Power of Solar Energy</h2>
-                <p>Discover how much energy your solar panels can produce based on real-time data and unique algorithms.</p>
+                <p>Discover how much energy your solar panels can produce based on real-time data and unique
+                    algorithms.</p>
                 <Link to="/forecast" className="cta-button">Get Forecast</Link>
             </section>
 
@@ -31,11 +32,13 @@ const Home: React.FC = () => {
                 <h2>Why Use Our Forecasting System?</h2>
                 <div className="feature-card">
                     <h3>Real-Time Data</h3>
-                    <p>We use real-time weather and environmental data to ensure accurate predictions for your solar panels.</p>
+                    <p>We use real-time weather and environmental data to ensure accurate predictions for your solar
+                        panels.</p>
                 </div>
                 <div className="feature-card">
                     <h3>Custom Algorithms</h3>
-                    <p>Our algorithms are specifically designed to forecast solar energy production based on panel location and configuration.</p>
+                    <p>Our algorithms are specifically designed to forecast solar energy production based on panel
+                        location and configuration.</p>
                 </div>
                 <div className="feature-card">
                     <h3>Comprehensive Dashboard</h3>

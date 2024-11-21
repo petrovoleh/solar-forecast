@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { backend_url } from "../config";
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import React, {useState} from 'react';
+import {useAuth} from '../context/AuthContext';
+import {backend_url} from "../config";
+import {useNavigate} from 'react-router-dom';
+import {useTranslation} from 'react-i18next'; // Import useTranslation
 
 interface SignUpFormState {
     name: string;
@@ -19,7 +19,7 @@ interface ValidationErrors {
 }
 
 const SignUp: React.FC = () => {
-    const { t } = useTranslation(); // Initialize the useTranslation hook
+    const {t} = useTranslation(); // Initialize the useTranslation hook
     const [formState, setFormState] = useState<SignUpFormState>({
         name: '',
         email: '',
@@ -27,7 +27,7 @@ const SignUp: React.FC = () => {
         confirmPassword: ''
     });
     const navigate = useNavigate();
-    const { setIsLoggedIn } = useAuth();
+    const {setIsLoggedIn} = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [message, setMessage] = useState<string | null>(null);
 
@@ -45,7 +45,7 @@ const SignUp: React.FC = () => {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormState((prevState) => ({
             ...prevState,
             [name]: value
@@ -58,7 +58,7 @@ const SignUp: React.FC = () => {
             try {
                 const response = await fetch(`${backend_url}/api/auth/signup`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         username: formState.name,
                         email: formState.email,

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import './ViewCluster.css';
-import { backend_url } from '../config';
+import {backend_url} from '../config';
 
 interface Location {
     country: string;
@@ -42,7 +42,7 @@ interface SolarPanel {
 }
 
 const ViewCluster: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
 
     const [cluster, setCluster] = useState<Cluster | null>(null);

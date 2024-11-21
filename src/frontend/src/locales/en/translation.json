@@ -1,18 +1,17 @@
-
 {
-"signIn": {
-"title": "Sign In",
-"emailOrUsername": "Email or Username",
-"emailOrUsernameError": "Email or username is required",
-"emailInvalidError": "Email is invalid",
-"password": "Password",
-"passwordError": "Password is required",
-"passwordLengthError": "Password must be at least 8 characters long",
-"submitButton": "Sign In",
-"signInSuccess": "Sign In Successful",
-"signInFailed": "Sign In Failed",
-"errorOccurred": "An error occurred: "
-},
+  "signIn": {
+    "title": "Sign In",
+    "emailOrUsername": "Email or Username",
+    "emailOrUsernameError": "Email or username is required",
+    "emailInvalidError": "Email is invalid",
+    "password": "Password",
+    "passwordError": "Password is required",
+    "passwordLengthError": "Password must be at least 8 characters long",
+    "submitButton": "Sign In",
+    "signInSuccess": "Sign In Successful",
+    "signInFailed": "Sign In Failed",
+    "errorOccurred": "An error occurred: "
+  },
   "signUp": {
     "title": "Sign Up",
     "name": "Name",
@@ -42,16 +41,15 @@
     "notSet": "Not set",
     "confirmExitMessage": "Are you sure you want to exit?"
   },
-"nav":{
-  "home": "Home",
-  "profile": "Profile",
-  "dashboard": "Dashboard",
-  "myPanels": "My Panels",
-  "myClusters": "My Clusters",
-  "forecast": "Forecast",
-  "signIn": "Sign In",
-  "signUp": "Sign Up"
-}
-
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "myPanels": "My Panels",
+    "myClusters": "My Clusters",
+    "forecast": "Forecast",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  }
 }
 

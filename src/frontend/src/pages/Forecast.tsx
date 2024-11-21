@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import './PanelList.css';
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {backend_url} from "../config";
+
 interface Location {
     country: string;
     city: string;
@@ -69,7 +70,7 @@ const Forecast: React.FC = () => {
 
                     if (text) {
                         const data = JSON.parse(text);
-                       setClusters(data);
+                        setClusters(data);
                     } else {
                         setClusters([]);
 
@@ -84,21 +85,40 @@ const Forecast: React.FC = () => {
         fetchClusters();
     }, []);
 
-    const handleSort = (key: keyof SolarPanel) => {
-        const sortedPanels = [...panels].sort((a, b) => {
-            if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+    const handleSort = (key: keyof SolarPanel | 'type') => {
+        const sortedPanels = [...combinedData].sort((a, b) => {
+            if (key === 'location') {
+                // Compare by city first, then country, then district
+                const aLocation = `${a.location.city || ''}, ${a.location.country || ''}, ${a.location.district || ''}`;
+                const bLocation = `${b.location.city || ''}, ${b.location.country || ''}, ${b.location.district || ''}`;
+                return aLocation.localeCompare(bLocation);
+            } else if (key === 'type') {
+                return a.type.localeCompare(b.type);
+            } else if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+                // For other string fields like 'name'
                 return (a[key] as string).localeCompare(b[key] as string);
             }
             return 0;
         });
-        setPanels(sortedPanels);
-        setSortKey(key);
+
+        setCombinedData(sortedPanels);
+        setSortKey(key as keyof SolarPanel); // Update sortKey state
     };
+
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value);
     };
-    const combinedData = [...panels.map(panel => ({ ...panel, type: 'panel' })), ...clusters.map(cluster => ({ ...cluster, type: 'cluster' }))];
+    const [combinedData, setCombinedData] = useState<SolarPanel[]>([]);
+
+// Update `combinedData` whenever `panels` or `clusters` change
+    useEffect(() => {
+        setCombinedData([
+            ...panels.map(panel => ({...panel, type: 'panel' as 'panel'})),
+            ...clusters.map(cluster => ({...cluster, type: 'cluster' as 'cluster'})),
+        ]);
+    }, [panels, clusters]);
+
 
     const filteredPanels = combinedData.filter((item) =>
         (item.name && item.name.toLowerCase().includes(filter.toLowerCase())) ||
@@ -121,21 +141,30 @@ const Forecast: React.FC = () => {
                     />
                     <button onClick={() => navigate('/add')} className="add-panel-button">Add New Panel</button>
                     <div className="view-toggle-buttons">
-                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List View</button>
-                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid View</button>
+                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List
+                            View
+                        </button>
+                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid
+                            View
+                        </button>
                     </div>
                 </div>
                 <div className="panel-sort-options">
-                    <span>Sort by:</span>
-                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name</button>
-
-                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>Location</button>
+                    <span className="sortby">Sort by:</span>
+                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name
+                    </button>
+                    <button onClick={() => handleSort('location')}
+                            className={sortKey === 'location' ? 'active' : ''}>Location
+                    </button>
+                    <button onClick={() => handleSort('type')} className={sortKey === 'type' ? 'active' : ''}>Type
+                    </button>
                 </div>
+
             </div>
 
             {/* Render headers when in list view */}
             {viewMode === 'list' && (
-                <div className="panel-list-headers">
+                <div className="forecast-list-headers">
                     <div>Name</div>
                     <div>Location</div>
                     <div>Type</div>
@@ -148,24 +177,30 @@ const Forecast: React.FC = () => {
             ) : (
                 <div className={`panel-list ${viewMode}`}>
                     {filteredPanels.map((panel) => (
-                        <div key={panel.id} className="panel-cardd">
+                        <div key={panel.id} className="panel-cardd forecast-card ">
                             <div>{viewMode === 'grid' && <strong>Name: </strong>}{panel.name}</div>
                             <div>{viewMode === 'grid' &&
                                 <strong>Location: </strong>}{panel.location.city}, {panel.location.country}</div>
                             <div>{viewMode === 'grid' &&
                                 <strong>Type: </strong>}{panel.type}</div>
 
-                                <div className="panel-actions">
-                                <button onClick={() => navigate(`/bar_forecast/${panel.id}`)}
-                                className="view-button">Weekly forecast
-                            </button>
-                            <button onClick={() => navigate(`/panel_forecast/${panel.id}`)}
-                                    className="view-button">Daily Forecast
-                            </button>
+                            <div className="panel-actions">
+                                <button
+                                    onClick={() => navigate(`/bar_forecast/${panel.id}?type=${panel.type}`)}
+                                    className="view-button"
+                                >
+                                    Bar forecast
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/panel_forecast/${panel.id}?type=${panel.type}`)}
+                                    className="view-button"
+                                >
+                                    Graph Forecast
+                                </button>
 
+                            </div>
                         </div>
-                        </div>
-                        ))}
+                    ))}
                 </div>
             )}
 

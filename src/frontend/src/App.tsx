@@ -1,20 +1,20 @@
-import React, {useState} from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import PanelForecast from './pages/PanelForecast';
 import BarForecast from './pages/BarForecast';
-import { Helmet } from 'react-helmet';
+import {Helmet} from 'react-helmet';
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';  // Import the EditProfile page
+import EditProfile from './pages/EditProfile'; // Import the EditProfile page
 import Dashboard from './pages/Dashboard';
 import Header from './components/Header';
 import PanelsList from "./pages/PanelsList";
 import "./App.css"
 import AddPanel from "./pages/AddPanel";
 import ViewPanel from "./pages/ViewPanel";
-import { AuthProvider } from './context/AuthContext';
+import {AuthProvider} from './context/AuthContext';
 import Forecast from "./pages/Forecast";
 import ClusterList from "./pages/ClusterList";
 import AddCluster from "./pages/AddCluster";
@@ -55,7 +55,7 @@ const App: React.FC = () => {
 
                         <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
                         <Route path="/bar_forecast/:id" element={<BarForecast/>}/>
-                        <Route path="*" element={<NotFound />} />
+                        <Route path="*" element={<NotFound/>}/>
                     </Routes>
                 </div>
                 <footer className="footer">

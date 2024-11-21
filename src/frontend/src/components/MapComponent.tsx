@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import React, {useEffect, useState} from 'react';
+import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapComponent.css';
@@ -17,7 +17,10 @@ interface MapComponentProps {
     lon: number; // Required prop for initial longitude
 }
 
-const MapClickHandler: React.FC<{ onLocationChange: (lat: number, lon: number) => void, onAddressChange: (address: { country: string; city: string; district: string }) => void }> = ({ onLocationChange, onAddressChange }) => {
+const MapClickHandler: React.FC<{
+    onLocationChange: (lat: number, lon: number) => void,
+    onAddressChange: (address: { country: string; city: string; district: string }) => void
+}> = ({onLocationChange, onAddressChange}) => {
     useMapEvents({
         click(e) {
             const lat = e.latlng.lat;
@@ -52,13 +55,13 @@ const customIcon = L.divIcon({
     iconAnchor: [12, 41],
 });
 
-const MoveMapToLocation: React.FC<{ lat: number, lng: number }> = ({ lat, lng }) => {
+const MoveMapToLocation: React.FC<{ lat: number, lng: number }> = ({lat, lng}) => {
     const map = useMap();
     map.setView([lat, lng], map.getZoom());
     return null;
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({ onLocationChange, address, onAddressChange, lat, lon }) => {
+const MapComponent: React.FC<MapComponentProps> = ({onLocationChange, address, onAddressChange, lat, lon}) => {
     const [position, setPosition] = useState<[number, number]>([lat, lon]); // Initialize with props lat and lon
     const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
 
@@ -69,7 +72,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onLocationChange, address, 
 
     const handleCurrentLocation = () => {
         navigator.geolocation.getCurrentPosition((position) => {
-            const { latitude, longitude } = position.coords;
+            const {latitude, longitude} = position.coords;
             setPosition([latitude, longitude]);
             setCurrentLocation([latitude, longitude]);
             onLocationChange(latitude, longitude);
@@ -101,15 +104,15 @@ const MapComponent: React.FC<MapComponentProps> = ({ onLocationChange, address, 
                 <MapClickHandler onLocationChange={(lat, lng) => {
                     setPosition([lat, lng]);
                     onLocationChange(lat, lng);
-                }} onAddressChange={onAddressChange} />
+                }} onAddressChange={onAddressChange}/>
                 <Marker position={position} icon={customIcon}>
                     <Popup>
-                        Selected Location<br />
-                        Latitude: {position[0]}<br />
+                        Selected Location<br/>
+                        Latitude: {position[0]}<br/>
                         Longitude: {position[1]}
                     </Popup>
                 </Marker>
-                {currentLocation && <MoveMapToLocation lat={currentLocation[0]} lng={currentLocation[1]} />}
+                {currentLocation && <MoveMapToLocation lat={currentLocation[0]} lng={currentLocation[1]}/>}
             </MapContainer>
             <button onClick={handleCurrentLocation} className="edit-button current-location-button">
                 Current Location

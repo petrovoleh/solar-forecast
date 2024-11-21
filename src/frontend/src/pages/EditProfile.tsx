@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config"; // Імпорт компонента з мапою
 
@@ -180,11 +180,11 @@ const EditProfile: React.FC = () => {
                     country: "Lithuania",
                     city: "Vilnius",
                     district: "Vilnius County",
-                    }}
-                    onAddressChange={handleAddressChange}
-                    lat={user?.location?.lat || 54.6872} // Use latitude from user data or default
-                    lon={user?.location?.lon || 25.2797} // Use longitude from user data or default
-                />
+                }}
+                onAddressChange={handleAddressChange}
+                lat={user?.location?.lat || 54.6872} // Use latitude from user data or default
+                lon={user?.location?.lon || 25.2797} // Use longitude from user data or default
+            />
         </div>
     );
 };

@@ -4,6 +4,7 @@ import com.olehpetrov.backend.models.DailyEnergyTotal;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.repositories.DailyEnergyTotalRepository;
 import com.olehpetrov.backend.repositories.SolarPanelRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,4 +48,16 @@ public class SolarPanelService {
     public List<DailyEnergyTotal> getDailyEnergyTotalsByDateRange(Panel panel, String startDate, String endDate) {
         return dailyEnergyTotalRepository.findByPanelAndDateBetween(panel, startDate, endDate);
     }
+    public List<Panel> getPanelsByClusterId(String clusterId) {
+        ObjectId clusterObjectId = new ObjectId(clusterId); // Перетворення рядка в ObjectId
+        return solarPanelRepository.findByCluster(clusterObjectId);
+    }
+
+
+    public double calculateTotalCapacityKwp(List<Panel> panels) {
+        return panels.stream()
+                .mapToDouble(panel -> (panel.getPowerRating() / 1000.0) * (panel.getEfficiency() / 100.0))
+                .sum();
+    }
 }
+

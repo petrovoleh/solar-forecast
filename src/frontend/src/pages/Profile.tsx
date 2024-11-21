@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { useAuth } from '../context/AuthContext';
-import { backend_url } from "../config";
-import { useTranslation } from 'react-i18next'; // Import the useTranslation hook
+import {useAuth} from '../context/AuthContext';
+import {backend_url} from "../config";
+import {useTranslation} from 'react-i18next'; // Import the useTranslation hook
 
 interface Address {
     country: string;
@@ -18,10 +18,10 @@ interface User {
 }
 
 const Profile: React.FC = () => {
-    const { t } = useTranslation(); // Use the useTranslation hook
+    const {t} = useTranslation(); // Use the useTranslation hook
     const navigate = useNavigate();
     const [isModalOpen, setModalOpen] = useState(false);
-    const { setIsLoggedIn } = useAuth();
+    const {setIsLoggedIn} = useAuth();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { format, parseISO } from 'date-fns';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {format, parseISO} from 'date-fns';
 import './Forecast.css';
 import {backend_url} from "../config";
 
@@ -11,21 +11,24 @@ interface ForecastData {
 }
 
 const PanelForecast: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const location = useLocation(); // Access query parameters
 
     const [forecastData, setForecastData] = useState<ForecastData[]>([]);
-    const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     const [error, setError] = useState<string | null>(null);
-
+    const params = new URLSearchParams(location.search);
+    const type = params.get('type');
+    console.log(type)
     const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const fetchForecast = async () => {
         try {
             const response = await fetch(
-                `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
                 {
                     method: 'POST',
                     headers: {
@@ -87,7 +90,7 @@ const PanelForecast: React.FC = () => {
     return (
         <div className="panel-forecast">
             <main className="forecast-main">
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p style={{color: 'red'}}>{error}</p>}
                 <div className="date-selection-wrapper">
                     <div className="date-selection">
                         <label>
@@ -100,7 +103,7 @@ const PanelForecast: React.FC = () => {
                                 min={"2020-01-01"}
                             />
                         </label>
-                        <label style={{ marginLeft: '1em' }}>
+                        <label style={{marginLeft: '1em'}}>
                             To Date:
                             <input
                                 type="date"
@@ -115,20 +118,20 @@ const PanelForecast: React.FC = () => {
                     </div>
                 </div>
 
-                <ResponsiveContainer width="100%" height={800}>
+                <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <LineChart data={forecastData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
                         <XAxis
                             dataKey="datetime"
                             tickFormatter={(tick) => format(parseISO(tick), 'MM-dd HH:mm')}
                             stroke="#333"
                         />
-                        <YAxis label={{ value: 'Power (kW)', angle: -90, position: 'insideLeft', fill: '#333' }} />
+                        <YAxis label={{value: 'Power (kW)', angle: -90, position: 'insideLeft', fill: '#333'}}/>
                         <Tooltip
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
-                            contentStyle={{ backgroundColor: '#e0f7fa', borderColor: '#00796b' }}
+                            contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}
                         />
-                        <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} dot={false}/>
                     </LineChart>
                 </ResponsiveContainer>
             </main>

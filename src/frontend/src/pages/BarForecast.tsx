@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { format, parseISO } from 'date-fns';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {format, parseISO} from 'date-fns';
 import './Forecast.css';
 import {backend_url} from "../config";
 
@@ -11,21 +11,25 @@ interface DailyTotalData {
 }
 
 const BarForecast: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const location = useLocation(); // Access query parameters
+
     const token = localStorage.getItem('token');
     const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const [dailyTotals, setDailyTotals] = useState<DailyTotalData[]>([]);
     const [totalEnergySum, setTotalEnergySum] = useState<number>(0);
-    const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7*24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     const [error, setError] = useState<string | null>(null);
-
+    const params = new URLSearchParams(location.search);
+    const type = params.get('type');
+    console.log(type)
     const fetchDailyTotals = async () => {
         try {
             const response = await fetch(
-                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00`,
+                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
                 {
                     method: 'GET',
                     headers: {
@@ -79,7 +83,7 @@ const BarForecast: React.FC = () => {
     return (
         <div className="panel-forecast">
             <main className="forecast-main">
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p style={{color: 'red'}}>{error}</p>}
                 <div className="date-selection-wrapper">
                     <div className="date-selection">
                         <label>
@@ -87,33 +91,34 @@ const BarForecast: React.FC = () => {
                             <input type="date" value={fromDate} onChange={handleFromDateChange} max={maxToDate}
                                    min={"2020-01-01"}/>
                         </label>
-                        <label style={{ marginLeft: '1em' }}>
+                        <label style={{marginLeft: '1em'}}>
                             To Date:
                             <input type="date" value={toDate} onChange={handleToDateChange} max={maxToDate}
                                    min={fromDate > "2020-01-01" ? fromDate : "2020-01-01"}/>
                         </label>
                         <button className="cta-button" onClick={fetchDailyTotals}>OK</button>
+                        <p className="total-energy-text">
+                            Total energy generated over this period: {totalEnergySum.toFixed(2)} kWh
+                        </p>
                     </div>
                     {/* Display total energy generated */}
-                    <p className="total-energy-text">
-                        Total energy generated over this period: {totalEnergySum.toFixed(2)} kWh
-                    </p>
+
                 </div>
 
-                <ResponsiveContainer width="100%" height={800}>
+                <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <BarChart data={dailyTotals}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
                         <XAxis
                             dataKey="date"
                             tickFormatter={(tick) => format(parseISO(tick), 'MM-dd')}
                             stroke="#333"
                         />
-                        <YAxis label={{ value: 'Total Energy (kWh)', angle: -90, position: 'insideLeft', fill: '#333' }} />
+                        <YAxis label={{value: 'Total Energy (kWh)', angle: -90, position: 'insideLeft', fill: '#333'}}/>
                         <Tooltip
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd')}
-                            contentStyle={{ backgroundColor: '#e0f7fa', borderColor: '#00796b' }}
+                            contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}
                         />
-                        <Bar dataKey="totalEnergy_kwh" fill="#004d40" />
+                        <Bar dataKey="totalEnergy_kwh" fill="#004d40"/>
                     </BarChart>
                 </ResponsiveContainer>
             </main>

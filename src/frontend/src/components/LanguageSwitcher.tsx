@@ -1,9 +1,9 @@
 // LanguageSwitcher.tsx
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 const LanguageSwitcher: React.FC = () => {
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
 
     const changeLanguage = (language: string) => {
         i18n.changeLanguage(language);

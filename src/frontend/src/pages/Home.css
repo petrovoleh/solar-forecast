@@ -13,7 +13,6 @@ body {
 }
 
 
-
 .hero-section {
     background-color: #e0f7fa;
     text-align: center;
@@ -108,23 +107,6 @@ body {
     font-style: italic;
     color: #555;
 }
-
-.footer {
-    height:25px;
-    background-color: #004d40;
-    color: white;
-    text-align: center;
-    padding: 1vh;
-}
-.footer p {
-    margin-top: 5px;
-}
-
-
-.footer-links a:hover {
-    text-decoration: underline;
-}
-
 
 .not-found-container {
     display: flex;

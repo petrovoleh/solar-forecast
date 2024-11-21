@@ -1,12 +1,12 @@
 /* ClusterList.css */
 
 /* Cluster list container */
-.cluster-list-container {
+.list-container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    min-height: calc(93vh - 60px);
+    min-height: calc(100vh - 125px - 3rem);
     height: 100%;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -14,14 +14,14 @@
 }
 
 /* Cluster controls and header */
-.cluster-list-header {
-    margin-top: 60px;
+.list-header {
     display: flex;
     flex-direction: column;
     gap: 20px;
     margin-bottom: 20px;
 }
-.cluster-list-headers {
+
+.list-headers {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
     background-color: #f1f1f1;
@@ -29,7 +29,8 @@
     border-bottom: 1px solid #ddd;
     font-weight: bold;
 }
-.cluster-list-controls {
+
+.list-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -108,12 +109,12 @@
 }
 
 /* List View (Excel-like) */
-.cluster-list.list {
+.list.list {
     display: flex;
     flex-direction: column;
 }
 
-.cluster-list.list .cluster-card {
+.list.list .cluster-card {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
@@ -123,31 +124,31 @@
     font-size: 14px;
 }
 
-.cluster-list.list .cluster-card h3 {
+.list.list .cluster-card h3 {
     margin: 0;
     font-size: 14px;
 }
 
-.cluster-list.list .cluster-card p {
+.list.list .cluster-card p {
     margin: 0;
 }
 
-.cluster-list.list .cluster-card strong {
+.list.list .cluster-card strong {
     font-weight: 600;
 }
 
-.cluster-list.list .cluster-actions {
+.list.list .cluster-actions {
     display: flex;
     gap: 10px;
 }
 
-.cluster-list.list .cluster-actions button {
+.list.list .cluster-actions button {
     padding: 5px 10px;
     font-size: 12px;
 }
 
 /* Grid View (Same as before) */
-.cluster-list.grid {
+.list.grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -213,7 +214,7 @@
 
 /* Media Queries */
 @media (max-width: 768px) {
-    .cluster-list.list .cluster-card {
+    .list.list .cluster-card {
         grid-template-columns: repeat(2, 1fr);
     }
 

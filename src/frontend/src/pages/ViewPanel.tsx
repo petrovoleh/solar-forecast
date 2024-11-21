@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {backend_url} from "../config";
 
@@ -16,7 +16,7 @@ interface PanelData {
 }
 
 const ViewPanel: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const [panelData, setPanelData] = useState<PanelData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();

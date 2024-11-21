@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { backend_url } from "../config";
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import {backend_url} from "../config";
 
 interface InverterFormData {
     name: string;
@@ -10,7 +10,7 @@ interface InverterFormData {
 }
 
 const AddInverter: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
     const [formData, setFormData] = useState<InverterFormData>({
         name: '',
@@ -48,7 +48,7 @@ const AddInverter: React.FC = () => {
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [name]: name === 'capacity' || name === 'efficiency' ? parseFloat(value) : value
@@ -136,7 +136,8 @@ const AddInverter: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="inverter-button">{isEditMode ? 'Update Inverter' : 'Add Inverter'}</button>
+                    <button type="submit"
+                            className="inverter-button">{isEditMode ? 'Update Inverter' : 'Add Inverter'}</button>
                     {responseMessage && <p>{responseMessage}</p>}
                 </form>
             </div>

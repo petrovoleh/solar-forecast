@@ -1,3 +1,4 @@
+
 .header {
     position: fixed;
     top: 0;
@@ -7,12 +8,13 @@
     position: fixed;
     background-color: #004d40;
     color: white;
-    padding: 1rem;
+    padding: 0.5rem;
     display: flex;
     z-index: 1001;
     justify-content: space-between;
     align-items: center;
 }
+
 .nav {
     width: 98%;
     display: grid;
@@ -40,11 +42,13 @@
 .nav-links li a:hover {
     color: #61dafb;
 }
+
 /* LanguageSwitcher.css */
 .language-switcher {
     margin-left: auto; /* Pushes the language switcher to the right */
     display: flex;
-    gap: 10px;}
+    gap: 10px;
+}
 
 .language-button {
     background-color: #00796b;

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import './PanelList.css';
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {backend_url} from "../config";
+
 interface Location {
     country: string;
     city: string;
@@ -109,7 +110,7 @@ const PanelList: React.FC = () => {
 
     return (
         <div className="panel-list-container">
-            <div className="panel-list-header">
+            <div className="list-header">
                 <div className="panel-list-controls">
                     <input
                         type="text"
@@ -120,17 +121,30 @@ const PanelList: React.FC = () => {
                     />
                     <button onClick={() => navigate('/add')} className="add-panel-button">Add New Panel</button>
                     <div className="view-toggle-buttons">
-                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List View</button>
-                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid View</button>
+                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List
+                            View
+                        </button>
+                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid
+                            View
+                        </button>
                     </div>
                 </div>
                 <div className="panel-sort-options">
-                    <span>Sort by:</span>
-                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name</button>
-                    <button onClick={() => handleSort('powerRating')} className={sortKey === 'powerRating' ? 'active' : ''}>Power Rating</button>
-                    <button onClick={() => handleSort('efficiency')} className={sortKey === 'efficiency' ? 'active' : ''}>Efficiency</button>
-                    <button onClick={() => handleSort('quantity')} className={sortKey === 'quantity' ? 'active' : ''}>Quantity</button>
-                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>Location</button>
+                    <span className="sortby">Sort by:</span>
+                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name
+                    </button>
+                    <button onClick={() => handleSort('powerRating')}
+                            className={sortKey === 'powerRating' ? 'active' : ''}>Power Rating
+                    </button>
+                    <button onClick={() => handleSort('efficiency')}
+                            className={sortKey === 'efficiency' ? 'active' : ''}>Efficiency
+                    </button>
+                    <button onClick={() => handleSort('quantity')}
+                            className={sortKey === 'quantity' ? 'active' : ''}>Quantity
+                    </button>
+                    <button onClick={() => handleSort('location')}
+                            className={sortKey === 'location' ? 'active' : ''}>Location
+                    </button>
                 </div>
             </div>
 

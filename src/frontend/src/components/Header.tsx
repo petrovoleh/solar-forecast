@@ -1,15 +1,15 @@
 // Header.tsx
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import the Auth context
+import {Link} from 'react-router-dom';
+import {useAuth} from '../context/AuthContext'; // Import the Auth context
 import './Header.css';
 import LanguageSwitcher from "./LanguageSwitcher";
-import {useTranslation} from "react-i18next";  // Optional styling
+import {useTranslation} from "react-i18next"; // Optional styling
 
 const Header: React.FC = () => {
     // Using the auth context to get the current authentication state
-    const { isLoggedIn } = useAuth();  // Get the isLoggedIn state from context
-    const { t } = useTranslation(); // Use the useTranslation hook
+    const {isLoggedIn} = useAuth();  // Get the isLoggedIn state from context
+    const {t} = useTranslation(); // Use the useTranslation hook
 
     return (
         <header className="header">
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
                         </>
                     ) : (
                         <>
-                        <li><Link to="/signin">{t('nav.signIn')}</Link></li>
+                            <li><Link to="/signin">{t('nav.signIn')}</Link></li>
                             <li><Link to="/signup">{t('nav.signUp')}</Link></li>
                         </>
                     )}

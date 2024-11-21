@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
-import { backend_url } from "../config";
+import {backend_url} from "../config";
 
 interface LocationRequest {
     lat: number;
@@ -24,7 +24,7 @@ interface Inverter {
 }
 
 const AddCluster: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
 
     const [inverters, setInverters] = useState<Inverter[]>([]); // State for list of inverters
@@ -82,7 +82,7 @@ const AddCluster: React.FC = () => {
                         const clusterData = await response.json();
                         setFormData({
                             ...clusterData,
-                            inverterId:clusterData.inverter?.id || ''
+                            inverterId: clusterData.inverter?.id || ''
                         });
                     } else {
                         setResponseMessage('Failed to fetch cluster data.');
@@ -99,7 +99,7 @@ const AddCluster: React.FC = () => {
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [name]: value
@@ -133,7 +133,7 @@ const AddCluster: React.FC = () => {
     const handleAddressManualChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             location: {
@@ -264,7 +264,8 @@ const AddCluster: React.FC = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="cluster-button">{isEditMode ? 'Update Cluster' : 'Add Cluster'}</button>
+                    <button type="submit"
+                            className="cluster-button">{isEditMode ? 'Update Cluster' : 'Add Cluster'}</button>
                     {responseMessage && <p>{responseMessage}</p>}
                 </form>
             </div>

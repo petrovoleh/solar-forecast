@@ -6,6 +6,8 @@ body {
 
 .panel-forecast {
     color: #333;
+    height: 100%;
+    min-height: calc(100vh - 160px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,19 +28,21 @@ body {
 
 .forecast-main {
     width: 100%;
-    height: 80vh;
-    margin-top: 4vh;
+    /*height: 80vh;*/
+    margin-top: 2vh;
     /*max-width: 800px;*/
     padding: 1rem;
 }
-.date-selection-wrapper{
+
+.date-selection-wrapper {
     width: 100%;
     padding: 1rem;
 
 }
+
 .date-selection {
     display: flex;
-    width: 600px;
+    width: 100%;
     /*align-items: center;*/
     /*justify-content: center;*/
     /*margin-bottom: 1em;*/
@@ -58,7 +62,7 @@ body {
 }
 
 .cta-button {
-    margin:1rem;
+    margin: 1rem;
     width: 100px;
     padding: 0.5rem 1.5rem;
     background-color: #00796b;

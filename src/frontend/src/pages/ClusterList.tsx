@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import './ClusterList.css';
-import { useNavigate } from "react-router-dom";
-import { backend_url } from "../config";
+import {useNavigate} from "react-router-dom";
+import {backend_url} from "../config";
 
 interface Location {
     id: string;
@@ -122,9 +122,9 @@ const ClusterList: React.FC = () => {
     );
 
     return (
-        <div className="cluster-list-container">
-            <div className="cluster-list-header">
-                <div className="cluster-list-controls">
+        <div className="list-container">
+            <div className="list-header">
+                <div className="list-controls">
                     <input
                         type="text"
                         placeholder="Filter by name or location"
@@ -132,14 +132,19 @@ const ClusterList: React.FC = () => {
                         onChange={handleFilter}
                         className="filter-input"
                     />
-                    <button onClick={() => navigate('/add-cluster')} className="add-cluster-button">Add New Cluster</button>
+                    <button onClick={() => navigate('/add-cluster')} className="add-cluster-button">Add New Cluster
+                    </button>
                     <div className="view-toggle-buttons">
-                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List View</button>
-                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid View</button>
+                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List
+                            View
+                        </button>
+                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid
+                            View
+                        </button>
                     </div>
                 </div>
                 <div className="cluster-sort-options">
-                    <span>Sort by:</span>
+                    <span className="sortby">Sort by:</span>
                     <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name
                     </button>
                     <button onClick={() => handleSort('location')}
@@ -154,7 +159,7 @@ const ClusterList: React.FC = () => {
             </div>
 
             {viewMode === 'list' && (
-                <div className="cluster-list-headers">
+                <div className="list-headers">
                     <div>Name</div>
                     <div>Description</div>
                     <div>Location</div>
@@ -167,7 +172,7 @@ const ClusterList: React.FC = () => {
             {clusters.length === 0 ? (
                 <div className="no-clusters-message">No clusters added yet.</div>
             ) : (
-                <div className={`cluster-list ${viewMode}`}>
+                <div className={`list ${viewMode}`}>
                     {filteredClusters.map((cluster) => (
                         <div key={cluster.id} className="cluster-card">
                             <div>{viewMode === 'grid' && <strong>Name: </strong>}{cluster.name}</div>
