@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import './ClusterList.css';
 import {useNavigate} from "react-router-dom";
 import {backend_url} from "../config";
 

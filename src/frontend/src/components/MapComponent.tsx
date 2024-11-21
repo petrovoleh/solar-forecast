@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import './MapComponent.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 interface MapComponentProps {

@@ -2,7 +2,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext'; // Import the Auth context
-import './Header.css';
 import LanguageSwitcher from "./LanguageSwitcher";
 import {useTranslation} from "react-i18next"; // Optional styling
 

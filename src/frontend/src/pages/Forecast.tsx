@@ -129,9 +129,9 @@ const Forecast: React.FC = () => {
 
 
     return (
-        <div className="panel-list-container">
-            <div className="panel-list-header">
-                <div className="panel-list-controls">
+        <div className="list-container">
+            <div className="list-header">
+                <div className="list-controls">
                     <input
                         type="text"
                         placeholder="Filter by name or location"
@@ -164,7 +164,7 @@ const Forecast: React.FC = () => {
 
             {/* Render headers when in list view */}
             {viewMode === 'list' && (
-                <div className="forecast-list-headers">
+                <div className="list-headers">
                     <div>Name</div>
                     <div>Location</div>
                     <div>Type</div>

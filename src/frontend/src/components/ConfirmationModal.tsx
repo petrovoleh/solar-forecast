@@ -1,6 +1,5 @@
 // ConfirmationModal.tsx
 import React from 'react';
-import './ConfirmationModal.css'; // Import CSS for styling
 
 interface ConfirmationModalProps {
     isOpen: boolean;
