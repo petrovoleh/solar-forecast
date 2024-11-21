@@ -527,17 +527,7 @@ code {
         /* Adjust padding for mobile */
     }
 }
-.panel-list-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    min-height: calc(100vh - 160px);
-    height: 100%;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+
 /* View Panel Page Container */
 .profile-container, .auth-container {
     flex: 1;
@@ -623,7 +613,6 @@ button {
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    margin-top: 1.5rem;
     transition: background-color 0.2s ease;
 }
 button:hover {
@@ -776,7 +765,7 @@ button:disabled {
 }
 /* ClusterList.css */
 /* Cluster list container */
-.list-container {
+.list-container, .panel-list-container{
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
@@ -787,6 +776,7 @@ button:disabled {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 /* Cluster controls and header */
 .list-header {
     display: flex;

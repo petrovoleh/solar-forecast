@@ -50,6 +50,41 @@
     "forecast": "Forecast",
     "signIn": "Sign In",
     "signUp": "Sign Up"
+  },
+  "clusterList": {
+    "title": "Cluster List",
+    "filterPlaceholder": "Filter by name or location",
+    "addCluster": "Add New Cluster",
+    "listView": "List View",
+    "gridView": "Grid View",
+    "sortBy": "Sort by:",
+    "name": "Name",
+    "description": "Description",
+    "location": "Location",
+    "inverter": "Inverter",
+    "efficiency": "Efficiency",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "type": "Type",
+    "barForecast": "Bar forecast",
+    "graphForecast": "Graph Forecast",
+    "noClustersMessage": "No clusters added yet."
+  },
+  "barForecast": {
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "okButton": "OK",
+    "totalEnergyGenerated": "Total energy generated over this period: {{total}} kWh",
+    "yAxisLabel": "Total Energy (kWh)",
+    "errorRetrievingData": "Failed to retrieve daily totals.",
+    "tokenNotFound": "Token not found. Please log in."
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "Oops! The page you are looking for does not exist.",
+    "goBack": "Go Back Home"
   }
 }
 

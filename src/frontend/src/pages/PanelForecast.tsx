@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {format, parseISO} from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import './Forecast.css';
 import {backend_url} from "../config";
 
@@ -11,6 +12,7 @@ interface ForecastData {
 }
 
 const PanelForecast: React.FC = () => {
+    const { t } = useTranslation();
     const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
@@ -46,7 +48,7 @@ const PanelForecast: React.FC = () => {
             setForecastData(data);
             setError(null);
         } catch (error) {
-            setError('Failed to retrieve forecast data.');
+            setError(t('barForecast.errorRetrievingData'));
             console.error(error);
         }
     };
@@ -56,7 +58,7 @@ const PanelForecast: React.FC = () => {
             fetchForecast();
         }
         if (!token) {
-            setError('Token not found. Please log in.');
+            setError(t('barForecast.tokenNotFound'));
             return;
         }
     }, [fromDate, toDate, token]);
@@ -94,7 +96,7 @@ const PanelForecast: React.FC = () => {
                 <div className="date-selection-wrapper">
                     <div className="date-selection">
                         <label>
-                            From Date:
+                            {t('barForecast.fromDate')}:
                             <input
                                 type="date"
                                 value={fromDate}
@@ -104,7 +106,7 @@ const PanelForecast: React.FC = () => {
                             />
                         </label>
                         <label style={{marginLeft: '1em'}}>
-                            To Date:
+                            {t('barForecast.toDate')}:
                             <input
                                 type="date"
                                 value={toDate}
@@ -114,7 +116,8 @@ const PanelForecast: React.FC = () => {
                             />
                         </label>
 
-                        <button className="cta-button" onClick={fetchForecast}>OK</button>
+                        <button className="cta-button" onClick={fetchForecast}>{t('barForecast.okButton')}
+                        </button>
                     </div>
                 </div>
 
@@ -126,7 +129,7 @@ const PanelForecast: React.FC = () => {
                             tickFormatter={(tick) => format(parseISO(tick), 'MM-dd HH:mm')}
                             stroke="#333"
                         />
-                        <YAxis label={{value: 'Power (kW)', angle: -90, position: 'insideLeft', fill: '#333'}}/>
+                        <YAxis label={{value: t('barForecast.yAxisLabel'), angle: -90, position: 'insideLeft', fill: '#333'}}/>
                         <Tooltip
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
                             contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}

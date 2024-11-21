@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router-dom";
-import {backend_url} from "../config";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
+import { backend_url } from "../config";
 
 interface Location {
     id: string;
@@ -28,12 +29,14 @@ interface Cluster {
 }
 
 const ClusterList: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
     const [clusters, setClusters] = useState<Cluster[]>([]);
     const [sortKey, setSortKey] = useState<keyof Cluster>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
 
+    // Fetch clusters from the backend
     useEffect(() => {
         const fetchClusters = async () => {
             try {
@@ -46,13 +49,7 @@ const ClusterList: React.FC = () => {
 
                 if (response.ok) {
                     const text = await response.text();
-
-                    if (text) {
-                        const data = JSON.parse(text);
-                        setClusters(data);
-                    } else {
-                        setClusters([]);
-                    }
+                    setClusters(text ? JSON.parse(text) : []);
                 } else {
                     console.error("Failed to fetch clusters:", response.statusText);
                 }
@@ -63,31 +60,29 @@ const ClusterList: React.FC = () => {
         fetchClusters();
     }, []);
 
+    // Sorting logic
     const handleSort = (key: keyof Cluster | 'location' | 'inverter' | 'efficiency') => {
         const sortedClusters = [...clusters].sort((a, b) => {
             if (key === 'name' || key === 'description') {
                 return (a[key] as string).localeCompare(b[key] as string);
             } else if (key === 'location') {
-                // Sort by city, then country, then district
                 return (
                     a.location.city.localeCompare(b.location.city) ||
                     a.location.country.localeCompare(b.location.country) ||
                     a.location.district.localeCompare(b.location.district)
                 );
             } else if (key === 'inverter') {
-                // Sort by inverter name
                 return a.inverter.name.localeCompare(b.inverter.name);
             } else if (key === 'efficiency') {
-                // Sort by inverter efficiency (numeric)
                 return a.inverter.efficiency - b.inverter.efficiency;
             }
             return 0;
         });
         setClusters(sortedClusters);
-        setSortKey(key as keyof Cluster); // Adjust sortKey state for UI indication
+        setSortKey(key as keyof Cluster);
     };
 
-
+    // Deleting a cluster
     const handleDelete = async (id: string) => {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -109,6 +104,7 @@ const ClusterList: React.FC = () => {
         }
     };
 
+    // Filter clusters based on input
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value);
     };
@@ -126,74 +122,75 @@ const ClusterList: React.FC = () => {
                 <div className="list-controls">
                     <input
                         type="text"
-                        placeholder="Filter by name or location"
+                        placeholder={t('clusterList.filterPlaceholder')}
                         value={filter}
                         onChange={handleFilter}
                         className="filter-input"
                     />
-                    <button onClick={() => navigate('/add-cluster')} className="add-cluster-button">Add New Cluster
+                    <button onClick={() => navigate('/add-cluster')} className="add-cluster-button">
+                        {t('clusterList.addCluster')}
                     </button>
                     <div className="view-toggle-buttons">
-                        <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>List
-                            View
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={viewMode === 'list' ? 'active' : ''}
+                        >
+                            {t('clusterList.listView')}
                         </button>
-                        <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active' : ''}>Grid
-                            View
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={viewMode === 'grid' ? 'active' : ''}
+                        >
+                            {t('clusterList.gridView')}
                         </button>
                     </div>
                 </div>
                 <div className="cluster-sort-options">
-                    <span className="sortby">Sort by:</span>
-                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>Name
+                    <span className="sortby">{t('clusterList.sortBy')}</span>
+                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>
+                        {t('clusterList.name')}
                     </button>
-                    <button onClick={() => handleSort('location')}
-                            className={sortKey === 'location' ? 'active' : ''}>Location
+                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>
+                        {t('clusterList.location')}
                     </button>
-                    <button onClick={() => handleSort('inverter')}
-                            className={sortKey === 'inverter' ? 'active' : ''}>Inverter
+                    <button onClick={() => handleSort('inverter')} className={sortKey === 'inverter' ? 'active' : ''}>
+                        {t('clusterList.inverter')}
                     </button>
-
                 </div>
-
             </div>
 
-            {viewMode === 'list' && (
-                <div className="list-headers">
-                    <div>Name</div>
-                    <div>Description</div>
-                    <div>Location</div>
-                    <div>Inverter</div>
-                    <div>Efficiency</div>
-                    <div>Actions</div>
-                </div>
-            )}
-
             {clusters.length === 0 ? (
-                <div className="no-clusters-message">No clusters added yet.</div>
+                <div className="no-clusters-message">{t('clusterList.noClustersMessage')}</div>
             ) : (
                 <div className={`list ${viewMode}`}>
                     {filteredClusters.map((cluster) => (
                         <div key={cluster.id} className="cluster-card">
-                            <div>{viewMode === 'grid' && <strong>Name: </strong>}{cluster.name}</div>
-                            <div>{viewMode === 'grid' && <strong>Description: </strong>}{cluster.description}</div>
-                            <div>{viewMode === 'grid' &&
-                                <strong>Location: </strong>}{cluster.location.city}, {cluster.location.country}</div>
+                            <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{cluster.name}</div>
                             <div>
-                                {viewMode === 'grid' && <strong>Inverter: </strong>}
-                                {cluster.inverter?.name ? `${cluster.inverter.name}%` : 'N/A'}
+                                {viewMode === 'grid' && <strong>{t('clusterList.description')}: </strong>}
+                                {cluster.description}
                             </div>
                             <div>
-                                {viewMode === 'grid' && <strong>Inverter Efficiency: </strong>}
+                                {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
+                                {cluster.location.city}, {cluster.location.country}
+                            </div>
+                            <div>
+                                {viewMode === 'grid' && <strong>{t('clusterList.inverter')}: </strong>}
+                                {cluster.inverter?.name ? cluster.inverter.name : 'N/A'}
+                            </div>
+                            <div>
+                                {viewMode === 'grid' && <strong>{t('clusterList.efficiency')}: </strong>}
                                 {cluster.inverter?.efficiency ? `${cluster.inverter.efficiency}%` : 'N/A'}
                             </div>
                             <div className="cluster-actions">
-                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)}
-                                        className="view-button">View
+                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)} className="view-button">
+                                    {t('clusterList.view')}
                                 </button>
-                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)}
-                                        className="edit-button">Edit
+                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)} className="edit-button">
+                                    {t('clusterList.edit')}
                                 </button>
-                                <button onClick={() => handleDelete(cluster.id)} className="delete-button">Delete
+                                <button onClick={() => handleDelete(cluster.id)} className="delete-button">
+                                    {t('clusterList.delete')}
                                 </button>
                             </div>
                         </div>

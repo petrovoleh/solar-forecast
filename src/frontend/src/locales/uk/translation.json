@@ -50,5 +50,42 @@
     "forecast": "Прогноз",
     "signIn": "Увійти",
     "signUp": "Зареєструватися"
+  },
+
+  "clusterList": {
+    "title": "Список Кластерів",
+    "filterPlaceholder": "Фільтрувати за назвою або місцем",
+    "addCluster": "Додати Новий Кластер",
+    "listView": "Список",
+    "gridView": "Таблиця",
+    "sortBy": "Сортувати за:",
+    "name": "Назва",
+    "description": "Опис",
+    "location": "Місце",
+    "inverter": "Інвертор",
+    "efficiency": "Ефективність",
+    "actions": "Дії",
+    "view": "Переглянути",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "type": "Тип",
+    "barForecast": "Прогноз стовчиками",
+    "graphForecast": "Прогноз графіком",
+    "noClustersMessage": "Ще не додано кластерів."
+  },
+  "barForecast": {
+    "fromDate": "Дата початку",
+    "toDate": "Дата закінчення",
+    "okButton": "Обрати",
+    "totalEnergyGenerated": "Загальна кількість енергії, виробленої за цей період: {{total}} кВт·год",
+    "yAxisLabel": "Енергія (кВт·год)",
+    "errorRetrievingData": "Не вдалося отримати дані за день.",
+    "tokenNotFound": "Токен не знайдено. Будь ласка, увійдіть."
+  },
+  "notFound": {
+    "title": "404 - Сторінка не знайдена",
+    "message": "Ой! Сторінка, яку ви шукаєте, не існує.",
+    "goBack": "Повернутися на головну"
   }
+
 }

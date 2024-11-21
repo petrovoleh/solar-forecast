@@ -50,5 +50,42 @@
     "forecast": "Prognozė",
     "signIn": "Prisijungti",
     "signUp": "Registruotis"
+  },
+
+  "clusterList": {
+    "title": "Klasterių Sąrašas",
+    "filterPlaceholder": "Filtruoti pagal pavadinimą ar vietą",
+    "addCluster": "Pridėti Naują Klasterį",
+    "listView": "Sąrašo Vaizdas",
+    "gridView": "Tinklelio Vaizdas",
+    "sortBy": "Rūšiuoti pagal:",
+    "name": "Pavadinimas",
+    "description": "Aprašymas",
+    "location": "Vieta",
+    "inverter": "Inverteris",
+    "efficiency": "Efektyvumas",
+    "actions": "Veiksmai",
+    "view": "Peržiūrėti",
+    "edit": "Redaguoti",
+    "type": "Typas",
+    "delete": "Ištrinti",
+    "barForecast": "Juostos prognozė",
+    "graphForecast": "Grafiko prognozė",
+    "noClustersMessage": "Klasterių dar nepridėta."
+  },
+  "barForecast": {
+    "fromDate": "Pradžios data",
+    "toDate": "Pabaigos data",
+    "okButton": "OK",
+    "totalEnergyGenerated": "Bendras sugeneruotas energijos kiekis šiuo laikotarpiu: {{total}} kWh",
+    "yAxisLabel": "Energija (kWh)",
+    "errorRetrievingData": "Nepavyko gauti dienos sumų.",
+    "tokenNotFound": "Nepavyko rasti žetono. Prašome prisijungti."
+  },
+  "notFound": {
+    "title": "404 - Puslapis nerastas",
+    "message": "Oi! Puslapis, kurio ieškote, neegzistuoja.",
+    "goBack": "Grįžti į pradžią"
   }
+
 }
