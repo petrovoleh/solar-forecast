@@ -71,7 +71,11 @@
     "type": "Тип",
     "barForecast": "Прогноз стовчиками",
     "graphForecast": "Прогноз графіком",
-    "noClustersMessage": "Ще не додано кластерів."
+    "noClustersMessage": "Ще не додано кластерів.",
+    "addButton": "Додати нову панель",
+    "powerRating": "Рейтинг потужності",
+    "quantity": "Кількість",
+    "cluster": "Кластер"
   },
   "barForecast": {
     "fromDate": "Дата початку",

@@ -158,7 +158,17 @@ const ClusterList: React.FC = () => {
                     </button>
                 </div>
             </div>
+            {viewMode === 'list' && (
+                <div className="list-headers">
+                    <div>{t('clusterList.name')}</div>
+                    <div>{t('clusterList.description')}</div>
 
+                    <div>{t('clusterList.location')}</div>
+                    <div>{t('clusterList.inverter')}</div>
+                    <div>{t("clusterList.efficiency")}</div>
+                    <div>{t('clusterList.actions')}</div>
+                </div>
+            )}
             {clusters.length === 0 ? (
                 <div className="no-clusters-message">{t('clusterList.noClustersMessage')}</div>
             ) : (

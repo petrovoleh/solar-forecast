@@ -9,7 +9,7 @@
 
 .panel-list-headers {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
     background-color: #f1f1f1;
     padding: 10px;
     border-bottom: 1px solid #ddd;
@@ -78,7 +78,7 @@
 
 .panel-list.list .panel-cardd {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr  1fr  1fr; /* 7 columns: one for each data and actions */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr  1fr  2fr; /* 7 columns: one for each data and actions */
     align-items: center;
     padding: 10px;
     background-color: white;
@@ -114,7 +114,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: space-between;
+    justify-content: left;
 }
 
 .panel-cardd {

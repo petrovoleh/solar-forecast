@@ -154,7 +154,7 @@ const Forecast: React.FC = () => {
             </div>
 
             {viewMode === 'list' && (
-                <div className="list-headers">
+                <div className="forecast-list-headers">
                     <div>{t('clusterList.name')}</div>
                     <div>{t('clusterList.location')}</div>
                     <div>{t('clusterList.type')}</div>

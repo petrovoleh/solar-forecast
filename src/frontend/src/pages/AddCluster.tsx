@@ -236,6 +236,7 @@ const AddCluster: React.FC = () => {
                             <label>Country:</label>
                             <input
                                 type="text"
+                                required
                                 name="country"
                                 value={formData.location?.country || ''}
                                 onChange={handleAddressManualChange}
@@ -246,6 +247,7 @@ const AddCluster: React.FC = () => {
                             <label>City:</label>
                             <input
                                 type="text"
+                                required
                                 name="city"
                                 value={formData.location?.city || ''}
                                 onChange={handleAddressManualChange}
@@ -256,6 +258,7 @@ const AddCluster: React.FC = () => {
                             <label>District:</label>
                             <input
                                 type="text"
+                                required
                                 name="district"
                                 value={formData.location?.district || ''}
                                 onChange={handleAddressManualChange}

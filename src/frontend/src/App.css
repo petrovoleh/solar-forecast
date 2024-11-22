@@ -786,7 +786,7 @@ button:disabled {
 }
 .list-headers {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
     background-color: #f1f1f1;
     padding: 10px;
     border-bottom: 1px solid #ddd;
@@ -821,6 +821,7 @@ button:disabled {
 .view-toggle-buttons {
     display: flex;
     gap: 5px;
+    width:200px;
 }
 .view-toggle-buttons button {
     background-color: #e0e0e0;
@@ -866,7 +867,7 @@ button:disabled {
 }
 .list.list .cluster-card {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
     align-items: center;
     padding: 10px;
     background-color: white;
@@ -896,7 +897,7 @@ button:disabled {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: space-between;
+    justify-content: left;
 }
 .cluster-card {
     background-color: white;

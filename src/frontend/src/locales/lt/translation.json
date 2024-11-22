@@ -71,7 +71,11 @@
     "delete": "Ištrinti",
     "barForecast": "Juostos prognozė",
     "graphForecast": "Grafiko prognozė",
-    "noClustersMessage": "Klasterių dar nepridėta."
+    "noClustersMessage": "Klasterių dar nepridėta.",
+    "addButton": "Pridėti naują skydelį",
+    "powerRating": "Galingumo reitingas",
+    "quantity": "Kiekis",
+    "cluster": "Klasteris"
   },
   "barForecast": {
     "fromDate": "Pradžios data",

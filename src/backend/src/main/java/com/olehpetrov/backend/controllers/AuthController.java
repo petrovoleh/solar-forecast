@@ -1,6 +1,7 @@
 package com.olehpetrov.backend.controllers;
 
 import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.requests.AuthRequest;
 import com.olehpetrov.backend.responses.AuthResponse;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
@@ -38,7 +39,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SigninRequest signupRequest) {
+    public ResponseEntity<?> signup(@Valid @RequestBody AuthRequest signupRequest) {
         // Check if username already exists
         if (userService.existsByUsername(signupRequest.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already taken.");
@@ -77,16 +78,16 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@Valid @RequestBody SigninRequest signinRequest) {
+    public ResponseEntity<?> signin(@Valid @RequestBody AuthRequest AuthRequest) {
         // Validate presence of username and password
-        if (signinRequest.getUsername() == null || signinRequest.getPassword() == null) {
+        if (AuthRequest.getUsername() == null || AuthRequest.getPassword() == null) {
             return ResponseEntity.badRequest().body("Username and password must be provided.");
         }
 
         try {
-             UserDetails userDetail = userService.findByUsername(signinRequest.getUsername());
+             UserDetails userDetail = userService.findByUsername(AuthRequest.getUsername());
             if (userDetail == null) {
-                userDetail = userService.findByEmail(signinRequest.getUsername());
+                userDetail = userService.findByEmail(AuthRequest.getUsername());
             }
             final UserDetails userDetails = userDetail;
             if (userDetails == null) {
@@ -94,7 +95,7 @@ public class AuthController {
             }
             // Authenticate the user
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDetails.getUsername(), signinRequest.getPassword()));
+                    new UsernamePasswordAuthenticationToken(userDetails.getUsername(), AuthRequest.getPassword()));
 
             // Load user details
 
@@ -106,54 +107,13 @@ public class AuthController {
             logger.info("User signed in successfully: {}", userDetails.getUsername());
             return ResponseEntity.ok(new AuthResponse(jwt, expirationDate));
         } catch (Exception e) {
-            logger.error("Authentication failed for user: {}", signinRequest.getUsername(), e);
+            logger.error("Authentication failed for user: {}", AuthRequest.getUsername(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         }
     }
 
-
     private boolean isValidPassword(String password) {
         // Password validation logic (e.g., at least 8 characters, 1 uppercase, 1 lowercase, 1 digit, 1 special character)
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
-    }
-
-    // Inner class for sign-in and sign-up requests to handle validation
-    public static class SigninRequest {
-        @NotBlank(message = "Username is required")
-        @Size(max = 40, message = "Username cannot exceed 40 characters")
-        private String username;
-
-        @NotBlank(message = "Email is required")
-        @Size(max = 254, message = "Email cannot exceed 254 characters")
-        private String email;
-
-        @NotBlank(message = "Password is required")
-        @Size(min = 8, max = 254, message = "Password must be between 8 and 254 characters")
-        private String password;
-
-        // Getters and Setters
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
     }
 }

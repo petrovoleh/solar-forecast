@@ -70,7 +70,11 @@
     "type": "Type",
     "barForecast": "Bar forecast",
     "graphForecast": "Graph Forecast",
-    "noClustersMessage": "No clusters added yet."
+    "noClustersMessage": "No clusters added yet.",
+    "addButton": "Add New Panel",
+    "powerRating": "Power Rating",
+    "quantity": "Quantity",
+    "cluster": "Cluster"
   },
   "barForecast": {
     "fromDate": "From Date",
