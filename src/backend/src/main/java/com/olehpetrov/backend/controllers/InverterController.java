@@ -31,6 +31,9 @@ public class InverterController {
     // Get a single inverter by inverter ID
     @GetMapping("/{inverterId}")
     public ResponseEntity<Inverter> getInverterById(@PathVariable String inverterId) {
+        if(inverterId == null || inverterId.isEmpty()) {
+            return ResponseEntity.status(400).body(null);
+        }
         Inverter inverter = inverterService.getInverterById(inverterId);
         if (inverter == null) {
             return ResponseEntity.status(404).body(null);
@@ -48,15 +51,25 @@ public class InverterController {
     // Add a new inverter (only for authenticated users)
     @PostMapping("/add")
     public ResponseEntity<String> addInverter(@RequestHeader("Authorization") String token, @RequestBody Inverter inverterRequest) {
-        String username = jwtUtils.extractUsername(token.substring(7));
-        User user = userService.findByUsername(username);
-
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(400).body("Token is missing.");
         }
 
-        inverterService.addInverter(inverterRequest);
-        logger.info("Inverter added successfully by user: {}", username);
-        return ResponseEntity.ok("Inverter added successfully.");
+        try {
+            String username = jwtUtils.extractUsername(token.substring(7));
+            User user = userService.findByUsername(username);
+
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+
+            inverterService.addInverter(inverterRequest);
+            logger.info("Inverter added successfully by user: {}", username);
+            return ResponseEntity.ok("Inverter added successfully.");
+        } catch (RuntimeException e) {
+            logger.error("Invalid token provided: {}", e.getMessage());
+            return ResponseEntity.status(400).body("Invalid request.");
+        }
     }
+
 }
