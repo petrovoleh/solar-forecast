@@ -75,7 +75,10 @@
     "addButton": "Додати нову панель",
     "powerRating": "Рейтинг потужності",
     "quantity": "Кількість",
-    "cluster": "Кластер"
+    "cluster": "Кластер",
+    "capacity": "Ємність",
+    "manufacturer": "Виробник"
+
   },
   "barForecast": {
     "fromDate": "Дата початку",
@@ -107,7 +110,8 @@
     "city": "Місто",
     "district": "Район",
     "editButton": "Редагувати панель",
-    "backButton": "Повернутися до списку панелей",
+    "backButton": "Повернутися до списку",
+
     "errorFetchingData": "Помилка під час отримання даних панелі"
   },
   "addPanel": {
@@ -152,7 +156,35 @@
       "errorSubmit": "Під час подання панелі сталася помилка.",
       "notLoggedIn": "Ви повинні увійти, щоб додати або редагувати панель."
     }
-  }
+  },
+  "editProfile": {
+    "title": "Редагувати профіль",
+    "username": "Ім'я",
+    "usernamePlaceholder": "Введіть ваше ім'я",
+    "email": "Електронна пошта",
+    "emailPlaceholder": "Введіть вашу електронну пошту",
+      "country": "Країна",
+      "countryPlaceholder": "Введіть вашу країну",
+      "city": "Місто або селище",
+      "cityPlaceholder": "Введіть ваше місто або селище",
+      "district": "Район",
+      "districtPlaceholder": "Введіть ваш район",
+      "save": "Зберегти зміни",
+      "discard": "Скасувати зміни",
+    "mapSection": {
+      "header": "Виберіть місце на карті",
+      "defaultCountry": "Литва",
+      "defaultCity": "Вільнюс",
+      "defaultDistrict": "Вільнюський повіт"
+    },
+    "loading": "Завантаження...",
+    "errorFetchingData": "Помилка при завантаженні даних профілю",
+    "responseMessages": {
+      "successUpdate": "Профіль успішно оновлено!",
+      "errorUpdate": "Виникла помилка під час оновлення профілю."
+    }
+
+}
 
 
 }

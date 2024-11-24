@@ -74,7 +74,9 @@
     "addButton": "Add New Panel",
     "powerRating": "Power Rating",
     "quantity": "Quantity",
-    "cluster": "Cluster"
+    "cluster": "Cluster",
+    "capacity": "Capacity",
+    "manufacturer": "Manufacturer"
   },
   "barForecast": {
     "fromDate": "From Date",
@@ -105,7 +107,7 @@
     "city": "City",
     "district": "District",
     "editButton": "Edit Panel",
-    "backButton": "Back to Panels List",
+    "backButton": "Back to List",
     "errorFetchingData": "Error fetching panel data"
   },
   "addPanel": {
@@ -152,7 +154,39 @@
       "errorSubmit": "An error occurred while submitting the panel.",
       "notLoggedIn": "You must be logged in to add or edit a panel."
     }
-  }
+  },
+
+  "editProfile": {
+    "title": "Edit Profile",
+    "username": "Name",
+    "usernamePlaceholder": "Enter your name",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+
+      "country": "Country",
+      "countryPlaceholder": "Enter your country",
+      "city": "City or Town",
+      "cityPlaceholder": "Enter your city or town",
+      "district": "District",
+      "districtPlaceholder": "Enter your district",
+
+      "save": "Save Changes",
+      "discard": "Discard Changes",
+    "mapSection": {
+      "header": "Select location on the map",
+      "defaultCountry": "Lithuania",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilnius County"
+    },
+    "loading": "Loading...",
+    "errorFetchingData": "Error fetching profile data",
+    "responseMessages": {
+      "successUpdate": "Profile updated successfully!",
+      "errorUpdate": "An error occurred while updating the profile."
+    }
+
+}
+
 
 }
 

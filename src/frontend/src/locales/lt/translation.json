@@ -75,7 +75,10 @@
     "addButton": "Pridėti naują skydelį",
     "powerRating": "Galingumo reitingas",
     "quantity": "Kiekis",
-    "cluster": "Klasteris"
+    "cluster": "Klasteris",
+    "capacity": "Talpa",
+    "manufacturer": "Gamintojas"
+
   },
   "barForecast": {
     "fromDate": "Pradžios data",
@@ -106,7 +109,7 @@
     "city": "Miestas",
     "district": "Rajonas",
     "editButton": "Redaguoti skydelį",
-    "backButton": "Grįžti į skydelių sąrašą",
+    "backButton": "Grįžti į sąrašą",
     "errorFetchingData": "Nepavyko gauti skydelio duomenų"
   },
 
@@ -151,6 +154,35 @@
       "errorFetchPanel": "Nepavyko gauti baterijos duomenų.",
       "errorSubmit": "Įvyko klaida pateikiant bateriją.",
       "notLoggedIn": "Norėdami pridėti ar redaguoti bateriją, turite prisijungti."
+    }
+  },
+  "editProfile": {
+    "title": "Redaguoti profilį",
+    "username": "Vardas",
+    "usernamePlaceholder": "Įveskite savo vardą",
+    "email": "El. paštas",
+    "emailPlaceholder": "Įveskite savo el. paštą",
+
+      "country": "Šalis",
+      "countryPlaceholder": "Įveskite savo šalį",
+      "city": "Miestas arba miestelis",
+      "cityPlaceholder": "Įveskite savo miestą arba miestelį",
+      "district": "Rajonas",
+      "districtPlaceholder": "Įveskite savo rajoną",
+
+      "save": "Išsaugoti pakeitimus",
+      "discard": "Atšaukti pakeitimus",
+    "mapSection": {
+      "header": "Pasirinkite vietą žemėlapyje",
+      "defaultCountry": "Lietuva",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilniaus apskritis"
+    },
+    "loading": "Įkeliama...",
+    "errorFetchingData": "Klaida gaunant profilio duomenis",
+    "responseMessages": {
+      "successUpdate": "Profilis sėkmingai atnaujintas!",
+      "errorUpdate": "Įvyko klaida atnaujinant profilį."
     }
   }
 

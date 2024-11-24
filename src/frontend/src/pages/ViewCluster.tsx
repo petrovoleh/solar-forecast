@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import './ViewCluster.css';
 import {backend_url} from '../config';
+import { useTranslation } from 'react-i18next';
 
 interface Location {
     country: string;
@@ -49,6 +50,7 @@ const ViewCluster: React.FC = () => {
     const [panels, setPanels] = useState<SolarPanel[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const token = localStorage.getItem('token');
 
@@ -118,54 +120,59 @@ const ViewCluster: React.FC = () => {
     }
 
     return (
-        <div className="cluster-view-container ">
-            <div className="cluster-details">
-                <h1>Cluster: {cluster.name}</h1>
-                <p><strong>Description:</strong> {cluster.description}</p>
-                <div className="location-info">
-                    <h2>Location</h2>
-                    <p><strong>Country:</strong> {cluster.location.country}</p>
-                    <p><strong>City:</strong> {cluster.location.city}</p>
-                    <p><strong>District:</strong> {cluster.location.district}</p>
+        <div className="profile-container ">
+
+            <div className="cluster-view-container ">
+                <div className="cluster-details">
+                    <h1>{t("clusterList.cluster")}: {cluster.name}</h1>
+                    <p><strong>{t("clusterList.description")}:</strong> {cluster.description}</p>
+                    <div className="location-info">
+                        <h2>{t("viewPanel.location")}</h2>
+                        <p><strong>{t("viewPanel.country")}:</strong> {cluster.location.country}</p>
+                        <p><strong>{t("viewPanel.city")}:</strong> {cluster.location.city}</p>
+                        <p><strong>{t("viewPanel.district")}:</strong> {cluster.location.district}</p>
+                    </div>
+                    {cluster.inverter && (
+                        <div className="inverter-info">
+                            <h2>Inverter Information</h2>
+                            <p><strong>{t("clusterList.name")}:</strong> {cluster.inverter.name}</p>
+                            <p><strong>{t("clusterList.capacity")}:</strong> {cluster.inverter.capacity} kW</p>
+                            <p><strong>{t("clusterList.efficiency")}:</strong> {cluster.inverter.efficiency}%</p>
+                            <p><strong>{t("clusterList.manufacturer")}:</strong> {cluster.inverter.manufacturer}</p>
+                        </div>
+                    )}
                 </div>
-                {cluster.inverter && (
-                    <div className="inverter-info">
-                        <h2>Inverter Information</h2>
-                        <p><strong>Name:</strong> {cluster.inverter.name}</p>
-                        <p><strong>Capacity:</strong> {cluster.inverter.capacity} kW</p>
-                        <p><strong>Efficiency:</strong> {cluster.inverter.efficiency}%</p>
-                        <p><strong>Manufacturer:</strong> {cluster.inverter.manufacturer}</p>
-                    </div>
-                )}
-            </div>
 
-            <div className="panels-list">
-                <h2>Solar Panels in this Cluster</h2>
-                {panels.length === 0 ? (
-                    <p>No panels assigned to this cluster.</p>
-                ) : (
-                    <div className="panel-list">
-                        {panels.map((panel) => (
-                            <div key={panel.id} className="panel-card">
-                                <h3>{panel.name}</h3>
-                                <p><strong>Power Rating:</strong> {panel.powerRating}W</p>
-                                <p><strong>Efficiency:</strong> {panel.efficiency}%</p>
-                                <p><strong>Quantity:</strong> {panel.quantity}</p>
-                                <p>
-                                    <strong>Location:</strong> {panel.location.city}, {panel.location.country}
-                                </p>
-                                <div className="panel-actions">
-                                    <button onClick={() => navigate(`/view/${panel.id}`)}>View</button>
-                                    <button onClick={() => navigate(`/edit/${panel.id}`)}>Edit</button>
+                <div className="panels-list">
+                    <h2>Solar Panels in this Cluster</h2>
+                    {panels.length === 0 ? (
+                        <p>No panels assigned to this cluster.</p>
+                    ) : (
+                        <div className="panel-list">
+                            {panels.map((panel) => (
+                                <div key={panel.id} className="panel-cardd">
+                                    <h3><strong>{t("viewPanel.panelName")}:</strong> {panel.name}</h3>
+                                    <p><strong>{t("viewPanel.powerRating")}:</strong> {panel.powerRating}W</p>
+                                    <p><strong>{t("viewPanel.efficiency")}:</strong> {panel.efficiency}%</p>
+                                    <p><strong>{t("viewPanel.quantity")}:</strong> {panel.quantity}</p>
+
+                                    <div className="panel-actions">
+                                        <button onClick={() => navigate(`/view/${panel.id}`)}>{t("clusterList.view")}</button>
+                                        <button onClick={() => navigate(`/edit/${panel.id}`)}>{t("clusterList.edit")}</button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <button onClick={() => navigate(`/edit-cluster/${cluster?.id}`)} className="edit-button">
+                    {t("clusterList.edit")}
+                </button>
+                <button className="exit-button" onClick={() => navigate('/clusterslist')}>                    {t('viewPanel.backButton')}
+                </button>
             </div>
-
-            <button className="back-button" onClick={() => navigate('/clusterslist')}>Back</button>
         </div>
+
     );
 };
 

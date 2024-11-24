@@ -457,6 +457,9 @@ code {
     background-color: #c7c7c7;
     cursor: not-allowed;
 }
+.discard-button{
+    margin-top: 20px;
+}
 /* Map Card Styles */
 .map-card {
     background-color: white;
