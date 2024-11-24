@@ -87,9 +87,72 @@
     "tokenNotFound": "Токен не знайдено. Будь ласка, увійдіть."
   },
   "notFound": {
+    "errorTitle": "Помилка",
+
     "title": "404 - Сторінка не знайдена",
     "message": "Ой! Сторінка, яку ви шукаєте, не існує.",
     "goBack": "Повернутися на головну"
+  },
+  "viewPanel": {
+    "title": "Перегляд панелі",
+    "loading": "Завантаження...",
+    "notFound": "Панель не знайдено",
+    "panelName": "Назва панелі",
+    "powerRating": "Потужність (Вт)",
+    "temperatureCoefficient": "Температурний коефіцієнт (%/°C)",
+    "efficiency": "Ефективність (%)",
+    "quantity": "Кількість",
+    "location": "Інформація про розташування",
+    "country": "Країна",
+    "city": "Місто",
+    "district": "Район",
+    "editButton": "Редагувати панель",
+    "backButton": "Повернутися до списку панелей",
+    "errorFetchingData": "Помилка під час отримання даних панелі"
+  },
+  "addPanel": {
+    "titleAdd": "Додати сонячну панель",
+    "titleEdit": "Редагувати сонячну панель",
+    "currentLocation": "Поточна локація",
+
+    "form": {
+      "panelName": "Назва панелі",
+      "panelNamePlaceholder": "Введіть назву панелі",
+      "powerRating": "Потужність (Вт)",
+      "powerRatingPlaceholder": "Введіть потужність",
+      "temperatureCoefficient": "Температурний коефіцієнт (%/°C)",
+      "temperatureCoefficientPlaceholder": "Введіть температурний коефіцієнт",
+      "efficiency": "Ефективність (%)",
+      "efficiencyPlaceholder": "Введіть ефективність",
+      "quantity": "Кількість",
+      "quantityPlaceholder": "Введіть кількість",
+      "cluster": "Кластер",
+      "clusterInfo": "Якщо вибрано кластер, ви не можете змінити локацію тут. Вам слід змінити локацію кластера. Локацію потрібно вибрати на карті, а це вікно відображає поля лише для зручності.",
+      "clusterPlaceholder": "Виберіть кластер",
+      "country": "Країна",
+      "countryPlaceholder": "Введіть країну",
+      "city": "Місто",
+      "cityPlaceholder": "Введіть місто",
+      "district": "Район",
+      "districtPlaceholder": "Введіть район",
+      "submitButtonAdd": "Додати панель",
+      "submitButtonEdit": "Оновити панель"
+    },
+    "mapSection": {
+      "header": "Виберіть місце на карті",
+      "defaultCountry": "Литва",
+      "defaultCity": "Вільнюс",
+      "defaultDistrict": "Вільнюський повіт"
+    },
+    "responseMessages": {
+      "successAdd": "Панель успішно додано!",
+      "successEdit": "Панель успішно оновлено!",
+      "errorFetchClusters": "Не вдалося отримати кластери.",
+      "errorFetchPanel": "Не вдалося отримати дані панелі.",
+      "errorSubmit": "Під час подання панелі сталася помилка.",
+      "notLoggedIn": "Ви повинні увійти, щоб додати або редагувати панель."
+    }
   }
+
 
 }

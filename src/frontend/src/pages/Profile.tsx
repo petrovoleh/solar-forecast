@@ -62,6 +62,9 @@ const Profile: React.FC = () => {
 
     const handleConfirmExit = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('expirationDate');
+
         setIsLoggedIn(false);
         navigate('/');
     };

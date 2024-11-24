@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {backend_url} from "../config";
+import { useTranslation } from 'react-i18next';
 
 interface PanelData {
     name: string;
@@ -21,6 +22,7 @@ const ViewPanel: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchPanelData = async () => {
@@ -62,39 +64,39 @@ const ViewPanel: React.FC = () => {
     return (
         <div className="profile-container">
             <div className="profile-card">
-                <h2>{panelData.name}</h2>
+                <h2>{t('viewPanel.panelName')}: {panelData.name}</h2>
                 <div className="profile-info">
                     <div className="info-item">
-                        <label>Power Rating (W):</label>
+                        <label>{t('viewPanel.powerRating')}:</label>
                         <p>{panelData.powerRating}</p>
                     </div>
                     <div className="info-item">
-                        <label>Temperature Coefficient (%/°C):</label>
+                        <label>{t('viewPanel.temperatureCoefficient')}:</label>
                         <p>{panelData.temperatureCoefficient}</p>
                     </div>
                     <div className="info-item">
-                        <label>Efficiency (%):</label>
+                        <label>{t('viewPanel.efficiency')}:</label>
                         <p>{panelData.efficiency}</p>
                     </div>
                     <div className="info-item">
-                        <label>Quantity:</label>
+                        <label>{t('viewPanel.quantity')}:</label>
                         <p>{panelData.quantity}</p>
                     </div>
                     {panelData.location && (
                         <div className="info-item">
-                            <h3>Location Information</h3>
-                            <p>Country: {panelData.location.country}</p>
-                            <p>City: {panelData.location.city}</p>
-                            <p>District: {panelData.location.district}</p>
+                            <h3>{t('viewPanel.location')}</h3>
+                            <p>{t('viewPanel.country')}: {panelData.location.country}</p>
+                            <p>{t('viewPanel.city')}: {panelData.location.city}</p>
+                            <p>{t('viewPanel.district')}: {panelData.location.district}</p>
                         </div>
                     )}
                 </div>
 
                 <button className="edit-button" onClick={() => navigate(`/edit/{id}`)}>
-                    Edit Panel
+                    {t('viewPanel.editButton')}
                 </button>
                 <button className="exit-button" onClick={() => navigate(`/panelslist`)}>
-                    Back
+                    {t('viewPanel.backButton')}
                 </button>
             </div>
         </div>

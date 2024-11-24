@@ -64,11 +64,11 @@ public class ForecastController {
         User user = userService.findByUsername(username);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"User not found.\"}");
         }
         if (!isValidDateRange(from, to)) {
             logger.error("Date range is out of bounds for user: {}", username);
-            return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.\"}");
         }
 
         double capacity_kwp;
@@ -78,13 +78,13 @@ public class ForecastController {
             // Find all panels by cluster ID
             List<Panel> panels = panelService.getPanelsByClusterId(panelId);
             if (panels.isEmpty()) {
-                return ResponseEntity.badRequest().body("No panels found for the given cluster ID.");
+                return ResponseEntity.badRequest().body("{\"statusText\": \"No panels found for the given cluster ID.\"}");
             }
             logger.info("Len: {}", panels.size());
 
             // Verify all panels belong to the user
             if (panels.stream().anyMatch(panel -> !panel.getUserId().equals(user.getId()))) {
-                return ResponseEntity.status(403).body("Forbidden: Some panels in the cluster do not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Some panels in the cluster do not belong to the user.\"}");
             }
 
             // Calculate total capacity for the cluster
@@ -94,16 +94,17 @@ public class ForecastController {
             // Find the panel by ID and verify ownership
             Panel panel = panelService.getPanelById(panelId);
             if (panel == null || !panel.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
             }
 
             // Calculate capacity for the single panel
             capacity_kwp = panel.getPowerRating() / 1000.0 * (panel.getEfficiency() / 100.0);
         } else {
-            return ResponseEntity.badRequest().body("Invalid type. Must be 'cluster' or 'panel'.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid type. Must be 'cluster' or 'panel'.\"}");
         }
         if( capacity_kwp <=0 ){
-            return ResponseEntity.badRequest().body("Panel or cluster power rating is zero or lower, please change values and try again.");
+            return ResponseEntity.status(400)
+                    .body("{\"statusText\": \"Panel or cluster power rating is zero or lower, please change values and try again.\"}");
         }
 
         // Prepare request body for the forecast service
@@ -131,14 +132,15 @@ public class ForecastController {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+        logger.info("request");
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
+        logger.info(String.valueOf(response));
         if (response.getStatusCode().is2xxSuccessful()) {
             logger.info("Forecast retrieved successfully for user: {}", username);
             return ResponseEntity.ok(response.getBody());
         } else {
             logger.error("Failed to retrieve forecast for user: {}", username);
-            return ResponseEntity.status(response.getStatusCode()).body("Failed to retrieve forecast.");
+            return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
         }
     }
 
@@ -152,11 +154,11 @@ public class ForecastController {
         User user = userService.findByUsername(username);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"User not found.\"}");
         }
         if (!isValidDateRange(from, to)) {
             logger.error("Date range is out of bounds for user: {}", username);
-            return ResponseEntity.badRequest().body("Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.\"}");
         }
         Set<String> allRequestedDates = null;
         List<DailyEnergyTotal> existingRecords = null;
@@ -164,7 +166,7 @@ public class ForecastController {
         if ("panel".equalsIgnoreCase(type)) {
             panel2 = panelService.getPanelById(panelId);
             if (panel2 == null || !panel2.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
             }
             existingRecords = panelService.getDailyEnergyTotalsByDateRange(panel2, from, to);
             Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
@@ -188,10 +190,10 @@ public class ForecastController {
         }else   if ("cluster".equalsIgnoreCase(type)) {
             Cluster cl = clusterService.getClusterById(panelId);
             if (cl == null || !cl.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("Forbidden: Cluster does not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Cluster does not belong to the user.\"}");
             }
         }else {
-            return ResponseEntity.status(400).body("No panels found for the given ID.");
+            return ResponseEntity.status(400).body("{\"statusText\": \"No panels found for the given ID.\"}");
         }
         // If there are missing dates, make an API call to fetch them
         double capacity_kwp;
@@ -199,11 +201,11 @@ public class ForecastController {
         if ("cluster".equalsIgnoreCase(type)) {
             List<Panel> panels = panelService.getPanelsByClusterId(panelId);
             if (panels.isEmpty()) {
-                return ResponseEntity.badRequest().body("No panels found for the given cluster ID.");
+                return ResponseEntity.badRequest().body("{\"statusText\": \"No panels found for the given cluster ID.\"}");
             }
 
             if (panels.stream().anyMatch(panel -> !panel.getUserId().equals(user.getId()))) {
-                return ResponseEntity.status(403).body("Forbidden: Some panels in the cluster do not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Some panels in the cluster do not belong to the user.\"}");
             }
 
             allRequestedDates = getDatesInRange(from, to);
@@ -219,16 +221,17 @@ public class ForecastController {
             // Find the panel by ID and verify ownership
             Panel panel = panelService.getPanelById(panelId);
             if (panel == null || !panel.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
+                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
             }
 
             // Calculate capacity for the single panel
             capacity_kwp = panel.getPowerRating() / 1000.0 * (panel.getEfficiency() / 100.0);
         } else {
-            return ResponseEntity.badRequest().body("Invalid type. Must be 'cluster' or 'panel'.");
+            return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid type. Must be 'cluster' or 'panel'.\"}");
         }
         if( capacity_kwp <=0 ){
-            return ResponseEntity.badRequest().body("Panel or cluster power rating is zero or lower, please change values and try again.");
+            return ResponseEntity.status(400)
+                    .body("{\"statusText\": \"Panel or cluster power rating is zero or lower, please change values and try again.\"}");
         }
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("init_time_freq", 15);
@@ -306,7 +309,7 @@ public class ForecastController {
             return ResponseEntity.ok(dailyTotals.toString());
         } else {
             logger.error("Failed to retrieve forecast for user: {}", username);
-            return ResponseEntity.status(response.getStatusCode()).body("Failed to retrieve forecast.");
+            return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
         }
     }
     private Set<String> getDatesInRange(String startDate, String endDate) {

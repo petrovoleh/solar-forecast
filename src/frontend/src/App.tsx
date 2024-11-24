@@ -21,7 +21,8 @@ import AddCluster from "./pages/AddCluster";
 import NotFound from "./pages/NotFound";
 import AddInverter from "./pages/AddInverter";
 import './i18n';
-import ViewCluster from "./pages/ViewCluster"; // Import the i18n configuration
+import ViewCluster from "./pages/ViewCluster";
+import ErrorPage from "./pages/ErrorPage"; // Import the i18n configuration
 
 
 const App: React.FC = () => {
@@ -52,6 +53,7 @@ const App: React.FC = () => {
                         <Route path="/edit-cluster/:id" element={<AddCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
                         <Route path="/view-cluster/:id" element={<ViewCluster/>}/> {/* View route */}
+                        <Route path="/error" element={<ErrorPage />} />
 
                         <Route path="/panel_forecast/:id" element={<PanelForecast/>}/>
                         <Route path="/bar_forecast/:id" element={<BarForecast/>}/>

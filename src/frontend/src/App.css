@@ -61,6 +61,7 @@ code {
 /* Cluster Form Card Styles */
 .cluster-card2 {
     margin-top: 80px;
+
     margin-bottom: 40px;
     background-color: white;
     padding: 2rem;
@@ -115,20 +116,7 @@ code {
     display: block;
     margin-bottom: 0.5rem;
 }
-.info-item input {
-    width: 90%;
-    padding: 0.9rem;
-    border: 1px solid #d2d2d7;
-    border-radius: 12px;
-    background-color: #f9f9f9;
-    transition: border-color 0.2s ease;
-}
-.info-item input:focus {
-    border-color: #00796b;
-    outline: none;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
-}
+
 .info-item textarea {
     width: 90%;
     padding: 0.9rem;
@@ -211,20 +199,7 @@ code {
     display: block;
     margin-bottom: 0.5rem;
 }
-.info-item input {
-    width: 90%;
-    padding: 0.9rem;
-    border: 1px solid #d2d2d7;
-    border-radius: 12px;
-    background-color: #f9f9f9;
-    transition: border-color 0.2s ease;
-}
-.info-item input:focus {
-    border-color: #00796b;
-    outline: none;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
-}
+
 .inverter-button {
     width: 100%;
     padding: 0.9rem;
@@ -317,20 +292,7 @@ code {
     display: block;
     margin-bottom: 0.5rem;
 }
-.info-item input {
-    width: 90%;
-    padding: 0.9rem;
-    border: 1px solid #d2d2d7;
-    border-radius: 12px;
-    background-color: #f9f9f9;
-    transition: border-color 0.2s ease;
-}
-.info-item input:focus {
-    border-color: #00796b;
-    outline: none;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
-}
+
 /* Button Styles */
 .panel-button {
     width: 100%;
@@ -361,7 +323,7 @@ code {
     }
 }
 .info-item select {
-    width: 90%;
+    width: 95%;
     /* Same width as input fields */
     padding: 0.9rem;
     /* Consistent padding */
@@ -861,39 +823,44 @@ button:disabled {
     background-color: #bdbdbd;
 }
 /* List View (Excel-like) */
-.list.list {
+.cluster-list.list {
     display: flex;
     flex-direction: column;
 }
-.list.list .cluster-card {
+.cluster-list.list .cluster-card {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+    grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) 2fr;
     align-items: center;
+
     padding: 10px;
     background-color: white;
     border-bottom: 1px solid #ddd;
     font-size: 14px;
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break long words to fit within the width */
+    overflow-wrap: break-word;
 }
-.list.list .cluster-card h3 {
+
+.cluster-list.list .cluster-card h3 {
     margin: 0;
     font-size: 14px;
 }
-.list.list .cluster-card p {
+.cluster-list.list .cluster-card p {
     margin: 0;
 }
-.list.list .cluster-card strong {
+.cluster-list.list .cluster-card strong {
     font-weight: 600;
 }
-.list.list .cluster-actions {
+.cluster-list.list .cluster-actions {
     display: flex;
     gap: 10px;
 }
-.list.list .cluster-actions button {
+.cluster-list.list .cluster-actions button {
     padding: 5px 10px;
     font-size: 12px;
 }
 /* Grid View (Same as before) */
-.list.grid {
+.cluster-list.grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;

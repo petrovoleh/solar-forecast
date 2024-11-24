@@ -35,7 +35,7 @@
     "email": "Email",
     "address": "Address",
     "edit": "Edit Profile",
-    "exit": "Exit",
+    "exit": "Logout",
     "loading": "Loading...",
     "error": "Error fetching profile data",
     "notSet": "Not set",
@@ -87,8 +87,72 @@
   },
   "notFound": {
     "title": "404 - Page Not Found",
+    "errorTitle": "Error",
     "message": "Oops! The page you are looking for does not exist.",
     "goBack": "Go Back Home"
+  },
+  "viewPanel": {
+    "title": "View Panel",
+    "loading": "Loading...",
+    "notFound": "Panel not found",
+    "panelName": "Panel Name",
+    "powerRating": "Power Rating (W)",
+    "temperatureCoefficient": "Temperature Coefficient (%/°C)",
+    "efficiency": "Efficiency (%)",
+    "quantity": "Quantity",
+    "location": "Location Information",
+    "country": "Country",
+    "city": "City",
+    "district": "District",
+    "editButton": "Edit Panel",
+    "backButton": "Back to Panels List",
+    "errorFetchingData": "Error fetching panel data"
+  },
+  "addPanel": {
+    "titleAdd": "Add a Solar Panel",
+    "titleEdit": "Edit Solar Panel",
+    "currentLocation": "Current location",
+
+    "form": {
+      "panelName": "Panel Name",
+      "panelNamePlaceholder": "Enter panel name",
+      "powerRating": "Power Rating (W)",
+      "powerRatingPlaceholder": "Enter power rating",
+      "temperatureCoefficient": "Temperature Coefficient (%/°C)",
+      "temperatureCoefficientPlaceholder": "Enter temperature coefficient",
+      "efficiency": "Efficiency (%)",
+      "efficiencyPlaceholder": "Enter efficiency",
+      "quantity": "Quantity",
+      "quantityPlaceholder": "Enter quantity",
+      "cluster": "Cluster",
+
+      "clusterInfo": "If a cluster is selected, you cannot change the location here. You need to update the cluster's location. The location must be selected on the map, and these fields are for display only.",
+
+      "clusterPlaceholder": "Select a cluster",
+      "country": "Country",
+      "countryPlaceholder": "Enter country",
+      "city": "City",
+      "cityPlaceholder": "Enter city",
+      "district": "District",
+      "districtPlaceholder": "Enter district",
+      "submitButtonAdd": "Add Panel",
+      "submitButtonEdit": "Update Panel"
+    },
+    "mapSection": {
+      "header": "Select location on the map",
+      "defaultCountry": "Lithuania",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilnius County"
+    },
+    "responseMessages": {
+      "successAdd": "Panel added successfully!",
+      "successEdit": "Panel updated successfully!",
+      "errorFetchClusters": "Failed to fetch clusters.",
+      "errorFetchPanel": "Failed to fetch panel data.",
+      "errorSubmit": "An error occurred while submitting the panel.",
+      "notLoggedIn": "You must be logged in to add or edit a panel."
+    }
   }
+
 }
 

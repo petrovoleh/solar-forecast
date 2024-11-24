@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom'; // Import for reading route parameters
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config"; // Import MapComponent
+import { useTranslation } from 'react-i18next';
 
 // Define the type for cluster
 interface Cluster {
@@ -33,6 +34,8 @@ interface PanelFormData {
 
 const AddPanel: React.FC = () => {
     const {id} = useParams<{ id: string }>(); // Extract the ID from the route
+    const { t } = useTranslation();
+
     const isEditMode = Boolean(id); // Determine if we're in edit mode based on presence of id
     const [formData, setFormData] = useState<PanelFormData>({
         name: '',
@@ -206,73 +209,74 @@ const AddPanel: React.FC = () => {
         <>
             <div className="panel-container">
                 <div className="panel-card">
-                    <h2>{isEditMode ? 'Edit Solar Panel' : 'Add a Solar Panel'}</h2>
+                    <h2>{isEditMode ? t('addPanel.titleEdit') : t('addPanel.titleAdd')}</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="panel-info">
                             <div className="info-item">
-                                <label>Panel Name:</label>
+                                <label>{t('addPanel.form.panelName')}:</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Enter panel name"
+                                    placeholder={t('addPanel.form.panelNamePlaceholder')}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>Power Rating (W):</label>
+                                <label>{t('addPanel.form.powerRating')}:</label>
                                 <input
                                     type="number"
                                     name="powerRating"
                                     value={formData.powerRating}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Enter power rating"
+                                    placeholder={t('addPanel.form.powerRatingPlaceholder')}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>Temperature Coefficient (%/°C):</label>
+                                <label>{t('addPanel.form.temperatureCoefficient')}:</label>
                                 <input
                                     type="number"
                                     name="temperatureCoefficient"
                                     value={formData.temperatureCoefficient}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Enter temperature coefficient"
+                                    placeholder={t('addPanel.form.temperatureCoefficientPlaceholder')}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>Efficiency (%):</label>
+                                <label>{t('addPanel.form.efficiency')}:</label>
                                 <input
                                     type="number"
                                     name="efficiency"
                                     value={formData.efficiency}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Enter efficiency"
+                                    placeholder={t('addPanel.form.efficiencyPlaceholder')}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>Quantity:</label>
+                                <label>{t('addPanel.form.quantity')}:</label>
                                 <input
                                     type="number"
                                     name="quantity"
                                     value={formData.quantity}
                                     onChange={handleInputChange}
                                     required
-                                    placeholder="Enter quantity"
+                                    placeholder={t('addPanel.form.quantityPlaceholder')}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>Cluster:</label>
+                                <label>{t('addPanel.form.cluster')}:</label>
 
                                 <select
                                     name="clusterId"
                                     value={formData.clusterId || ''}
                                     onChange={handleClusterChange}
                                 >
-                                    <option value="" disabled={!isEditMode}>Select a cluster</option>
+                                    <option value=""
+                                            disabled={!isEditMode}>{t('addPanel.form.clusterPlaceholder')}</option>
                                     {/* Option to select None */}
                                     {clusters.map((cluster) => (
                                         <option key={cluster.id} value={cluster.id}>
@@ -283,39 +287,40 @@ const AddPanel: React.FC = () => {
                             </div>
 
                         </div>
+                        <p>{t('addPanel.form.clusterInfo')}</p>
 
                         {/* Manual Address Input */}
                         <div className="location-manual-input">
                             <div className="info-item">
-                                <label>Country:</label>
+                                <label>{t('addPanel.form.country')}:</label>
                                 <input
                                     type="text"
                                     name="country"
                                     value={formData.location?.country || ''}
                                     onChange={handleAddressManualChange}
-                                    placeholder="Enter country"
+                                    placeholder={t('addPanel.form.countryPlaceholder')}
                                     disabled={isClusterSelected} // Disable if cluster is selected
                                 />
                             </div>
                             <div className="info-item">
-                                <label>City:</label>
+                                <label>{t('addPanel.form.city')}:</label>
                                 <input
                                     type="text"
                                     name="city"
                                     value={formData.location?.city || ''}
                                     onChange={handleAddressManualChange}
-                                    placeholder="Enter city"
+                                    placeholder={t('addPanel.form.cityPlaceholder')}
                                     disabled={isClusterSelected}
                                 />
                             </div>
                             <div className="info-item">
-                                <label>District:</label>
+                                <label>{t('addPanel.form.district')}:</label>
                                 <input
                                     type="text"
                                     name="district"
                                     value={formData.location?.district || ''}
                                     onChange={handleAddressManualChange}
-                                    placeholder="Enter district"
+                                    placeholder={t('addPanel.form.districtPlaceholder')}
                                     disabled={isClusterSelected}
                                 />
                             </div>
@@ -324,19 +329,20 @@ const AddPanel: React.FC = () => {
 
                         {/* Submit Button */}
                         <button type="submit" className="btn-submit">
-                            {isEditMode ? 'Update Panel' : 'Add Panel'}
+                            {isEditMode ? t('addPanel.form.submitButtonEdit') : t('addPanel.form.submitButtonAdd')}
                         </button>
                     </form>
                     {responseMessage && <div className="response-message">{responseMessage}</div>}
                 </div>
                 <div className="panel-map-container">
-                    <h2 className="location_header">Select location on the map</h2>
+                    <h2 className="location_header">{t('addPanel.mapSection.header')}</h2>
                     <MapComponent
+                        disabled={isClusterSelected}
                         onLocationChange={handleLocationChange}
                         address={formData.location || {
-                            country: "Lithuania",
-                            city: "Vilnius",
-                            district: "Vilnius County",
+                            country: t('addPanel.mapSection.defaultCountry'),
+                            city: t('addPanel.mapSection.defaultCity'),
+                            district: t('addPanel.mapSection.defaultDistrict'),
                         }}
                         onAddressChange={handleAddressChange}
                         lat={formData.location?.lat || 54.6872}

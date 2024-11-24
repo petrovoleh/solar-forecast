@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from 'react-leaflet';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@fortawesome/fontawesome-free/css/all.css';
+import { useTranslation } from 'react-i18next';
 
 interface MapComponentProps {
     onLocationChange: (lat: number, lon: number) => void;
@@ -12,35 +13,38 @@ interface MapComponentProps {
         district: string;
     };
     onAddressChange: (address: { country: string; city: string; district: string }) => void;
-    lat: number; // Required prop for initial latitude
-    lon: number; // Required prop for initial longitude
+    lat: number; // Initial latitude
+    lon: number; // Initial longitude
+    disabled?: boolean; // Disable map interactions
 }
 
 const MapClickHandler: React.FC<{
-    onLocationChange: (lat: number, lon: number) => void,
-    onAddressChange: (address: { country: string; city: string; district: string }) => void
-}> = ({onLocationChange, onAddressChange}) => {
+
+    onLocationChange: (lat: number, lon: number) => void;
+    onAddressChange: (address: { country: string; city: string; district: string }) => void;
+    disabled?: boolean;
+}> = ({ onLocationChange, onAddressChange, disabled }) => {
+
     useMapEvents({
         click(e) {
+            if (disabled) return;
+
             const lat = e.latlng.lat;
             const lng = e.latlng.lng;
             onLocationChange(lat, lng);
 
-            const map = e.target;
-            map.setView(e.latlng, map.getZoom());
-
             // Geocode the clicked location
             fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-                .then(response => response.json())
-                .then(data => {
+                .then((response) => response.json())
+                .then((data) => {
                     const address = data.address;
                     onAddressChange({
                         country: address.country || 'Unknown',
                         city: address.city || address.town || address.village || address.hamlet || 'Unknown',
-                        district: address.state || address.county || 'Unknown'
+                        district: address.state || address.county || 'Unknown',
                     });
                 })
-                .catch(error => console.error('Geocoding error:', error));
+                .catch((error) => console.error('Geocoding error:', error));
         },
     });
     return null;
@@ -54,15 +58,28 @@ const customIcon = L.divIcon({
     iconAnchor: [12, 41],
 });
 
-const MoveMapToLocation: React.FC<{ lat: number, lng: number }> = ({lat, lng}) => {
+const MoveMapToLocation: React.FC<{ lat: number; lng: number }> = ({ lat, lng }) => {
     const map = useMap();
-    map.setView([lat, lng], map.getZoom());
+
+    // Fly to the new location with animation
+    useEffect(() => {
+        map.flyTo([lat, lng], map.getZoom());
+    }, [lat, lng, map]);
+
     return null;
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({onLocationChange, address, onAddressChange, lat, lon}) => {
+const MapComponent: React.FC<MapComponentProps> = ({
+                                                       onLocationChange,
+                                                       address,
+                                                       onAddressChange,
+                                                       lat,
+                                                       lon,
+                                                       disabled = false,
+                                                   }) => {
     const [position, setPosition] = useState<[number, number]>([lat, lon]); // Initialize with props lat and lon
     const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
+    const { t } = useTranslation();
 
     // Update position when props change
     useEffect(() => {
@@ -70,51 +87,67 @@ const MapComponent: React.FC<MapComponentProps> = ({onLocationChange, address, o
     }, [lat, lon]);
 
     const handleCurrentLocation = () => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const {latitude, longitude} = position.coords;
-            setPosition([latitude, longitude]);
-            setCurrentLocation([latitude, longitude]);
-            onLocationChange(latitude, longitude);
+        if (disabled) return;
 
-            // Geocode the current location to get address details
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
-                .then(response => response.json())
-                .then(data => {
-                    const address = data.address;
-                    onAddressChange({
-                        country: address.country || 'Unknown',
-                        city: address.city || address.town || address.village || address.hamlet || 'Unknown',
-                        district: address.state || address.county || 'Unknown'
-                    });
-                })
-                .catch(error => console.error('Geocoding error:', error));
-        }, (error) => {
-            console.error('Error getting current location:', error);
-        });
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                setPosition([latitude, longitude]);
+                setCurrentLocation([latitude, longitude]);
+                onLocationChange(latitude, longitude);
+
+                // Geocode the current location to get address details
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const address = data.address;
+                        onAddressChange({
+                            country: address.country || 'Unknown',
+                            city: address.city || address.town || address.village || address.hamlet || 'Unknown',
+                            district: address.state || address.county || 'Unknown',
+                        });
+                    })
+                    .catch((error) => console.error('Geocoding error:', error));
+            },
+            (error) => {
+                console.error('Error getting current location:', error);
+            }
+        );
     };
 
     return (
-        <div className="map-card">
+        <div className={`map-card ${disabled ? 'map-disabled' : ''}`}>
             <MapContainer center={position} zoom={13} className="map-container">
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <MapClickHandler onLocationChange={(lat, lng) => {
-                    setPosition([lat, lng]);
-                    onLocationChange(lat, lng);
-                }} onAddressChange={onAddressChange}/>
+                <MapClickHandler
+                    onLocationChange={(lat, lng) => {
+                        if (!disabled) {
+                            setPosition([lat, lng]);
+                            onLocationChange(lat, lng);
+                        }
+                    }}
+                    onAddressChange={onAddressChange}
+                    disabled={disabled}
+                />
                 <Marker position={position} icon={customIcon}>
                     <Popup>
-                        Selected Location<br/>
-                        Latitude: {position[0]}<br/>
+                        Selected Location<br />
+                        Latitude: {position[0]}<br />
                         Longitude: {position[1]}
                     </Popup>
                 </Marker>
-                {currentLocation && <MoveMapToLocation lat={currentLocation[0]} lng={currentLocation[1]}/>}
+                {/* Automatically move map when the position changes */}
+                <MoveMapToLocation lat={position[0]} lng={position[1]} />
             </MapContainer>
-            <button onClick={handleCurrentLocation} className="edit-button current-location-button">
-                Current Location
+            <button
+                onClick={handleCurrentLocation}
+                className="edit-button current-location-button"
+                disabled={disabled}
+            >
+                {t('addPanel.currentLocation')}
             </button>
         </div>
     );

@@ -73,7 +73,7 @@ public class AuthController {
         final Date expirationDate = jwtUtil.extractExpiration(jwt); // Extract expiration date
 
         // Return the JWT token in the response
-        return ResponseEntity.ok(new AuthResponse(jwt, expirationDate));
+        return ResponseEntity.ok(new AuthResponse(jwt, expirationDate, userDetails.getAuthorities().toString()));
     }
 
 
@@ -105,7 +105,7 @@ public class AuthController {
             final Date expirationDate = jwtUtil.extractExpiration(jwt); // Extract expiration date
 
             logger.info("User signed in successfully: {}", userDetails.getUsername());
-            return ResponseEntity.ok(new AuthResponse(jwt, expirationDate));
+            return ResponseEntity.ok(new AuthResponse(jwt, expirationDate, userDetails.getAuthorities().toString()));
         } catch (Exception e) {
             logger.error("Authentication failed for user: {}", AuthRequest.getUsername(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");

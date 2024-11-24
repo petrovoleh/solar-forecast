@@ -41,14 +41,22 @@ const PanelForecast: React.FC = () => {
             );
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                const responseBody = await response.json(); // Wait for the JSON body
+                // throw new Error(`Error: ${response.status} - ${responseBody.statusText}`);
+                if(responseBody.statusText) {
+                    navigate(`/error?error_text=${encodeURIComponent(responseBody.statusText)}&error_code=${response.status}`);
+                    return;
+                }else{
+                    navigate(`/error?error_text=Unknown%20error%20occurred&error_code=${response.status}`);
+                    return;
+                }
             }
 
             const data = await response.json();
             setForecastData(data);
             setError(null);
         } catch (error) {
-            setError(t('barForecast.errorRetrievingData'));
+            navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
             console.error(error);
         }
     };

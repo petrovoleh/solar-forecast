@@ -172,7 +172,7 @@ const ClusterList: React.FC = () => {
             {clusters.length === 0 ? (
                 <div className="no-clusters-message">{t('clusterList.noClustersMessage')}</div>
             ) : (
-                <div className={`list ${viewMode}`}>
+                <div className={`cluster-list ${viewMode}`}>
                     {filteredClusters.map((cluster) => (
                         <div key={cluster.id} className="cluster-card">
                             <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{cluster.name}</div>

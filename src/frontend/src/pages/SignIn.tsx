@@ -73,6 +73,8 @@ const SignIn: React.FC = () => {
                         if (result.token) {
                             localStorage.setItem('token', result.token);
                             localStorage.setItem("expirationDate", result.expirationDate);
+                            localStorage.setItem("role", result.role);
+
                         }
                         setIsLoggedIn(true);
                         setMessage(t('signIn.signInSuccess'));

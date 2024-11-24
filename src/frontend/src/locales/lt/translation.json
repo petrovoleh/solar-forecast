@@ -88,8 +88,70 @@
   },
   "notFound": {
     "title": "404 - Puslapis nerastas",
+    "errorTitle": "Klaida",
     "message": "Oi! Puslapis, kurio ieškote, neegzistuoja.",
     "goBack": "Grįžti į pradžią"
+  },
+  "viewPanel": {
+    "title": "Peržiūrėti skydelį",
+    "loading": "Įkeliama...",
+    "notFound": "Skydelis nerastas",
+    "panelName": "Skydelio pavadinimas",
+    "powerRating": "Galia (W)",
+    "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
+    "efficiency": "Efektyvumas (%)",
+    "quantity": "Kiekis",
+    "location": "Informacija apie vietą",
+    "country": "Šalis",
+    "city": "Miestas",
+    "district": "Rajonas",
+    "editButton": "Redaguoti skydelį",
+    "backButton": "Grįžti į skydelių sąrašą",
+    "errorFetchingData": "Nepavyko gauti skydelio duomenų"
+  },
+
+  "addPanel": {
+    "titleAdd": "Pridėti saulės bateriją",
+    "titleEdit": "Redaguoti saulės bateriją",
+    "currentLocation": "Dabartinė vieta",
+
+    "form": {
+      "panelName": "Baterijos pavadinimas",
+      "panelNamePlaceholder": "Įveskite baterijos pavadinimą",
+      "powerRating": "Galingumas (W)",
+      "powerRatingPlaceholder": "Įveskite galingumą",
+      "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
+      "temperatureCoefficientPlaceholder": "Įveskite temperatūros koeficientą",
+      "efficiency": "Efektyvumas (%)",
+      "efficiencyPlaceholder": "Įveskite efektyvumą",
+      "quantity": "Kiekis",
+      "quantityPlaceholder": "Įveskite kiekį",
+      "cluster": "Klastė",
+      "clusterInfo": "Jei pasirinktas klasteris, vietos čia pakeisti negalite. Jums reikia atnaujinti klasterio vietą. Vieta turi būti pasirinkta žemėlapyje, o šie laukai skirti tik patogiam peržiūrėjimui.",
+      "clusterPlaceholder": "Pasirinkite klastę",
+      "country": "Šalis",
+      "countryPlaceholder": "Įveskite šalį",
+      "city": "Miestas",
+      "cityPlaceholder": "Įveskite miestą",
+      "district": "Rajonas",
+      "districtPlaceholder": "Įveskite rajoną",
+      "submitButtonAdd": "Pridėti bateriją",
+      "submitButtonEdit": "Atnaujinti bateriją"
+    },
+    "mapSection": {
+      "header": "Pasirinkite vietą žemėlapyje",
+      "defaultCountry": "Lietuva",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilniaus apskritis"
+    },
+    "responseMessages": {
+      "successAdd": "Baterija sėkmingai pridėta!",
+      "successEdit": "Baterija sėkmingai atnaujinta!",
+      "errorFetchClusters": "Nepavyko gauti klasterių.",
+      "errorFetchPanel": "Nepavyko gauti baterijos duomenų.",
+      "errorSubmit": "Įvyko klaida pateikiant bateriją.",
+      "notLoggedIn": "Norėdami pridėti ar redaguoti bateriją, turite prisijungti."
+    }
   }
 
 }

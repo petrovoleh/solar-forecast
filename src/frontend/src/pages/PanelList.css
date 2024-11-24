@@ -78,12 +78,15 @@
 
 .panel-list.list .panel-cardd {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr  1fr  2fr; /* 7 columns: one for each data and actions */
+    grid-template-columns: minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr)  minmax(100px, 1fr)  minmax(150px, 2fr); /* 7 columns: one for each data and actions */
     align-items: center;
     padding: 10px;
     background-color: white;
     border-bottom: 1px solid #ddd;
     font-size: 14px;
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break long words to fit within the width */
+    overflow-wrap: break-word;
 }
 
 .panel-list.list .panel-cardd h3 {
