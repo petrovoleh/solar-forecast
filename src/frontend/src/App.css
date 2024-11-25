@@ -901,6 +901,10 @@ button:disabled {
     background-color: #ff9800;
     color: white;
 }
+.edit-button2 {
+    background-color: #ff9800;
+    color: white;
+}
 .cluster-actions .delete-button {
     background-color: #f44336;
     color: white;

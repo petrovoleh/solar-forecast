@@ -77,7 +77,9 @@
     "quantity": "Kiekis",
     "cluster": "Klasteris",
     "capacity": "Talpa",
-    "manufacturer": "Gamintojas"
+    "manufacturer": "Gamintojas",
+    "inverterInformation": "Keitiklio informacija",
+    "solarPanelsInCluster": "Saulės moduliai šiame klasteryje"
 
   },
   "barForecast": {

@@ -1,5 +1,6 @@
 package com.olehpetrov.backend.services;
 
+import com.olehpetrov.backend.models.Cluster;
 import com.olehpetrov.backend.models.DailyEnergyTotal;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.repositories.DailyEnergyTotalRepository;
@@ -53,7 +54,9 @@ public class SolarPanelService {
         return solarPanelRepository.findByCluster(clusterObjectId);
     }
 
-
+    public List<Panel> findAll() {
+        return solarPanelRepository.findAll();
+    }
     public double calculateTotalCapacityKwp(List<Panel> panels) {
         return panels.stream()
                 .mapToDouble(panel -> (panel.getPowerRating() / 1000.0) * (panel.getEfficiency() / 100.0))

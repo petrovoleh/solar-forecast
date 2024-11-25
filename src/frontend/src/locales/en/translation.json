@@ -76,7 +76,10 @@
     "quantity": "Quantity",
     "cluster": "Cluster",
     "capacity": "Capacity",
-    "manufacturer": "Manufacturer"
+    "manufacturer": "Manufacturer",
+    "inverterInformation": "Inverter Information",
+    "solarPanelsInCluster": "Solar Panels in this Cluster"
+
   },
   "barForecast": {
     "fromDate": "From Date",

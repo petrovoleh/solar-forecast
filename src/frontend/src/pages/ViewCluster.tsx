@@ -134,7 +134,7 @@ const ViewCluster: React.FC = () => {
                     </div>
                     {cluster.inverter && (
                         <div className="inverter-info">
-                            <h2>Inverter Information</h2>
+                            <h2>{t("clusterList.inverterInformation")}</h2>
                             <p><strong>{t("clusterList.name")}:</strong> {cluster.inverter.name}</p>
                             <p><strong>{t("clusterList.capacity")}:</strong> {cluster.inverter.capacity} kW</p>
                             <p><strong>{t("clusterList.efficiency")}:</strong> {cluster.inverter.efficiency}%</p>
@@ -144,7 +144,7 @@ const ViewCluster: React.FC = () => {
                 </div>
 
                 <div className="panels-list">
-                    <h2>Solar Panels in this Cluster</h2>
+                    <h2>{t("clusterList.solarPanelsInCluster")}</h2>
                     {panels.length === 0 ? (
                         <p>No panels assigned to this cluster.</p>
                     ) : (

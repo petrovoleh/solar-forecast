@@ -49,6 +49,7 @@ const App: React.FC = () => {
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/add-cluster" element={<AddCluster/>}/>
                         <Route path="/add-inverter" element={<AddInverter/>}/>
+                        <Route path="/edit-inverter/:id" element={<AddInverter/>}/>
 
                         <Route path="/edit-cluster/:id" element={<AddCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}

@@ -6,6 +6,7 @@ import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdatePanelRequest;
+import com.olehpetrov.backend.responses.ClusterResponse;
 import com.olehpetrov.backend.services.ClusterService;
 import com.olehpetrov.backend.services.LocationService;
 import com.olehpetrov.backend.services.SolarPanelService;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -120,7 +122,19 @@ public class SolarPanelController {
 
         return ResponseEntity.ok(panels);
     }
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<ClusterResponse>> getAllUsers() {
+        // Fetch all users from the userService
+        List<Panel> panels = panelService.findAll();
 
+        // Map users to a simplified response
+        List<ClusterResponse> response = panels.stream()
+                .map(user -> new ClusterResponse(user.getName(),user.getId()))
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
     // Get a single panel by panel ID
     @GetMapping("/{panelId}")
     public ResponseEntity<Panel> getPanelById(@RequestHeader("Authorization") String token, @PathVariable String panelId) {

@@ -21,7 +21,7 @@ const SignIn: React.FC = () => {
         emailOrUsername: '',
         password: ''
     });
-    const {setIsLoggedIn} = useAuth();
+    const {setIsLoggedIn,setIsAdmin} = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [message, setMessage] = useState<string | null>(null);
 
@@ -73,15 +73,19 @@ const SignIn: React.FC = () => {
                         if (result.token) {
                             localStorage.setItem('token', result.token);
                             localStorage.setItem("expirationDate", result.expirationDate);
-                            localStorage.setItem("role", result.role);
 
                         }
                         setIsLoggedIn(true);
+                        if(result.role === "ROLE_ADMIN"){
+                            localStorage.setItem("role", result.role);
+                            setIsAdmin(true);
+                        }
                         setMessage(t('signIn.signInSuccess'));
                     } else {
                         const result = await response.text();
                         localStorage.setItem('token', result);
                         setIsLoggedIn(true);
+
                         setMessage(t('signIn.signInSuccess'));
                     }
                     navigate('/profile');

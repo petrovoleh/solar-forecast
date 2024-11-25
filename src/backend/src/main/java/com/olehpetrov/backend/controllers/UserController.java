@@ -5,6 +5,7 @@ import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
 import com.olehpetrov.backend.responses.UserProfileResponse;
+import com.olehpetrov.backend.responses.UserResponse;
 import com.olehpetrov.backend.services.LocationService;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
@@ -13,7 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -136,7 +140,19 @@ public class UserController {
         // Return the location details in response
         return ResponseEntity.ok(user.getLocation());
     }
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        // Fetch all users from the userService
+        List<User> users = userService.findAllUsers();
 
+        // Map users to a simplified response
+        List<UserResponse> response = users.stream()
+                .map(user -> new UserResponse(user.getUsername(),user.getId()))
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
     // Utility method to validate password
     private boolean isValidPassword(String password) {
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");

@@ -5,6 +5,8 @@ import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
+import com.olehpetrov.backend.responses.ClusterResponse;
+import com.olehpetrov.backend.responses.UserResponse;
 import com.olehpetrov.backend.services.ClusterService;
 import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.olehpetrov.backend.services.LocationService;
 
@@ -115,7 +118,19 @@ public class ClusterController {
         List<Cluster> clusters = clusterService.getClustersByUserId(user.getId());
         return ResponseEntity.ok(clusters);
     }
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<ClusterResponse>> getAllUsers() {
+        // Fetch all users from the userService
+        List<Cluster> clusters = clusterService.findAll();
 
+        // Map users to a simplified response
+        List<ClusterResponse> response = clusters.stream()
+                .map(user -> new ClusterResponse(user.getName(),user.getId()))
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
     // Get a single cluster by cluster ID
     @GetMapping("/{clusterId}")
     public ResponseEntity<Cluster> getClusterById(@RequestHeader("Authorization") String token, @PathVariable String clusterId) {
