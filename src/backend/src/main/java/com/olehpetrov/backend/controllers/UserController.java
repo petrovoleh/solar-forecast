@@ -4,8 +4,8 @@ import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
+import com.olehpetrov.backend.responses.ClusterResponse;
 import com.olehpetrov.backend.responses.UserProfileResponse;
-import com.olehpetrov.backend.responses.UserResponse;
 import com.olehpetrov.backend.services.LocationService;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
@@ -13,11 +13,12 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -142,14 +143,15 @@ public class UserController {
     }
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        // Fetch all users from the userService
-        List<User> users = userService.findAllUsers();
+    public ResponseEntity<Page<ClusterResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+
+        // Fetch paginated panels from the service
+        Page<User> users = userService.findAll(PageRequest.of(page, size));
 
         // Map users to a simplified response
-        List<UserResponse> response = users.stream()
-                .map(user -> new UserResponse(user.getUsername(),user.getId()))
-                .toList();
+        Page<ClusterResponse> response = users.map(panel -> new ClusterResponse(panel.getUsername(), panel.getId()));
 
         return ResponseEntity.ok(response);
     }

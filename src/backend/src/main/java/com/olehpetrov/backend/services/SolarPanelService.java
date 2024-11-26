@@ -7,6 +7,8 @@ import com.olehpetrov.backend.repositories.DailyEnergyTotalRepository;
 import com.olehpetrov.backend.repositories.SolarPanelRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,8 +56,8 @@ public class SolarPanelService {
         return solarPanelRepository.findByCluster(clusterObjectId);
     }
 
-    public List<Panel> findAll() {
-        return solarPanelRepository.findAll();
+    public Page<Panel> findAll(Pageable pageable) {
+        return solarPanelRepository.findAll(pageable);
     }
     public double calculateTotalCapacityKwp(List<Panel> panels) {
         return panels.stream()

@@ -1,8 +1,11 @@
 package com.olehpetrov.backend.services;
 
 import com.olehpetrov.backend.models.Inverter;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.repositories.InverterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +23,9 @@ public class InverterService {
         return inverterOptional.orElse(null);
     }
 
-    // Retrieve a list of all inverters
-    public List<Inverter> getAllInverters() {
-        return inverterRepository.findAll();
+    public Page<Inverter> findAll(Pageable pageable) {
+        return inverterRepository.findAll(pageable);
     }
-
     // Add a new inverter
     public void addInverter(Inverter inverterRequest) {
         inverterRepository.save(inverterRequest);

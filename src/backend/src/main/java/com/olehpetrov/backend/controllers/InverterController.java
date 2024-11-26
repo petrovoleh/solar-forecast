@@ -1,5 +1,6 @@
 package com.olehpetrov.backend.controllers;
 import com.olehpetrov.backend.models.Inverter;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
@@ -7,7 +8,10 @@ import com.olehpetrov.backend.utils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,12 +47,15 @@ public class InverterController {
 
     // Get all inverters
     @GetMapping("/all")
-    public ResponseEntity<List<Inverter>> getAllInverters() {
-        List<Inverter> inverters = inverterService.getAllInverters();
+    public ResponseEntity<Page<Inverter>> getAllInverters(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        Page<Inverter> inverters = inverterService.findAll(PageRequest.of(page, size));
+
         return ResponseEntity.ok(inverters);
     }
 
-    // Add a new inverter (only for authenticated users)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<String> addInverter(@RequestHeader("Authorization") String token, @RequestBody Inverter inverterRequest) {
         if (token == null || token.isEmpty()) {

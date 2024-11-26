@@ -1,9 +1,6 @@
 package com.olehpetrov.backend.controllers;
 
-import com.olehpetrov.backend.models.Cluster;
-import com.olehpetrov.backend.models.Location;
-import com.olehpetrov.backend.models.Panel;
-import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdatePanelRequest;
 import com.olehpetrov.backend.responses.ClusterResponse;
@@ -16,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -124,14 +123,15 @@ public class SolarPanelController {
     }
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ClusterResponse>> getAllUsers() {
-        // Fetch all users from the userService
-        List<Panel> panels = panelService.findAll();
+    public ResponseEntity<Page<ClusterResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        // Map users to a simplified response
-        List<ClusterResponse> response = panels.stream()
-                .map(user -> new ClusterResponse(user.getName(),user.getId()))
-                .toList();
+        // Fetch paginated panels from the service
+        Page<Panel> panels = panelService.findAll(PageRequest.of(page, size));
+
+        // Map panels to a paginated response
+        Page<ClusterResponse> response = panels.map(panel -> new ClusterResponse(panel.getName(), panel.getId()));
 
         return ResponseEntity.ok(response);
     }
@@ -145,7 +145,8 @@ public class SolarPanelController {
         }
 
         Panel panel = panelService.getPanelById(panelId);
-        if (panel == null || !panel.getUserId().equals(user.getId())) {
+
+            if (panel == null || (!panel.getUserId().equals(user.getId()) && !user.getRole().equals(Role.ROLE_ADMIN) )) {
             logger.error(String.valueOf(panel));
             return ResponseEntity.status(403).body(null); // Forbidden if panel does not belong to the user
         }

@@ -1,10 +1,13 @@
 package com.olehpetrov.backend.services;
 
 import com.olehpetrov.backend.models.Location;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.repositories.LocationRepository;
 import com.olehpetrov.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +56,7 @@ public class UserService {
         }
         return null;  // Handle null case (user not found)
     }
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }

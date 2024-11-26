@@ -1,9 +1,12 @@
 package com.olehpetrov.backend.services;
 
 import com.olehpetrov.backend.models.Cluster;
+import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.repositories.ClusterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +43,7 @@ public class ClusterService {
     public void deleteCluster(String clusterId) {
         clusterRepository.deleteById(clusterId);
     }
-    public List<Cluster> findAll() {
-        return clusterRepository.findAll();
+    public Page<Cluster> findAll(Pageable pageable) {
+        return clusterRepository.findAll(pageable);
     }
 }

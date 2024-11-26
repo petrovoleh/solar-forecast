@@ -1,12 +1,8 @@
 package com.olehpetrov.backend.controllers;
 
-import com.olehpetrov.backend.models.Cluster;
-import com.olehpetrov.backend.models.Inverter;
-import com.olehpetrov.backend.models.Location;
-import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.responses.ClusterResponse;
-import com.olehpetrov.backend.responses.UserResponse;
 import com.olehpetrov.backend.services.ClusterService;
 import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
@@ -14,6 +10,8 @@ import com.olehpetrov.backend.utils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -120,34 +118,50 @@ public class ClusterController {
     }
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<ClusterResponse>> getAllUsers() {
-        // Fetch all users from the userService
-        List<Cluster> clusters = clusterService.findAll();
+    public ResponseEntity<Page<ClusterResponse>> getAllClusters(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Fetch paginated panels from the service
+        Page<Cluster> clusters = clusterService.findAll(PageRequest.of(page, size));
 
         // Map users to a simplified response
-        List<ClusterResponse> response = clusters.stream()
-                .map(user -> new ClusterResponse(user.getName(),user.getId()))
-                .toList();
+        Page<ClusterResponse> response = clusters.map(panel -> new ClusterResponse(panel.getName(), panel.getId()));
+
 
         return ResponseEntity.ok(response);
     }
     // Get a single cluster by cluster ID
     @GetMapping("/{clusterId}")
     public ResponseEntity<Cluster> getClusterById(@RequestHeader("Authorization") String token, @PathVariable String clusterId) {
+        // Extract username from token
         String username = jwtUtils.extractUsername(token.substring(7));
+
+        // Find user by username
         User user = userService.findByUsername(username);
 
         if (user == null) {
+            // If user not found, return bad request
             return ResponseEntity.badRequest().body(null);
         }
 
+        // Retrieve cluster by ID
         Cluster cluster = clusterService.getClusterById(clusterId);
         if (cluster == null) {
+            // If cluster not found, return 404
             return ResponseEntity.status(404).body(null);
         }
 
-        return ResponseEntity.ok(cluster);
+        // Check if the user is an admin or the owner of the cluster
+        if (user.getRole().equals(Role.ROLE_ADMIN) || cluster.getUserId().equals(user.getId())) {
+            // If admin or the user is the owner, return the cluster
+            return ResponseEntity.ok(cluster);
+        } else {
+            // If user is not authorized, return forbidden (403)
+            return ResponseEntity.status(403).body(null);
+        }
     }
+
 
     // Update an existing cluster with additional location and inverter update handling
     @PutMapping("/{clusterId}")

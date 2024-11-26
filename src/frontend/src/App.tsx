@@ -46,13 +46,19 @@ const App: React.FC = () => {
                         <Route path="/panelslist" element={<PanelsList/>}/>
                         <Route path="/clusterlist" element={<ClusterList/>}/>
                         <Route path="/add" element={<AddPanel/>}/>
+                        <Route path="/add-panel" element={<AddPanel/>}/>
+
                         <Route path="/edit/:id" element={<AddPanel/>}/>
+                        <Route path="/edit-panel/:id" element={<AddPanel/>}/>
+
                         <Route path="/add-cluster" element={<AddCluster/>}/>
                         <Route path="/add-inverter" element={<AddInverter/>}/>
                         <Route path="/edit-inverter/:id" element={<AddInverter/>}/>
 
                         <Route path="/edit-cluster/:id" element={<AddCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
+                        <Route path="/view-panel/:id" element={<ViewPanel/>}/> {/* View route */}
+
                         <Route path="/view-cluster/:id" element={<ViewCluster/>}/> {/* View route */}
                         <Route path="/error" element={<ErrorPage />} />
 

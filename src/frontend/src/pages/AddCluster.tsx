@@ -53,8 +53,9 @@ const AddCluster: React.FC = () => {
                     }
                 });
                 if (response.ok) {
-                    const invertersData = await response.json();
-                    setInverters(invertersData); // Set the inverter list
+                    const data = await response.json();
+                    const content = data.content
+                    setInverters(content); // Set the inverter list
 
                 } else {
                     console.error('Failed to fetch inverters');
