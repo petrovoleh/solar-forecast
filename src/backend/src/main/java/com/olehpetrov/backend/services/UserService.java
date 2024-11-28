@@ -1,5 +1,6 @@
 package com.olehpetrov.backend.services;
 
+import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.User;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -45,7 +47,10 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
+    public User getById(String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.orElse(null);
+    }
     // New method to update or set the user's location later
     public User setUserLocation(String userId, Location location) {
         User user = userRepository.findById(userId).orElse(null);
@@ -59,4 +64,8 @@ public class UserService {
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+    public void delete(String id) {
+        userRepository.deleteById(id);
+    }
+
 }

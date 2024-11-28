@@ -1,6 +1,8 @@
 package com.olehpetrov.backend.controllers;
 
+import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.models.Location;
+import com.olehpetrov.backend.models.Role;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
@@ -159,5 +161,19 @@ public class UserController {
     private boolean isValidPassword(String password) {
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@RequestHeader("Authorization") String token, @PathVariable String id) {
+    
 
+        User existingUser = userService.getById(id);
+
+        if (existingUser == null) {
+            return ResponseEntity.status(403).body("Forbidden.");
+        }
+
+        userService.delete(id); // Assume you have this method in your service
+        logger.info("User deleted successfully");
+        return ResponseEntity.ok("User deleted successfully.");
+    }
 }

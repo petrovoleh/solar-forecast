@@ -1,6 +1,7 @@
 package com.olehpetrov.backend.controllers;
 import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Panel;
+import com.olehpetrov.backend.models.Role;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
@@ -78,5 +79,14 @@ public class InverterController {
             return ResponseEntity.status(400).body("Invalid request.");
         }
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@RequestHeader("Authorization") String token, @PathVariable String id) {
+        Inverter existingInverter = inverterService.getInverterById(id);
+        if (existingInverter == null) {
+            return ResponseEntity.status(403).body("Forbidden.");
+        }
+        inverterService.delete(id); // Assume you have this method in your service
+        return ResponseEntity.ok("Inverter deleted successfully.");
+    }
 }

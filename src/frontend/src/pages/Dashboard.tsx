@@ -53,6 +53,30 @@ const Dashboard: React.FC = () => {
         fetchData("cluster", setClusters);
         fetchData("user", setUsers);
     }, [page, size]);
+    const handleDelete = async (id: string, type: 'cluster' | 'panel' | 'inverter' | 'user') => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${backend_url}/api/${type}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                // Remove the deleted item from the respective state
+                if (type === 'cluster') setClusters(clusters.filter(item => item.id !== id));
+                if (type === 'panel') setPanels(panels.filter(item => item.id !== id));
+                if (type === 'inverter') setInverters(inverters.filter(item => item.id !== id));
+                if (type === 'user') setUsers(users.filter(item => item.id !== id));
+            } else {
+                setError(`Failed to delete ${type}.`);
+            }
+        } catch (error) {
+            setError(`An error occurred while deleting ${type}.`);
+        }
+    };
 
     const handlePageChange = (direction: string) => {
         if (direction === 'prev' && page > 0) {
@@ -93,7 +117,12 @@ const Dashboard: React.FC = () => {
                                 >
                                     Edit
                                 </button>
-                                <button className="delete-button">Delete</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(user.id, 'user')}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </li>
                     ))}
@@ -123,7 +152,12 @@ const Dashboard: React.FC = () => {
                                 >
                                     Edit
                                 </button>
-                                <button className="delete-button">Delete</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(cluster.id, 'cluster')}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </li>
                     ))}
@@ -153,7 +187,12 @@ const Dashboard: React.FC = () => {
                                 >
                                     Edit
                                 </button>
-                                <button className="delete-button">Delete</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(panel.id, 'panel')}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </li>
                     ))}
@@ -183,7 +222,12 @@ const Dashboard: React.FC = () => {
                                 >
                                     Edit
                                 </button>
-                                <button className="delete-button">Delete</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={() => handleDelete(inverter.id, 'inverter')}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </li>
                     ))}

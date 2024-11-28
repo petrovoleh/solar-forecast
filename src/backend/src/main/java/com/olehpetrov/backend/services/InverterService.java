@@ -22,6 +22,9 @@ public class InverterService {
         Optional<Inverter> inverterOptional = inverterRepository.findById(inverterId);
         return inverterOptional.orElse(null);
     }
+    public void delete(String id) {
+        inverterRepository.deleteById(id);
+    }
 
     public Page<Inverter> findAll(Pageable pageable) {
         return inverterRepository.findAll(pageable);

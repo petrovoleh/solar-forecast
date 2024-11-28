@@ -168,67 +168,96 @@ public class ClusterController {
     public ResponseEntity<String> updateCluster(@RequestHeader("Authorization") String token,
                                                 @PathVariable String clusterId,
                                                 @RequestBody UpdateClusterRequest clusterRequest) {
+        // Extract username from token
         String username = jwtUtils.extractUsername(token.substring(7));
+
+        // Find user by username
         User user = userService.findByUsername(username);
 
+        // Check if the user exists
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
+        // Retrieve the cluster by ID
         Cluster existingCluster = clusterService.getClusterById(clusterId);
+
+        // Check if the cluster exists
         if (existingCluster == null) {
             return ResponseEntity.status(404).body("Cluster not found.");
         }
 
-        // Update fields
-        if (clusterRequest.getName() != null) {
-            existingCluster.setName(clusterRequest.getName());
-        }
-        if (clusterRequest.getDescription() != null) {
-            existingCluster.setDescription(clusterRequest.getDescription());
-        }
+        // Check if the user is an admin or the owner of the cluster
+        if (user.getRole().equals(Role.ROLE_ADMIN) || existingCluster.getUserId().equals(user.getId())) {
+            // If admin or the user is the owner, update the cluster
 
-        // Handle location update
-        if (clusterRequest.getLocation() != null) {
-            Location updatedLocation = handleLocation(clusterRequest.getLocation(), user);
-            existingCluster.setLocation(updatedLocation);
-        }
-
-        // Handle inverter update
-        if (clusterRequest.getInverterId() != null) {
-            Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
-            if (inverter == null) {
-                return ResponseEntity.badRequest().body("Invalid inverter ID.");
+            // Update fields if provided in the request
+            if (clusterRequest.getName() != null) {
+                existingCluster.setName(clusterRequest.getName());
             }
-            existingCluster.setInverter(inverter);
+            if (clusterRequest.getDescription() != null) {
+                existingCluster.setDescription(clusterRequest.getDescription());
+            }
+
+            // Handle location update
+            if (clusterRequest.getLocation() != null) {
+                Location updatedLocation = handleLocation(clusterRequest.getLocation(), user);
+                existingCluster.setLocation(updatedLocation);
+            }
+
+            // Handle inverter update
+            if (clusterRequest.getInverterId() != null) {
+                Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
+                if (inverter == null) {
+                    return ResponseEntity.badRequest().body("Invalid inverter ID.");
+                }
+                existingCluster.setInverter(inverter);
+            }
+
+            // Save the updated cluster
+            clusterService.updateCluster(existingCluster);
+            logger.info("Cluster updated successfully for user: {}", username);
+            return ResponseEntity.ok("Cluster updated successfully.");
+        } else {
+            // If not authorized (not the owner or admin), return forbidden response
+            return ResponseEntity.status(403).body("Forbidden: You are not authorized to update this cluster.");
         }
-
-        // Save the updated cluster
-        clusterService.updateCluster(existingCluster);
-        logger.info("Cluster updated successfully for user: {}", username);
-
-        return ResponseEntity.ok("Cluster updated successfully.");
     }
+
 
 
     // Delete an existing cluster
     @DeleteMapping("/{clusterId}")
     public ResponseEntity<String> deleteCluster(@RequestHeader("Authorization") String token, @PathVariable String clusterId) {
+        // Extract username from token
         String username = jwtUtils.extractUsername(token.substring(7));
+
+        // Find user by username
         User user = userService.findByUsername(username);
 
+        // Check if the user exists
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
+        // Retrieve the cluster by ID
         Cluster existingCluster = clusterService.getClusterById(clusterId);
+
+        // Check if the cluster exists
         if (existingCluster == null) {
             return ResponseEntity.status(404).body("Cluster not found.");
         }
 
-        clusterService.deleteCluster(clusterId);
-        logger.info("Cluster deleted successfully for user: {}", username);
-        return ResponseEntity.ok("Cluster deleted successfully.");
+        // Check if the user is an admin or the owner of the cluster
+        if (user.getRole().equals(Role.ROLE_ADMIN) || existingCluster.getUserId().equals(user.getId())) {
+            // If admin or the user is the owner, delete the cluster
+            clusterService.deleteCluster(clusterId);
+            logger.info("Cluster deleted successfully for user: {}", username);
+            return ResponseEntity.ok("Cluster deleted successfully.");
+        } else {
+            // If not authorized (not the owner or admin), return forbidden response
+            return ResponseEntity.status(403).body("Forbidden: You are not authorized to delete this cluster.");
+        }
     }
 
     public static class UpdateClusterRequest {

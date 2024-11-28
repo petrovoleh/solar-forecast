@@ -226,7 +226,8 @@ public class SolarPanelController {
         }
 
         Panel existingPanel = panelService.getPanelById(panelId);
-        if (existingPanel == null || !existingPanel.getUserId().equals(user.getId())) {
+
+            if (existingPanel == null || (!existingPanel.getUserId().equals(user.getId())&& !user.getRole().equals(Role.ROLE_ADMIN) )) {
             return ResponseEntity.status(403).body("Forbidden: Panel does not belong to the user.");
         }
 
