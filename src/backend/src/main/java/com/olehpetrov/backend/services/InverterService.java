@@ -33,4 +33,7 @@ public class InverterService {
     public void addInverter(Inverter inverterRequest) {
         inverterRepository.save(inverterRequest);
     }
+    public void updateInverter(Inverter inverterRequest) {
+        inverterRepository.save(inverterRequest);
+    }
 }

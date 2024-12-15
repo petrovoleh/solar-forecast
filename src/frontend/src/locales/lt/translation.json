@@ -54,6 +54,7 @@
 
   "clusterList": {
     "title": "Klasterių Sąrašas",
+    "loadingMessage": "Apdorojamas jūsų užklausa, tai gali užtrukti kelias sekundes...",
     "filterPlaceholder": "Filtruoti pagal pavadinimą ar vietą",
     "addCluster": "Pridėti Naują Klasterį",
     "listView": "Sąrašo Vaizdas",
@@ -143,6 +144,52 @@
       "submitButtonAdd": "Pridėti bateriją",
       "submitButtonEdit": "Atnaujinti bateriją"
     },
+    "mapSection": {
+      "header": "Pasirinkite vietą žemėlapyje",
+      "defaultCountry": "Lietuva",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilniaus apskritis"
+    },
+    "responseMessages": {
+      "successAdd": "Baterija sėkmingai pridėta!",
+      "successEdit": "Baterija sėkmingai atnaujinta!",
+      "errorFetchClusters": "Nepavyko gauti klasterių.",
+      "errorFetchPanel": "Nepavyko gauti baterijos duomenų.",
+      "errorSubmit": "Įvyko klaida pateikiant bateriją.",
+      "notLoggedIn": "Norėdami pridėti ar redaguoti bateriją, turite prisijungti."
+    }
+  },
+  "addCluster": {
+    "titleAdd": "Pridėti klasterį",
+    "titleEdit": "Redaguoti klasterį",
+    "currentLocation": "Dabartinė vieta",
+
+    "form": {
+      "panelName": "Klasterio pavadinimas",
+      "panelNamePlaceholder": "Įveskite pavadinimą",
+      "powerRating": "Galingumas (W)",
+      "powerRatingPlaceholder": "Įveskite galingumą",
+      "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
+      "temperatureCoefficientPlaceholder": "Įveskite temperatūros koeficientą",
+      "efficiency": "Efektyvumas (%)",
+      "efficiencyPlaceholder": "Įveskite efektyvumą",
+      "description": "Aprašymas",
+      "quantityPlaceholder": "Įveskite kiekį",
+      "cluster": "Klasteris",
+
+      "clusterInfo": "Vieta turi būti pažymėta žemėlapyje, o šie laukai yra tik rodymui.",
+
+      "clusterPlaceholder": "Pasirinkite klasterį",
+      "country": "Šalis",
+      "countryPlaceholder": "Įveskite šalį",
+      "city": "Miestas",
+      "cityPlaceholder": "Įveskite miestą",
+      "district": "Rajonas",
+      "districtPlaceholder": "Įveskite rajoną",
+      "submitButtonAdd": "Sukurti",
+      "submitButtonEdit": "Atnaujinti"
+    },
+
     "mapSection": {
       "header": "Pasirinkite vietą žemėlapyje",
       "defaultCountry": "Lietuva",

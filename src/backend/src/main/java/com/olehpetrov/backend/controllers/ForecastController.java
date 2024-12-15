@@ -1,9 +1,7 @@
 package com.olehpetrov.backend.controllers;
-import com.olehpetrov.backend.models.Cluster;
-import com.olehpetrov.backend.models.DailyEnergyTotal;
-import com.olehpetrov.backend.models.Panel;
-import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.services.ClusterService;
+import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.SolarPanelService;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
@@ -36,6 +34,8 @@ public class ForecastController {
     private SolarPanelService panelService;
     @Autowired
     private ClusterService clusterService;
+    @Autowired
+    private InverterService inverterService;
     @Autowired
     private UserService userService;
 
@@ -89,7 +89,19 @@ public class ForecastController {
 
             // Calculate total capacity for the cluster
             capacity_kwp = panelService.calculateTotalCapacityKwp(panels);
-            logger.info("Capacity: {}", capacity_kwp);
+
+            // Retrieve the cluster information to check for an inverter
+            Cluster cluster = clusterService.getClusterById(panelId);
+            if (cluster != null && cluster.getInverter() != null) {
+                Inverter inverter = inverterService.getInverterById(cluster.getInverter().getId());
+                logger.info("efficiency: {}", inverter.getEfficiency());
+
+                if (inverter != null && inverter.getEfficiency() != null) {
+                    double inverterEfficiency = inverter.getEfficiency() / 100.0; // Convert percentage to decimal
+                    capacity_kwp *= inverterEfficiency;
+                    logger.info("Capacity after applying inverter efficiency ({}%): {}", inverter.getEfficiency(), capacity_kwp);
+                }
+            }
         } else if ("panel".equalsIgnoreCase(type)) {
             // Find the panel by ID and verify ownership
             Panel panel = panelService.getPanelById(panelId);
@@ -102,7 +114,8 @@ public class ForecastController {
         } else {
             return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid type. Must be 'cluster' or 'panel'.\"}");
         }
-        if( capacity_kwp <=0 ){
+
+        if (capacity_kwp <= 0) {
             return ResponseEntity.status(400)
                     .body("{\"statusText\": \"Panel or cluster power rating is zero or lower, please change values and try again.\"}");
         }
@@ -143,6 +156,7 @@ public class ForecastController {
             return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
         }
     }
+
 
     @GetMapping("/getTotal")
     public ResponseEntity<String> getTotal(@RequestHeader("Authorization") String token,
@@ -216,7 +230,17 @@ public class ForecastController {
             Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
             allRequestedDates.removeAll(existingDates);
             capacity_kwp = panelService.calculateTotalCapacityKwp(panels);
+            Cluster cl = clusterService.getClusterById(panelId);
+            if (cl != null && cl.getInverter() != null) {
+                Inverter inverter = inverterService.getInverterById(cl.getInverter().getId());
+                logger.info("efficiency: {}", inverter.getEfficiency());
 
+                if (inverter != null && inverter.getEfficiency() != null) {
+                    double inverterEfficiency = inverter.getEfficiency() / 100.0; // Convert percentage to decimal
+                    capacity_kwp *= inverterEfficiency;
+                    logger.info("Capacity after applying inverter efficiency ({}%): {}", inverter.getEfficiency(), capacity_kwp);
+                }
+            }
     } else if ("panel".equalsIgnoreCase(type)) {
             // Find the panel by ID and verify ownership
             Panel panel = panelService.getPanelById(panelId);
@@ -294,8 +318,6 @@ public class ForecastController {
                     newDailyTotal.setTotalEnergy_kwh(totalEnergy);
                     panelService.saveDailyEnergyTotal(newDailyTotal);
                 }
-
-
                 JSONObject dayTotal = new JSONObject();
                 dayTotal.put("date", date);
                 dayTotal.put("totalEnergy_kwh", totalEnergy);
@@ -312,6 +334,8 @@ public class ForecastController {
             return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
         }
     }
+
+
     private Set<String> getDatesInRange(String startDate, String endDate) {
         LocalDate start = LocalDate.parse(startDate.split(" ")[0]);
         LocalDate end = LocalDate.parse(endDate.split(" ")[0]);

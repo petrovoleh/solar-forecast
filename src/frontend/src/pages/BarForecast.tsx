@@ -16,9 +16,10 @@ const BarForecast: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
+    const [loading, setLoading] = useState(true);
 
     const token = localStorage.getItem('token');
-    const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const maxToDate = new Date(Date.now() + 13 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const [dailyTotals, setDailyTotals] = useState<DailyTotalData[]>([]);
     const [totalEnergySum, setTotalEnergySum] = useState<number>(0);
@@ -34,6 +35,7 @@ const BarForecast: React.FC = () => {
 
     const fetchDailyTotals = async () => {
         try {
+            setLoading(true)
             const response = await fetch(
                 `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
                 {
@@ -74,6 +76,8 @@ const BarForecast: React.FC = () => {
             // setError(t('barForecast.errorRetrievingData'));
             console.error(error);
         }
+        setLoading(false)
+
     };
 
     useEffect(() => {
@@ -128,8 +132,13 @@ const BarForecast: React.FC = () => {
                         </p>
                     </div>
                 </div>
-
-                <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
+                {loading &&
+                    <div className="loader-container">
+                        <div className="loader"></div>
+                        <p>{t('clusterList.loadingMessage')}</p>
+                    </div>
+                }
+                {!loading && <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <BarChart data={dailyTotals}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                         <XAxis
@@ -151,7 +160,7 @@ const BarForecast: React.FC = () => {
                         />
                         <Bar dataKey="totalEnergy_kwh" fill="#004d40" />
                     </BarChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer>}
             </main>
         </div>
     );

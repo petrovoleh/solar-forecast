@@ -80,6 +80,40 @@ public class InverterController {
         }
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateInverter(@RequestHeader("Authorization") String token, @PathVariable String id, @RequestBody Inverter inverterRequest) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(400).body("Token is missing.");
+        }
+
+        try {
+            String username = jwtUtils.extractUsername(token.substring(7));
+            User user = userService.findByUsername(username);
+
+            if (user == null) {
+                return ResponseEntity.badRequest().body("User not found.");
+            }
+
+            Inverter existingInverter = inverterService.getInverterById(id);
+            if (existingInverter == null) {
+                return ResponseEntity.status(404).body("Inverter not found.");
+            }
+
+            // Update existing inverter details
+            existingInverter.setName(inverterRequest.getName());
+            existingInverter.setManufacturer(inverterRequest.getManufacturer());
+            existingInverter.setEfficiency(inverterRequest.getEfficiency());
+            existingInverter.setCapacity(inverterRequest.getCapacity());
+
+            inverterService.updateInverter(existingInverter);
+            logger.info("Inverter updated successfully by user: {}", username);
+            return ResponseEntity.ok("Inverter updated successfully.");
+        } catch (RuntimeException e) {
+            logger.error("Invalid token provided: {}", e.getMessage());
+            return ResponseEntity.status(400).body("Invalid request.");
+        }
+    }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@RequestHeader("Authorization") String token, @PathVariable String id) {
         Inverter existingInverter = inverterService.getInverterById(id);

@@ -502,7 +502,7 @@ code {
     /* Centers horizontally */
     align-items: center;
     /* Centers vertically */
-    height: calc(100vh - 85px - 3rem);
+    height: calc(97vh - 85px - 3rem);
     background-color: #f4f4f9;
     /* Slightly adjusted for consistency */
 }
@@ -1052,3 +1052,38 @@ button:disabled {
     border-radius: 12px;
     margin-bottom: 1.5rem;
 }
+
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height:calc(90vh - 200px);
+}
+.mini-loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(85vh - 300px);
+}
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-container p {
+    margin-top: 16px;
+    font-size: 18px;
+    color: #555;
+}
+

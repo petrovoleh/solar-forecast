@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config";
+import {useTranslation} from "react-i18next";
 
 interface LocationRequest {
     lat: number;
@@ -26,6 +27,7 @@ interface Inverter {
 const AddCluster: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
+    const { t } = useTranslation();
 
     const [inverters, setInverters] = useState<Inverter[]>([]); // State for list of inverters
     const [formData, setFormData] = useState<ClusterFormData>({
@@ -182,28 +184,28 @@ const AddCluster: React.FC = () => {
     return (
         <div className="cluster-container">
             <div className="cluster-card2">
-                <h2>{isEditMode ? 'Edit Cluster' : 'Add a Cluster'}</h2>
+                <h2>{isEditMode ? t('addCluster.titleEdit') : t('addCluster.titleAdd')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="cluster-info">
                         <div className="info-item">
-                            <label>Cluster Name:</label>
+                            <label>{t('addCluster.form.panelName')}:</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="Enter cluster name"
+                                placeholder={t('addCluster.form.panelNamePlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>Description:</label>
+                            <label>{t('addCluster.form.description')}:</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="Enter description"
+                                placeholder={t('addCluster.form.description')}
                             />
                         </div>
                     </div>
@@ -230,53 +232,55 @@ const AddCluster: React.FC = () => {
                             ))}
                         </select>
                     </div>
+                    <p>{t('addCluster.form.clusterInfo')}</p>
 
                     {/* Manual Address Input */}
                     <div className="location-manual-input">
                         <div className="info-item">
-                            <label>Country:</label>
+                            <label>{t('addCluster.form.country')}:</label>
                             <input
                                 type="text"
                                 required
                                 name="country"
                                 value={formData.location?.country || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder="Enter country"
+                                placeholder={t('addCluster.form.countryPlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>City:</label>
+                            <label>{t('addCluster.form.city')}:</label>
                             <input
                                 type="text"
                                 required
                                 name="city"
                                 value={formData.location?.city || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder="Enter city"
+                                placeholder={t('addCluster.form.cityPlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>District:</label>
+                            <label>{t('addCluster.form.district')}:</label>
                             <input
                                 type="text"
                                 required
                                 name="district"
                                 value={formData.location?.district || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder="Enter district"
+                                placeholder={t('addCluster.form.districtPlaceholder')}
                             />
                         </div>
                     </div>
 
-                    <button type="submit"
-                            className="cluster-button">{isEditMode ? 'Update Cluster' : 'Add Cluster'}</button>
+                    <button type="submit" className="btn-submit">
+                        {isEditMode ? t('addCluster.form.submitButtonEdit') : t('addCluster.form.submitButtonAdd')}
+                    </button>
                     {responseMessage && <p>{responseMessage}</p>}
                 </form>
             </div>
 
             {/* Right side: Map */}
             <div className="cluster-map-container">
-                <h2 className="location_header">Select location on the map</h2>
+                <h2 className="location_header">{t('addCluster.mapSection.header')}</h2>
                 <MapComponent
                     onLocationChange={handleLocationChange}
                     address={formData.location || {

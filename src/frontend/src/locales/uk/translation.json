@@ -54,6 +54,7 @@
 
   "clusterList": {
     "title": "Список Кластерів",
+    "loadingMessage": "Обробка запиту, це може зайняти кілька секунд...",
     "filterPlaceholder": "Фільтрувати за назвою або місцем",
     "addCluster": "Додати Новий Кластер",
     "listView": "Список",
@@ -144,6 +145,52 @@
       "submitButtonAdd": "Додати панель",
       "submitButtonEdit": "Оновити панель"
     },
+    "mapSection": {
+      "header": "Виберіть місце на карті",
+      "defaultCountry": "Литва",
+      "defaultCity": "Вільнюс",
+      "defaultDistrict": "Вільнюський повіт"
+    },
+    "responseMessages": {
+      "successAdd": "Панель успішно додано!",
+      "successEdit": "Панель успішно оновлено!",
+      "errorFetchClusters": "Не вдалося отримати кластери.",
+      "errorFetchPanel": "Не вдалося отримати дані панелі.",
+      "errorSubmit": "Під час подання панелі сталася помилка.",
+      "notLoggedIn": "Ви повинні увійти, щоб додати або редагувати панель."
+    }
+  },
+  "addCluster": {
+    "titleAdd": "Додати кластер",
+    "titleEdit": "Редагувати кластер",
+    "currentLocation": "Поточна локація",
+
+    "form": {
+      "panelName": "Назва кластера",
+      "panelNamePlaceholder": "Введіть назву",
+      "powerRating": "Потужність (Вт)",
+      "powerRatingPlaceholder": "Введіть потужність",
+      "temperatureCoefficient": "Температурний коефіцієнт (%/°C)",
+      "temperatureCoefficientPlaceholder": "Введіть температурний коефіцієнт",
+      "efficiency": "Ефективність (%)",
+      "efficiencyPlaceholder": "Введіть ефективність",
+      "description": "Опис",
+      "quantityPlaceholder": "Введіть кількість",
+      "cluster": "Кластер",
+
+      "clusterInfo": "Місце розташування має бути вибрано на карті, а ці поля лише для відображення.",
+
+      "clusterPlaceholder": "Виберіть кластер",
+      "country": "Країна",
+      "countryPlaceholder": "Введіть країну",
+      "city": "Місто",
+      "cityPlaceholder": "Введіть місто",
+      "district": "Район",
+      "districtPlaceholder": "Введіть район",
+      "submitButtonAdd": "Створити",
+      "submitButtonEdit": "Оновити"
+    },
+
     "mapSection": {
       "header": "Виберіть місце на карті",
       "defaultCountry": "Литва",

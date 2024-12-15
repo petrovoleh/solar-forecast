@@ -102,7 +102,11 @@ const EditProfile: React.FC = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>; // Показуємо повідомлення про завантаження
+        return  (
+            <div className="profile-container">
+                <div className="loader"></div>
+            </div>
+        )
     }
 
     if (error) {

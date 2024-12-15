@@ -35,11 +35,13 @@ const ClusterList: React.FC = () => {
     const [sortKey, setSortKey] = useState<keyof Cluster>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     // Fetch clusters from the backend
     useEffect(() => {
         const fetchClusters = async () => {
             try {
+                setLoading(true)
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/cluster/user`, {
                     headers: {
@@ -50,12 +52,15 @@ const ClusterList: React.FC = () => {
                 if (response.ok) {
                     const text = await response.text();
                     setClusters(text ? JSON.parse(text) : []);
+
                 } else {
                     console.error("Failed to fetch clusters:", response.statusText);
                 }
             } catch (error) {
                 console.error("Error fetching clusters:", error);
             }
+            setLoading(false)
+
         };
         fetchClusters();
     }, []);
@@ -169,7 +174,12 @@ const ClusterList: React.FC = () => {
                     <div>{t('clusterList.actions')}</div>
                 </div>
             )}
-            {clusters.length === 0 ? (
+            {loading &&
+                <div className="mini-loader-container">
+                    <div className="loader"></div>
+                </div>
+            }
+            {!loading && clusters.length === 0 ? (
                 <div className="no-clusters-message">{t('clusterList.noClustersMessage')}</div>
             ) : (
                 <div className={`cluster-list ${viewMode}`}>

@@ -36,7 +36,6 @@
     "address": "Address",
     "edit": "Edit Profile",
     "exit": "Logout",
-    "loading": "Loading...",
     "error": "Error fetching profile data",
     "notSet": "Not set",
     "confirmExitMessage": "Are you sure you want to exit?"
@@ -53,6 +52,8 @@
   },
   "clusterList": {
     "title": "Cluster List",
+    "noPanelsMessage": "No clusters or panels added yet",
+    "loadingMessage": "Processing your request, this may take a few seconds...",
     "filterPlaceholder": "Filter by name or location",
     "addCluster": "Add New Cluster",
     "listView": "List View",
@@ -143,6 +144,7 @@
       "submitButtonAdd": "Add Panel",
       "submitButtonEdit": "Update Panel"
     },
+
     "mapSection": {
       "header": "Select location on the map",
       "defaultCountry": "Lithuania",
@@ -158,7 +160,52 @@
       "notLoggedIn": "You must be logged in to add or edit a panel."
     }
   },
+  "addCluster": {
+    "titleAdd": "Add a Cluster",
+    "titleEdit": "Edit Cluster",
+    "currentLocation": "Current location",
 
+    "form": {
+      "panelName": "Cluster Name",
+      "panelNamePlaceholder": "Enter panel name",
+      "powerRating": "Power Rating (W)",
+      "powerRatingPlaceholder": "Enter power rating",
+      "temperatureCoefficient": "Temperature Coefficient (%/°C)",
+      "temperatureCoefficientPlaceholder": "Enter temperature coefficient",
+      "efficiency": "Efficiency (%)",
+      "efficiencyPlaceholder": "Enter efficiency",
+      "description": "Description",
+      "quantityPlaceholder": "Enter quantity",
+      "cluster": "Cluster",
+
+      "clusterInfo": "The location must be selected on the map, and these fields are for display only.",
+
+      "clusterPlaceholder": "Select a cluster",
+      "country": "Country",
+      "countryPlaceholder": "Enter country",
+      "city": "City",
+      "cityPlaceholder": "Enter city",
+      "district": "District",
+      "districtPlaceholder": "Enter district",
+      "submitButtonAdd": "Create",
+      "submitButtonEdit": "Update"
+    },
+
+    "mapSection": {
+      "header": "Select location on the map",
+      "defaultCountry": "Lithuania",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilnius County"
+    },
+    "responseMessages": {
+      "successAdd": "Panel added successfully!",
+      "successEdit": "Panel updated successfully!",
+      "errorFetchClusters": "Failed to fetch clusters.",
+      "errorFetchPanel": "Failed to fetch panel data.",
+      "errorSubmit": "An error occurred while submitting the panel.",
+      "notLoggedIn": "You must be logged in to add or edit a panel."
+    }
+  },
   "editProfile": {
     "title": "Edit Profile",
     "username": "Name",

@@ -17,6 +17,7 @@ const PanelForecast: React.FC = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const location = useLocation(); // Access query parameters
+    const [loading, setLoading] = useState(true);
 
     const [forecastData, setForecastData] = useState<ForecastData[]>([]);
     const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
@@ -25,10 +26,11 @@ const PanelForecast: React.FC = () => {
     const params = new URLSearchParams(location.search);
     const type = params.get('type');
     console.log(type)
-    const maxToDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const maxToDate = new Date(Date.now() + 13 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const fetchForecast = async () => {
         try {
+            setLoading(true)
             const response = await fetch(
                 `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
                 {
@@ -59,6 +61,8 @@ const PanelForecast: React.FC = () => {
             navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
             console.error(error);
         }
+        setLoading(false)
+
     };
 
     useEffect(() => {
@@ -128,7 +132,13 @@ const PanelForecast: React.FC = () => {
                         </button>
                     </div>
                 </div>
-
+                {loading &&
+                    <div className="loader-container">
+                        <div className="loader"></div>
+                        <p>{t('clusterList.loadingMessage')}</p>
+                    </div>
+                }
+                {!loading &&
                 <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <LineChart data={forecastData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
@@ -145,6 +155,7 @@ const PanelForecast: React.FC = () => {
                         <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} dot={false}/>
                     </LineChart>
                 </ResponsiveContainer>
+                }
             </main>
         </div>
     );

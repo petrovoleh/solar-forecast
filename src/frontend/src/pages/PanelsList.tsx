@@ -33,10 +33,12 @@ const PanelList: React.FC = () => {
     const [sortKey, setSortKey] = useState<keyof SolarPanel>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchPanels = async () => {
             try {
+                setLoading(true)
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${backend_url}/api/panel/user`, {
                     headers: {
@@ -52,12 +54,15 @@ const PanelList: React.FC = () => {
                     } else {
                         setPanels([]);
                     }
+
                 } else {
                     console.error(t("clusterList.errorFetch"), response.statusText);
                 }
             } catch (error) {
                 console.error(t("clusterList.errorFetch"), error);
             }
+            setLoading(false)
+
         };
         fetchPanels();
     }, [t]);
@@ -173,9 +178,13 @@ const PanelList: React.FC = () => {
                     <div>{t("clusterList.actions")}</div>
                 </div>
             )}
-
-            {panels.length === 0 ? (
-                <div className="no-panels-message">{t("clusterList.noPanels")}</div>
+            {loading &&
+                <div className="mini-loader-container">
+                    <div className="loader"></div>
+                </div>
+            }
+            {!loading && panels.length === 0 ? (
+                <div className="no-panels-message">{t("clusterList.noPanelsMessage")}</div>
             ) : (
                 <div className={`panel-list ${viewMode}`}>
                     {filteredPanels.map((panel) => (

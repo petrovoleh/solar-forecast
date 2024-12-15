@@ -54,7 +54,11 @@ const ViewPanel: React.FC = () => {
 
 
     if (loading) {
-        return <div>Loading...</div>;
+        return  (
+            <div className="profile-container">
+                <div className="loader"></div>
+            </div>
+        )
     }
 
     if (!panelData) {
@@ -70,10 +74,10 @@ const ViewPanel: React.FC = () => {
                         <label>{t('viewPanel.powerRating')}:</label>
                         <p>{panelData.powerRating}</p>
                     </div>
-                    <div className="info-item">
-                        <label>{t('viewPanel.temperatureCoefficient')}:</label>
-                        <p>{panelData.temperatureCoefficient}</p>
-                    </div>
+                    {/*<div className="info-item">*/}
+                    {/*    <label>{t('viewPanel.temperatureCoefficient')}:</label>*/}
+                    {/*    <p>{panelData.temperatureCoefficient}</p>*/}
+                    {/*</div>*/}
                     <div className="info-item">
                         <label>{t('viewPanel.efficiency')}:</label>
                         <p>{panelData.efficiency}</p>

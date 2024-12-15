@@ -81,7 +81,11 @@ const Profile: React.FC = () => {
     };
 
     if (loading) {
-        return <div>{t('profile.loading')}</div>; // Use translation for loading text
+        return  (
+            <div className="profile-container">
+                <div className="loader"></div>
+            </div>
+        )
     }
 
     if (error) {

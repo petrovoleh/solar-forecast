@@ -27,15 +27,15 @@ const Forecast: React.FC = () => {
     const [sortKey, setSortKey] = useState<keyof SolarPanel>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchPanels = async () => {
+            setLoading(true); // Show loader
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${backend_url}/api/panel/user`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (response.ok) {
@@ -46,6 +46,8 @@ const Forecast: React.FC = () => {
                 }
             } catch (error) {
                 console.error("Error fetching panels:", error);
+            } finally {
+                setLoading(false); // Hide loader
             }
         };
         fetchPanels();
@@ -53,12 +55,11 @@ const Forecast: React.FC = () => {
 
     useEffect(() => {
         const fetchClusters = async () => {
+            setLoading(true); // Show loader
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/cluster/user`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (response.ok) {
@@ -69,6 +70,8 @@ const Forecast: React.FC = () => {
                 }
             } catch (error) {
                 console.error("Error fetching clusters:", error);
+            } finally {
+                setLoading(false); // Hide loader
             }
         };
         fetchClusters();
@@ -161,8 +164,12 @@ const Forecast: React.FC = () => {
                     <div>{t('clusterList.actions')}</div>
                 </div>
             )}
-
-            {filteredPanels.length === 0 ? (
+            {loading &&
+                <div className="mini-loader-container">
+                    <div className="loader"></div>
+                </div>
+            }
+            {!loading && filteredPanels.length === 0 ? (
                 <div className="no-panels-message">{t('clusterList.noPanelsMessage')}</div>
             ) : (
                 <div className={`panel-list ${viewMode}`}>

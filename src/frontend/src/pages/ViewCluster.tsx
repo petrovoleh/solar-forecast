@@ -108,7 +108,11 @@ const ViewCluster: React.FC = () => {
     }, [id, token]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return  (
+            <div className="profile-container">
+                <div className="loader"></div>
+            </div>
+        )
     }
 
     if (errorMessage) {
@@ -168,7 +172,7 @@ const ViewCluster: React.FC = () => {
                 <button onClick={() => navigate(`/edit-cluster/${cluster?.id}`)} className="edit-button">
                     {t("clusterList.edit")}
                 </button>
-                <button className="exit-button" onClick={() => navigate('/clusterslist')}>                    {t('viewPanel.backButton')}
+                <button className="exit-button" onClick={() => navigate('/clusterlist')}>                    {t('viewPanel.backButton')}
                 </button>
             </div>
         </div>
