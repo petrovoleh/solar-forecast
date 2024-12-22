@@ -55,6 +55,7 @@
   "clusterList": {
     "title": "Klasterių Sąrašas",
     "loadingMessage": "Apdorojamas jūsų užklausa, tai gali užtrukti kelias sekundes...",
+    "noPanelsMessage": "Dar nėra pridėtų klasterių ar saulės panelių",
     "filterPlaceholder": "Filtruoti pagal pavadinimą ar vietą",
     "addCluster": "Pridėti Naują Klasterį",
     "listView": "Sąrašo Vaizdas",
@@ -115,11 +116,33 @@
     "backButton": "Grįžti į sąrašą",
     "errorFetchingData": "Nepavyko gauti skydelio duomenų"
   },
-
+  "lt": {
+    "addUser": {
+      "title": "Pridėti naują vartotoją",
+      "username": "Vartotojo vardas",
+      "email": "El. paštas",
+      "password": "Slaptažodis",
+      "role": "Rolė",
+      "submitButton": "Sukurti vartotoją",
+      "usernameError": "Vartotojo vardas yra būtinas.",
+      "emailError": "El. paštas yra būtinas.",
+      "emailInvalidError": "Neteisingas el. pašto formatas.",
+      "passwordError": "Slaptažodis yra būtinas.",
+      "passwordLengthError": "Slaptažodis turi būti bent 8 simbolių ilgio.",
+      "roleError": "Rolė yra būtina.",
+      "success": "Vartotojas sėkmingai sukurtas!",
+      "error": "Nepavyko sukurti vartotojo",
+      "errorOccurred": "Įvyko klaida:",
+      "authError": "Jūs turite būti administratorius, kad atliktumėte šį veiksmą."
+    }
+  },
   "addPanel": {
     "titleAdd": "Pridėti saulės bateriją",
     "titleEdit": "Redaguoti saulės bateriją",
     "currentLocation": "Dabartinė vieta",
+    "profileLocation": "Vieta profilyje",
+
+
 
     "form": {
       "panelName": "Baterijos pavadinimas",
@@ -165,6 +188,7 @@
     "currentLocation": "Dabartinė vieta",
 
     "form": {
+      "selectInverter": "Pasirinkite інверterį",
       "panelName": "Klasterio pavadinimas",
       "panelNamePlaceholder": "Įveskite pavadinimą",
       "powerRating": "Galingumas (W)",

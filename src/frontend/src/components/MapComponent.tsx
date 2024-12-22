@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { useTranslation } from 'react-i18next';
+import {backend_url} from "../config";
 
 interface MapComponentProps {
     onLocationChange: (lat: number, lon: number) => void;
@@ -85,7 +86,38 @@ const MapComponent: React.FC<MapComponentProps> = ({
     useEffect(() => {
         setPosition([lat, lon]);
     }, [lat, lon]);
+    const handleProfileLocation = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${backend_url}/api/user/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
+            if (!response.ok) {
+                throw new Error('Failed to fetch profile');
+            }
+
+            const data = await response.json();
+
+            if (data.location ) {
+                onAddressChange({
+                    country: data.location.country || 'Unknown',
+                    city: data.location.city || 'Unknown',
+                    district: data.location.district || 'Unknown',
+                })
+                const { lat, lon } = data.location;
+                if (lat && lon ) {
+                    onLocationChange(lat, lon)
+                }
+            }
+
+
+        } catch (err) {
+            console.error(err)
+        }
+    };
     const handleCurrentLocation = () => {
         if (disabled) return;
 
@@ -134,13 +166,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 />
                 <Marker position={position} icon={customIcon}>
                     <Popup>
-                        Selected Location<br />
-                        Latitude: {position[0]}<br />
+                        Selected Location<br/>
+                        Latitude: {position[0]}<br/>
                         Longitude: {position[1]}
                     </Popup>
                 </Marker>
                 {/* Automatically move map when the position changes */}
-                <MoveMapToLocation lat={position[0]} lng={position[1]} />
+                <MoveMapToLocation lat={position[0]} lng={position[1]}/>
             </MapContainer>
             <button
                 onClick={handleCurrentLocation}
@@ -148,6 +180,12 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 disabled={disabled}
             >
                 {t('addPanel.currentLocation')}
+            </button>
+            <button
+                onClick={handleProfileLocation}
+                className="edit-button current-location-button margin10"
+            >
+                {t('addPanel.profileLocation')}
             </button>
         </div>
     );

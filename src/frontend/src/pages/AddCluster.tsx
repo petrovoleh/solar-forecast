@@ -11,7 +11,18 @@ interface LocationRequest {
     district: string;
     country: string;
 }
-
+interface User {
+    username: string;
+    email: string;
+    location: Address | null;
+}
+interface Address {
+    country: string;
+    city: string;
+    district: string;
+    lat: number;
+    lon: number;
+}
 interface ClusterFormData {
     name: string;
     description: string;
@@ -43,6 +54,11 @@ const AddCluster: React.FC = () => {
         inverterId: '' // Initialize selected inverter ID
     });
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+
 
     // Fetch the list of inverters on component mount
     useEffect(() => {
@@ -212,7 +228,7 @@ const AddCluster: React.FC = () => {
 
                     {/* Inverter Selection Dropdown */}
                     <div className="info-item">
-                        <label>Inverter:</label>
+                        <label>{t('clusterList.inverter')}:</label>
                         <select
                             required
                             name="inverterId"
@@ -224,7 +240,7 @@ const AddCluster: React.FC = () => {
                                 }))
                             }
                         >
-                            <option value="">Select an Inverter</option>
+                            <option value="">{t('addCluster.form.selectInverter')}</option>
                             {inverters.map((inverter) => (
                                 <option key={inverter.id} value={inverter.id}>
                                     {inverter.name}
@@ -292,6 +308,7 @@ const AddCluster: React.FC = () => {
                     lat={formData.location?.lat || 54.6872} // Default latitude (Vilnius)
                     lon={formData.location?.lon || 25.2797} // Default longitude (Vilnius)
                 />
+
             </div>
         </div>
     );

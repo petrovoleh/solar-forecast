@@ -19,6 +19,7 @@ interface ValidationErrors {
 }
 
 const SignUp: React.FC = () => {
+    const { isLoggedIn, isAdmin } = useAuth();  // Get the isLoggedIn state from context
     const {t} = useTranslation(); // Initialize the useTranslation hook
     const [formState, setFormState] = useState<SignUpFormState>({
         name: '',
@@ -30,6 +31,9 @@ const SignUp: React.FC = () => {
     const {setIsLoggedIn} = useAuth();
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [message, setMessage] = useState<string | null>(null);
+    if (isLoggedIn && !isAdmin) {
+        navigate(`/error?error_text=You%20can%20not%20create%20a%20new%20account%20when%20you%20logged%20in.&error_code=403 - Forbidden.`);
+    }
 
     const validate = (): boolean => {
         const newErrors: ValidationErrors = {};
@@ -102,10 +106,11 @@ const SignUp: React.FC = () => {
     return (
         <div className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
-                <h2>{t('signUp.title')}</h2>
-
+                {isLoggedIn && isAdmin && <h2>Create new user</h2> }
+                {!isLoggedIn && <h2>{t('signUp.title')}</h2>}
                 <div className="form-group">
-                    <label>{t('signUp.name')}</label>
+                    {isLoggedIn && isAdmin && <label>Create new user</label> }
+                    {!isLoggedIn &&<label>{t('signUp.name')}</label> }
                     <input
                         type="text"
                         name="name"
@@ -151,8 +156,9 @@ const SignUp: React.FC = () => {
                     />
                     {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
                 </div>
+                {isLoggedIn && isAdmin && <button type="submit" className="btn">Create</button>}
+                {!isLoggedIn && <button type="submit" className="btn">{t('signUp.submitButton')}</button>}
 
-                <button type="submit" className="btn">{t('signUp.submitButton')}</button>
 
                 {message && <p className="result-message">{message}</p>}
             </form>

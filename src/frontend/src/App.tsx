@@ -50,6 +50,7 @@ const App: React.FC = () => {
 
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/edit-panel/:id" element={<AddPanel/>}/>
+                        <Route path="/add-user" element={<SignUp/>}/>
 
                         <Route path="/add-cluster" element={<AddCluster/>}/>
                         <Route path="/add-inverter" element={<AddInverter/>}/>

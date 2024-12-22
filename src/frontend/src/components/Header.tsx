@@ -15,19 +15,18 @@ const Header: React.FC = () => {
             <nav className="nav">
                 <ul className="nav-links">
                     <li><Link to="/">{t('nav.home')}</Link></li>
-                    {isLoggedIn ? (  // Check if user is logged in from context
+                    {!isLoggedIn ? (  // Check if user is logged in from context
                         <>
+                            <li><Link to="/signin">{t('nav.signIn')}</Link></li>
+                            <li><Link to="/signup">{t('nav.signUp')}</Link></li>
+                        </>
+                    ) : (<>
                             <li><Link to="/profile">{t('nav.profile')}</Link></li>
                             {isAdmin && <li><Link to="/dashboard">{t('nav.dashboard')}</Link></li>}
                             <li><Link to="/panelslist">{t('nav.myPanels')}</Link></li>
                             <li><Link to="/clusterlist">{t('nav.myClusters')}</Link></li>
 
                             <li><Link to="/forecast">{t('nav.forecast')}</Link></li>
-                        </>
-                    ) : (
-                        <>
-                            <li><Link to="/signin">{t('nav.signIn')}</Link></li>
-                            <li><Link to="/signup">{t('nav.signUp')}</Link></li>
                         </>
                     )}
                 </ul>

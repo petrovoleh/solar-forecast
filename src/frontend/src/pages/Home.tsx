@@ -5,64 +5,82 @@ import './Home.css';
 const Home: React.FC = () => {
     return (
         <div className="home-container">
-
             <section className="hero-section">
-                <h2>Harness the Power of Solar Energy</h2>
-                <p>Discover how much energy your solar panels can produce based on real-time data and unique
-                    algorithms.</p>
-                <Link to="/forecast" className="cta-button">Get Forecast</Link>
+                <h2>Solar Energy Forecasting Platform</h2>
+                <p>
+                    This project is part of a bachelor’s thesis aimed at developing an advanced platform for forecasting
+                    solar energy production. The system combines cutting-edge machine learning models with modern web
+                    technologies to provide a reliable and user-friendly tool for optimizing solar energy use.
+                </p>
+                <p>
+                    The primary goal of this platform is to support solar energy operators, researchers, and enthusiasts
+                    by offering precise energy generation predictions based on weather data, satellite imagery, and
+                    historical solar output. This data can help improve grid stability, enhance energy efficiency, and
+                    aid in planning renewable energy strategies.
+                </p>
+
             </section>
 
-            <section className="stats-section">
-                <div className="stat-item">
-                    <h3>5,000+</h3>
-                    <p>Forecasts Generated</p>
-                </div>
-                <div className="stat-item">
-                    <h3>95%</h3>
-                    <p>Prediction Accuracy</p>
-                </div>
-                <div className="stat-item">
-                    <h3>1,200</h3>
-                    <p>Solar Panels Monitored</p>
-                </div>
-            </section>
-
-            <section className="features-section">
-                <h2>Why Use Our Forecasting System?</h2>
+            <section id="features" className="features-section">
+                <h2>Key Highlights</h2>
                 <div className="feature-card">
-                    <h3>Real-Time Data</h3>
-                    <p>We use real-time weather and environmental data to ensure accurate predictions for your solar
-                        panels.</p>
+                    <h3>Academic Excellence</h3>
+                    <p>
+                        This project is a culmination of extensive research and practical implementation, demonstrating
+                        the integration of machine learning and software engineering principles in real-world
+                        applications.
+                    </p>
                 </div>
                 <div className="feature-card">
-                    <h3>Custom Algorithms</h3>
-                    <p>Our algorithms are specifically designed to forecast solar energy production based on panel
-                        location and configuration.</p>
+                    <h3>Purpose-Built for Solar Forecasting</h3>
+                    <p>
+                        The platform uses advanced neural network models trained on large datasets to predict solar
+                        energy output with high accuracy, making it an indispensable tool for renewable energy
+                        optimization.
+                    </p>
                 </div>
                 <div className="feature-card">
-                    <h3>Comprehensive Dashboard</h3>
-                    <p>Monitor your energy production trends and forecasts in one easy-to-use dashboard.</p>
+                    <h3>Comprehensive Data Integration</h3>
+                    <p>
+                        Combines real-time weather forecasts, historical solar production data, and geospatial metadata
+                        to ensure reliable and detailed predictions.
+                    </p>
+                </div>
+                <div className="feature-card">
+                    <h3>Multilingual and Accessible</h3>
+                    <p>
+                        Designed with accessibility in mind, the platform supports multiple languages, including
+                        English, Lithuanian, and Ukrainian, ensuring usability for a diverse audience.
+                    </p>
+                </div>
+                <div className="feature-card">
+                    <h3>Scalable and Flexible Architecture</h3>
+                    <p>
+                        Built with modern technologies such as React, FastAPI, and MongoDB, the system is scalable and
+                        ready for future enhancements, including integration with additional datasets or advanced
+                        machine learning models.
+                    </p>
                 </div>
             </section>
 
             <section className="testimonials-section">
-                <h2>What Users Are Saying</h2>
+                <h2>Why This Project Matters</h2>
                 <div className="testimonial">
-                    <p>"This tool has drastically improved our solar energy production efficiency!"</p>
-                    <p>- Jane Doe, Solar Panel Owner</p>
+                    <p>
+                        "This platform represents a significant step towards harnessing the potential of renewable
+                        energy by providing reliable solar energy forecasts that empower users to make data-driven
+                        decisions."
+                    </p>
                 </div>
                 <div className="testimonial">
-                    <p>"The prediction accuracy is outstanding, and the dashboard is super intuitive."</p>
-                    <p>- John Smith, Solar Technician</p>
+                    <p>
+                        "Through the integration of cutting-edge technology and thoughtful design, this project
+                        demonstrates how machine learning can transform the energy sector."
+                    </p>
                 </div>
             </section>
-
-            <footer className="footer">
-                <p>© 2024 Oleh Petrov | Vilnius University</p>
-
-            </footer>
         </div>
+
     );
 };
 

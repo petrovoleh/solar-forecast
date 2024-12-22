@@ -46,7 +46,28 @@ const Dashboard: React.FC = () => {
             setError(`An error occurred while fetching ${endpoint}.`);
         }
     };
+    const generateInverters = async (endpoint: string) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${backend_url}/api/${endpoint}/create`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
+            if (response.ok) {
+                // const data = await response.;
+                console.log("created")
+                await fetchData("inverter", setInverters);
+
+            } else {
+                setError(`Failed to fetch ${endpoint}.`);
+            }
+        } catch (err) {
+            setError(`An error occurred while fetching ${endpoint}.`);
+        }
+    };
     useEffect(() => {
         fetchData("panel", setPanels);
         fetchData("inverter", setInverters);
@@ -203,7 +224,11 @@ const Dashboard: React.FC = () => {
             <section className="dashboard-section">
                 <div className="section-header">
                     <h2>Inverters</h2>
-                    <button className="add-button" onClick={() => navigate(`/add-inverter/`)}>Create new Inverter</button>
+                    <button className="add-button" onClick={()=>generateInverters("inverter")}>Generate Inverters
+                    </button>
+
+                    <button className="add-button" onClick={() => navigate(`/add-inverter/`)}>Create new Inverter
+                    </button>
                 </div>
                 <ul className="dashboard-list">
                     {inverters.map((inverter) => (

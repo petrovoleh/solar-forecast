@@ -1,8 +1,10 @@
 package com.olehpetrov.backend.controllers;
+import com.olehpetrov.backend.factories.InverterFactory;
 import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.Role;
 import com.olehpetrov.backend.models.User;
+import com.olehpetrov.backend.repositories.InverterRepository;
 import com.olehpetrov.backend.services.InverterService;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
@@ -32,6 +34,8 @@ public class InverterController {
 
     @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
+    private InverterRepository inverterRepository;
 
     // Get a single inverter by inverter ID
     @GetMapping("/{inverterId}")
@@ -50,7 +54,7 @@ public class InverterController {
     @GetMapping("/all")
     public ResponseEntity<Page<Inverter>> getAllInverters(
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
+        @RequestParam(defaultValue = "15") int size) {
         Page<Inverter> inverters = inverterService.findAll(PageRequest.of(page, size));
 
         return ResponseEntity.ok(inverters);
@@ -113,6 +117,14 @@ public class InverterController {
             return ResponseEntity.status(400).body("Invalid request.");
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/create")
+    public ResponseEntity<String> create() {
+        InverterFactory.createInverters(inverterRepository);
+        return ResponseEntity.ok("Inverter deleted successfully.");
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@RequestHeader("Authorization") String token, @PathVariable String id) {

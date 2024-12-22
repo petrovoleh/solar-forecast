@@ -38,6 +38,8 @@
     }
 }
 body {
+    width: 100%;
+    overflow-x: hidden;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen','Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -76,7 +78,7 @@ code {
     color: #004d40;
 }
 .cluster-map-container .map-card {
-    height: 81%;
+    height: 76%;
     padding: 0;
     box-shadow: none;
 }
@@ -86,7 +88,7 @@ code {
 .cluster-map-container {
     margin-top: 80px;
     margin-bottom: 40px;
-    height: 872px;
+    height: 800px;
     background-color: white;
     padding: 2rem;
     border-radius: 12px;
@@ -252,7 +254,7 @@ code {
     color: #004d40;
 }
 .panel-map-container .map-card {
-    height: 81%;
+    height: 78%;
     padding: 0;
     box-shadow: none;
 }
@@ -261,8 +263,9 @@ code {
 }
 .panel-map-container {
     margin-top: 80px;
+    padding-bottom: 80px;
     margin-bottom: 40px;
-    height: 872px;
+    height: 920px;
     background-color: white;
     padding: 2rem;
     border-radius: 12px;
@@ -1085,5 +1088,8 @@ button:disabled {
     margin-top: 16px;
     font-size: 18px;
     color: #555;
+}
+.margin10{
+    margin-top: 10px;
 }
 
