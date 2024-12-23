@@ -4,6 +4,7 @@ import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
+import com.olehpetrov.backend.requests.UpdateUserRequestAdmin;
 import com.olehpetrov.backend.responses.ClusterResponse;
 import com.olehpetrov.backend.responses.UserProfileResponse;
 import com.olehpetrov.backend.services.LocationService;
@@ -91,6 +92,68 @@ public class UserController {
         return ResponseEntity.ok("User details and location updated successfully.");
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUserById(@PathVariable String id, @Valid @RequestBody UpdateUserRequestAdmin updateUserRequest) {
+        User user = userService.getById(id);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+
+        // Оновлення електронної пошти, якщо вона присутня
+        if (updateUserRequest.getEmail() != null && !updateUserRequest.getEmail().isEmpty()) {
+            if (!updateUserRequest.getEmail().equals(user.getEmail()) && userService.existsByEmail(updateUserRequest.getEmail())) {
+                return ResponseEntity.badRequest().body("Email is already taken.");
+            }
+            user.setEmail(updateUserRequest.getEmail());
+        }
+
+        // Оновлення пароля, якщо він присутній
+        if (updateUserRequest.getPassword() != null && !updateUserRequest.getPassword().isEmpty()) {
+            if (!isValidPassword(updateUserRequest.getPassword())) {
+                return ResponseEntity.badRequest().body("Password does not meet security requirements.");
+            }
+            user.setPassword(updateUserRequest.getPassword());
+        }
+        if (updateUserRequest.getRole() != null) {
+            if (!isValidPassword(updateUserRequest.getPassword())) {
+                return ResponseEntity.badRequest().body("Role is empty.");
+            }
+            user.setRole(updateUserRequest.getRole());
+        }
+
+        // Оновлення адреси, якщо вона присутня в запиті
+        if (updateUserRequest.getLocation() != null) {
+            Location location;
+            if (user.getLocation() != null) {
+                location = user.getLocation(); // Existing location
+                // Update the location fields
+                location.setLat(updateUserRequest.getLocation().getLat());
+                location.setLon(updateUserRequest.getLocation().getLon());
+                location.setCity(updateUserRequest.getLocation().getCity());
+                location.setDistrict(updateUserRequest.getLocation().getDistrict());
+                location.setCountry(updateUserRequest.getLocation().getCountry());
+            } else {
+                // Create a new location only if the user does not have one
+                location = new Location();
+                location.setLat(updateUserRequest.getLocation().getLat());
+                location.setLon(updateUserRequest.getLocation().getLon());
+                location.setCity(updateUserRequest.getLocation().getCity());
+                location.setDistrict(updateUserRequest.getLocation().getDistrict());
+                location.setCountry(updateUserRequest.getLocation().getCountry());
+
+            }
+            locationService.register(location);
+            user.setLocation(location);
+        }
+
+
+        userService.register(user); // Збереження оновленого користувача
+        logger.info("User updated successfully: {}", user.getUsername());
+
+        return ResponseEntity.ok("User details and location updated successfully.");
+    }
+
 
     // Endpoint to update or set user location
     @PutMapping("/location")
@@ -128,10 +191,9 @@ public class UserController {
         UserProfileResponse response = new UserProfileResponse(user.getUsername(), user.getEmail(), user.getRole().toString(), user.getLocation());
         return ResponseEntity.ok(response);
     }
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@RequestHeader("Authorization") String token, @PathVariable String id) {
-
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
 
         User user = userService.getById(id);
         if (user == null) {

@@ -16,6 +16,8 @@ interface User {
     username: string;
     email: string;
     location: Address;
+    role: string;
+
 }
 
 const EditProfile: React.FC = () => {
@@ -73,6 +75,14 @@ const EditProfile: React.FC = () => {
             };
         });
     };
+    const handleRoleChange = (newRole: string) => {
+        if (user) {
+            setUser({
+                ...user,
+                role: newRole,
+            });
+        }
+    };
 
     const handleAddressChange = (address: Address) => {
         setUser((prevState) => {
@@ -90,8 +100,12 @@ const EditProfile: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
+        var url = `${backend_url}/api/user/update`
 
-        fetch(`${backend_url}/api/user/update`, {
+        if (id) {
+            url = `${backend_url}/api/user/${id}`
+        }
+        fetch(url, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -100,7 +114,12 @@ const EditProfile: React.FC = () => {
             body: JSON.stringify(user), // Відправка нових даних користувача
         }).then((response) => {
             if (response.ok) {
-                navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
+                if(!id) {
+                    navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
+                }
+                else{
+                    navigate('/dashboard');
+                }
             } else {
                 console.error('Error updating profile');
             }
@@ -175,6 +194,19 @@ const EditProfile: React.FC = () => {
                                 placeholder={t('editProfile.districtPlaceholder')} // Translation for placeholder
                             />
                         </div>
+                        {id && <div className="info-item">
+                            <label>Role:</label> {/* Translation for "District" */}
+                            <select
+                                name="role"
+                                value={user?.role || ''}
+                                onChange={(e) => handleRoleChange(e.target.value)}
+                                // placeholder={t('editProfile.rolePlaceholder')} // Translation for placeholder
+                            >
+                                <option value="ROLE_USER">User</option>
+                                <option value="ROLE_ADMIN">Admin</option>
+                            </select>
+
+                        </div>}
                     </div>
                     <button type="submit" className="edit-button">
                         {t('editProfile.save')} {/* Translation for "Save Changes" */}
@@ -182,7 +214,13 @@ const EditProfile: React.FC = () => {
                     <button
                         type="button"
                         className="discard-button"
-                        onClick={() => navigate('/profile')}
+                        onClick={() => {
+                            if (!id) {
+                                navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
+                            } else {
+                                navigate('/dashboard');
+                            }
+                        }}
                     >
                         {t('editProfile.discard')} {/* Translation for "Discard Changes" */}
                     </button>
