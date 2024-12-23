@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import ConfirmationModal from '../components/ConfirmationModal';
 import {useAuth} from '../context/AuthContext';
 import {backend_url} from "../config";
@@ -25,12 +25,18 @@ const Profile: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const {id} = useParams<{ id: string }>();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${backend_url}/api/user/profile`, {
+                var url = `${backend_url}/api/user/profile`
+
+                if (id) {
+                    url = `${backend_url}/api/user/${id}`
+                }
+                const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -53,7 +59,12 @@ const Profile: React.FC = () => {
     }, [t]);
 
     const handleEditClick = () => {
-        navigate('/edit-profile');
+        if (id){
+            navigate(`/edit-profile/${id}`);
+        }
+        else {
+            navigate('/edit-profile');
+        }
     };
 
     const handleExitClick = () => {
@@ -113,9 +124,10 @@ const Profile: React.FC = () => {
                 <button className="edit-button" onClick={handleEditClick}>
                     {t('profile.edit')} {/* Use translation for "Edit Profile" */}
                 </button>
+                {!id &&
                 <button className="exit-button" onClick={handleExitClick}>
                     {t('profile.exit')} {/* Use translation for "Exit" */}
-                </button>
+                </button>}
             </div>
 
             <ConfirmationModal

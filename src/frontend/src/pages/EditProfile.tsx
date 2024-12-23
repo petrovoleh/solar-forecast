@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config"; // Імпорт компонента з мапою
 import {useTranslation} from 'react-i18next'; // Import useTranslation hook
@@ -25,13 +25,19 @@ const EditProfile: React.FC = () => {
     const [user, setUser] = useState<User | null>(null); // Стейт для зберігання даних користувача
     const [loading, setLoading] = useState<boolean>(true); // Стейт для статусу завантаження
     const [error, setError] = useState<string | null>(null); // Стейт для зберігання помилок
+    const {id} = useParams<{ id: string }>();
 
     // Функція для завантаження профілю
     useEffect(() => {
         const fetchProfile = async () => {
             try {
+                var url = `${backend_url}/api/user/profile`
+
+                if (id) {
+                    url = `${backend_url}/api/user/${id}`
+                }
                 const token = localStorage.getItem('token'); // Get token from local storage
-                const response = await fetch(`${backend_url}/api/user/profile`, {
+                const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${token}` // Include the JWT token in the request
                     }

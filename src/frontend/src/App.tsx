@@ -42,6 +42,8 @@ const App: React.FC = () => {
                         <Route path="/signup" element={<SignUp/>}/>
                         <Route path="/profile" element={<Profile/>}/>
                         <Route path="/edit-profile" element={<EditProfile/>}/>
+                        <Route path="/edit-profile/:id" element={<EditProfile/>}/>
+
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/panelslist" element={<PanelsList/>}/>
                         <Route path="/clusterlist" element={<ClusterList/>}/>
@@ -51,6 +53,7 @@ const App: React.FC = () => {
                         <Route path="/edit/:id" element={<AddPanel/>}/>
                         <Route path="/edit-panel/:id" element={<AddPanel/>}/>
                         <Route path="/add-user" element={<SignUp/>}/>
+                        <Route path="/view-user/:id" element={<Profile/>}/>
 
                         <Route path="/add-cluster" element={<AddCluster/>}/>
                         <Route path="/add-inverter" element={<AddInverter/>}/>

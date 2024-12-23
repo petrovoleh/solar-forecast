@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
                                 </button>
                                 <button
                                     className="edit-button2"
-                                    onClick={() => navigate(`/edit-user/${user.id}`)}
+                                    onClick={() => navigate(`/edit-profile/${user.id}`)}
                                 >
                                     Edit
                                 </button>
@@ -235,12 +235,12 @@ const Dashboard: React.FC = () => {
                         <li key={inverter.id} className="list-item">
                             <span>{inverter.name}</span>
                             <div className="button-group">
-                                <button
-                                    className="view-button"
-                                    onClick={() => navigate(`/view-inverter/${inverter.id}`)}
-                                >
-                                    View
-                                </button>
+                                {/*<button*/}
+                                {/*    className="view-button"*/}
+                                {/*    onClick={() => navigate(`/view-inverter/${inverter.id}`)}*/}
+                                {/*>*/}
+                                {/*    View*/}
+                                {/*</button>*/}
                                 <button
                                     className="edit-button2"
                                     onClick={() => navigate(`/edit-inverter/${inverter.id}`)}

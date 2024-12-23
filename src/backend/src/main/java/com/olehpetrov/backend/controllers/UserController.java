@@ -1,8 +1,6 @@
 package com.olehpetrov.backend.controllers;
 
-import com.olehpetrov.backend.models.User;
-import com.olehpetrov.backend.models.Location;
-import com.olehpetrov.backend.models.Role;
+import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
@@ -129,6 +127,18 @@ public class UserController {
         // Return user details and location in response
         UserProfileResponse response = new UserProfileResponse(user.getUsername(), user.getEmail(), user.getRole().toString(), user.getLocation());
         return ResponseEntity.ok(response);
+    }
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@RequestHeader("Authorization") String token, @PathVariable String id) {
+
+
+        User user = userService.getById(id);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     // New endpoint to get user location
