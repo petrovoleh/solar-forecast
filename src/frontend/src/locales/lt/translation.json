@@ -235,7 +235,9 @@
     "usernamePlaceholder": "Įveskite savo vardą",
     "email": "El. paštas",
     "emailPlaceholder": "Įveskite savo el. paštą",
-
+    "role": "Vaidmuo",
+    "user": "Vartotojas",
+    "admin": "Administratorius",
       "country": "Šalis",
       "countryPlaceholder": "Įveskite savo šalį",
       "city": "Miestas arba miestelis",

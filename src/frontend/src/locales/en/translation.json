@@ -236,8 +236,11 @@
     "usernamePlaceholder": "Enter your name",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
+    "role": "Role",
+    "user": "User",
+    "admin": "Admin",
 
-      "country": "Country",
+    "country": "Country",
       "countryPlaceholder": "Enter your country",
       "city": "City or Town",
       "cityPlaceholder": "Enter your city or town",

@@ -116,9 +116,6 @@ public class UserController {
             user.setPassword(updateUserRequest.getPassword());
         }
         if (updateUserRequest.getRole() != null) {
-            if (!isValidPassword(updateUserRequest.getPassword())) {
-                return ResponseEntity.badRequest().body("Role is empty.");
-            }
             user.setRole(updateUserRequest.getRole());
         }
 

@@ -106,11 +106,10 @@ const SignUp: React.FC = () => {
     return (
         <div className="auth-container">
             <form className="auth-form" onSubmit={handleSubmit}>
-                {isLoggedIn && isAdmin && <h2>Create new user</h2> }
+                {isLoggedIn && isAdmin && <h2>{t('addUser.submitButton')}</h2> }
                 {!isLoggedIn && <h2>{t('signUp.title')}</h2>}
                 <div className="form-group">
-                    {isLoggedIn && isAdmin && <label>Create new user</label> }
-                    {!isLoggedIn &&<label>{t('signUp.name')}</label> }
+                    <label>{t('signUp.name')}</label>
                     <input
                         type="text"
                         name="name"
@@ -156,7 +155,7 @@ const SignUp: React.FC = () => {
                     />
                     {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
                 </div>
-                {isLoggedIn && isAdmin && <button type="submit" className="btn">Create</button>}
+                {isLoggedIn && isAdmin && <button type="submit" className="btn">{t('addUser.submitButton')}</button>}
                 {!isLoggedIn && <button type="submit" className="btn">{t('signUp.submitButton')}</button>}
 
 

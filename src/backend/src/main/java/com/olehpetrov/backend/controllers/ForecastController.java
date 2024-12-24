@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +29,8 @@ public class ForecastController {
 
     private static final Logger logger = LoggerFactory.getLogger(ForecastController.class);
 //    private final String url = "http://model:8000/forecast";
-    private final String url = "http://localhost:8000/forecast";
+    @Value("${FORECAST_URL:http://localhost:8000/forecast}") // Default value if env variable not found
+    private String forecastUrl;
     @Autowired
     private SolarPanelService panelService;
     @Autowired
@@ -146,7 +147,7 @@ public class ForecastController {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
         logger.info("request");
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
         logger.info(String.valueOf(response));
         if (response.getStatusCode().is2xxSuccessful()) {
             logger.info("Forecast retrieved successfully for user: {}", username);
@@ -279,7 +280,7 @@ public class ForecastController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
 

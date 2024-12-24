@@ -72,7 +72,7 @@ const App: React.FC = () => {
                     </Routes>
                 </div>
                 <footer className="footer">
-                    <p>© 2025 Oleh Petrov | Vilnius University</p>
+                    <p>2025 Oleh Petrov | Vilnius University</p>
 
                 </footer>
             </Router>

@@ -195,15 +195,15 @@ const EditProfile: React.FC = () => {
                             />
                         </div>
                         {id && <div className="info-item">
-                            <label>Role:</label> {/* Translation for "District" */}
+                            <label>{t('editProfile.role')}:</label> {/* Translation for "District" */}
                             <select
                                 name="role"
                                 value={user?.role || ''}
                                 onChange={(e) => handleRoleChange(e.target.value)}
                                 // placeholder={t('editProfile.rolePlaceholder')} // Translation for placeholder
                             >
-                                <option value="ROLE_USER">User</option>
-                                <option value="ROLE_ADMIN">Admin</option>
+                                <option value="ROLE_USER">{t('editProfile.user')}</option>
+                                <option value="ROLE_ADMIN">{t('editProfile.admin')}</option>
                             </select>
 
                         </div>}

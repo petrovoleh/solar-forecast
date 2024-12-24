@@ -43,5 +43,7 @@ services:
       - "8080:8080"  # Expose FastAPI app on port 8000
     depends_on:
       - model  # Ensure MongoDB starts before backend
+    environment:
+      - FORECAST_URL=http://model:8000/forecast
 volumes:
   mongo-data:  # Volume for MongoDB to persist data
