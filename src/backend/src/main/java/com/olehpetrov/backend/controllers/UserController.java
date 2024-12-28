@@ -4,7 +4,6 @@ import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdateUserRequest;
-import com.olehpetrov.backend.requests.UpdateUserRequestAdmin;
 import com.olehpetrov.backend.responses.ClusterResponse;
 import com.olehpetrov.backend.responses.UserProfileResponse;
 import com.olehpetrov.backend.services.LocationService;
@@ -37,7 +36,7 @@ public class UserController {
 
     // Endpoint to update user information (email, password, etc.)
     @PutMapping("/update")
-    public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String token, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserRequest updateUserRequest) {
         String username = jwtUtil.extractUsername(token.substring(7)); // Отримання username з токена
         User user = userService.findByUsername(username);
         if (user == null) {
@@ -61,24 +60,24 @@ public class UserController {
         }
 
         // Оновлення адреси, якщо вона присутня в запиті
-        if (updateUserRequest.getUserLocation() != null) {
+        if (updateUserRequest.getLocation() != null) {
             Location location;
             if (user.getLocation() != null) {
                 location = user.getLocation(); // Existing location
                 // Update the location fields
-                location.setLat(updateUserRequest.getUserLocation().getLat());
-                location.setLon(updateUserRequest.getUserLocation().getLon());
-                location.setCity(updateUserRequest.getUserLocation().getCity());
-                location.setDistrict(updateUserRequest.getUserLocation().getDistrict());
-                location.setCountry(updateUserRequest.getUserLocation().getCountry());
+                location.setLat(updateUserRequest.getLocation().getLat());
+                location.setLon(updateUserRequest.getLocation().getLon());
+                location.setCity(updateUserRequest.getLocation().getCity());
+                location.setDistrict(updateUserRequest.getLocation().getDistrict());
+                location.setCountry(updateUserRequest.getLocation().getCountry());
             } else {
                 // Create a new location only if the user does not have one
                 location = new Location();
-                location.setLat(updateUserRequest.getUserLocation().getLat());
-                location.setLon(updateUserRequest.getUserLocation().getLon());
-                location.setCity(updateUserRequest.getUserLocation().getCity());
-                location.setDistrict(updateUserRequest.getUserLocation().getDistrict());
-                location.setCountry(updateUserRequest.getUserLocation().getCountry());
+                location.setLat(updateUserRequest.getLocation().getLat());
+                location.setLon(updateUserRequest.getLocation().getLon());
+                location.setCity(updateUserRequest.getLocation().getCity());
+                location.setDistrict(updateUserRequest.getLocation().getDistrict());
+                location.setCountry(updateUserRequest.getLocation().getCountry());
 
             }
             locationService.register(location);
@@ -94,7 +93,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUserById(@PathVariable String id, @Valid @RequestBody UpdateUserRequestAdmin updateUserRequest) {
+    public ResponseEntity<String> updateUserById(@PathVariable String id, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User user = userService.getById(id);
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found.");
@@ -202,7 +201,7 @@ public class UserController {
 
     // New endpoint to get user location
     @GetMapping("/location")
-    public ResponseEntity<Location> getUserLocation(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Location> getLocation(@RequestHeader("Authorization") String token) {
         String username = jwtUtil.extractUsername(token.substring(7)); // Extract username from token
         User user = userService.findByUsername(username);
         if (user == null || user.getLocation() == null) {

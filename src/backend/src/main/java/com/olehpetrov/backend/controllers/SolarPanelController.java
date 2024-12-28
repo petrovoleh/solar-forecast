@@ -1,7 +1,6 @@
 package com.olehpetrov.backend.controllers;
 
 import com.olehpetrov.backend.models.*;
-import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.requests.UpdatePanelRequest;
 import com.olehpetrov.backend.responses.ClusterResponse;
 import com.olehpetrov.backend.services.ClusterService;
@@ -12,10 +11,8 @@ import com.olehpetrov.backend.utils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -71,25 +68,25 @@ public class SolarPanelController {
             panel.setCluster(cluster);
         }
         // Handle location
-        if (panelRequest.getUserLocation() != null) {
+        if (panelRequest.getLocation() != null) {
             Location location;
 
             if (user.getLocation() != null) {
                 location = user.getLocation(); // Existing location
                 // Update the existing location fields
-                location.setLat(panelRequest.getUserLocation().getLat());
-                location.setLon(panelRequest.getUserLocation().getLon());
-                location.setCity(panelRequest.getUserLocation().getCity());
-                location.setDistrict(panelRequest.getUserLocation().getDistrict());
-                location.setCountry(panelRequest.getUserLocation().getCountry());
+                location.setLat(panelRequest.getLocation().getLat());
+                location.setLon(panelRequest.getLocation().getLon());
+                location.setCity(panelRequest.getLocation().getCity());
+                location.setDistrict(panelRequest.getLocation().getDistrict());
+                location.setCountry(panelRequest.getLocation().getCountry());
             } else {
                 // Create a new location if the user does not have one
                 location = new Location();
-                location.setLat(panelRequest.getUserLocation().getLat());
-                location.setLon(panelRequest.getUserLocation().getLon());
-                location.setCity(panelRequest.getUserLocation().getCity());
-                location.setDistrict(panelRequest.getUserLocation().getDistrict());
-                location.setCountry(panelRequest.getUserLocation().getCountry());
+                location.setLat(panelRequest.getLocation().getLat());
+                location.setLon(panelRequest.getLocation().getLon());
+                location.setCity(panelRequest.getLocation().getCity());
+                location.setDistrict(panelRequest.getLocation().getDistrict());
+                location.setCountry(panelRequest.getLocation().getCountry());
             }
 
             // Register the location and associate it with the user
@@ -178,26 +175,26 @@ public class SolarPanelController {
         existingPanel.setQuantity(panelRequest.getQuantity());
 
         // Handle location update
-        if (panelRequest.getUserLocation() != null) {
+        if (panelRequest.getLocation() != null) {
             Location location;
 
             // Update existing location if available
             if (existingPanel.getLocation() != null) {
                 location = existingPanel.getLocation();
-                location.setLat(panelRequest.getUserLocation().getLat());
-                location.setLon(panelRequest.getUserLocation().getLon());
-                location.setCity(panelRequest.getUserLocation().getCity());
-                location.setDistrict(panelRequest.getUserLocation().getDistrict());
-                location.setCountry(panelRequest.getUserLocation().getCountry());
+                location.setLat(panelRequest.getLocation().getLat());
+                location.setLon(panelRequest.getLocation().getLon());
+                location.setCity(panelRequest.getLocation().getCity());
+                location.setDistrict(panelRequest.getLocation().getDistrict());
+                location.setCountry(panelRequest.getLocation().getCountry());
                 locationService.register(location); // Assuming you have a method to update existing location
             } else {
                 // Create a new location if the existing one is null
                 location = new Location();
-                location.setLat(panelRequest.getUserLocation().getLat());
-                location.setLon(panelRequest.getUserLocation().getLon());
-                location.setCity(panelRequest.getUserLocation().getCity());
-                location.setDistrict(panelRequest.getUserLocation().getDistrict());
-                location.setCountry(panelRequest.getUserLocation().getCountry());
+                location.setLat(panelRequest.getLocation().getLat());
+                location.setLon(panelRequest.getLocation().getLon());
+                location.setCity(panelRequest.getLocation().getCity());
+                location.setDistrict(panelRequest.getLocation().getDistrict());
+                location.setCountry(panelRequest.getLocation().getCountry());
                 locationService.register(location); // Save the new location
                 existingPanel.setLocation(location); // Associate the new location with the panel
             }
