@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { backend_url } from '../config';
-import './Dashboard.css';
 import { useAuth } from "../context/AuthContext";
 
 interface Item {

@@ -80,7 +80,6 @@
     "manufacturer": "Manufacturer",
     "inverterInformation": "Inverter Information",
     "solarPanelsInCluster": "Solar Panels in this Cluster"
-
   },
   "barForecast": {
     "fromDate": "From Date",
@@ -114,35 +113,29 @@
     "backButton": "Back to List",
     "errorFetchingData": "Error fetching panel data"
   },
-
-    "addUser": {
-      "title": "Add New User",
-      "username": "Username",
-      "email": "Email",
-      "password": "Password",
-      "role": "Role",
-      "submitButton": "Create User",
-      "usernameError": "Username is required.",
-      "emailError": "Email is required.",
-      "emailInvalidError": "Invalid email format.",
-      "passwordError": "Password is required.",
-      "passwordLengthError": "Password must be at least 8 characters long.",
-      "roleError": "Role is required.",
-      "success": "User created successfully!",
-      "error": "Failed to create user",
-      "errorOccurred": "An error occurred:",
-      "authError": "You must be an admin to perform this action."
-
+  "addUser": {
+    "title": "Add New User",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "submitButton": "Create User",
+    "usernameError": "Username is required.",
+    "emailError": "Email is required.",
+    "emailInvalidError": "Invalid email format.",
+    "passwordError": "Password is required.",
+    "passwordLengthError": "Password must be at least 8 characters long.",
+    "roleError": "Role is required.",
+    "success": "User created successfully!",
+    "error": "Failed to create user",
+    "errorOccurred": "An error occurred:",
+    "authError": "You must be an admin to perform this action."
   },
-
   "addPanel": {
     "titleAdd": "Add a Solar Panel",
     "titleEdit": "Edit Solar Panel",
     "currentLocation": "Current location",
-    "profileLocation":"Profile location",
-
-
-
+    "profileLocation": "Profile location",
     "form": {
       "panelName": "Panel Name",
       "panelNamePlaceholder": "Enter panel name",
@@ -155,9 +148,7 @@
       "quantity": "Quantity",
       "quantityPlaceholder": "Enter quantity",
       "cluster": "Cluster",
-
       "clusterInfo": "If a cluster is selected, you cannot change the location here. You need to update the cluster's location. The location must be selected on the map, and these fields are for display only.",
-
       "clusterPlaceholder": "Select a cluster",
       "country": "Country",
       "countryPlaceholder": "Enter country",
@@ -168,7 +159,6 @@
       "submitButtonAdd": "Add Panel",
       "submitButtonEdit": "Update Panel"
     },
-
     "mapSection": {
       "header": "Select location on the map",
       "defaultCountry": "Lithuania",
@@ -188,7 +178,6 @@
     "titleAdd": "Add a Cluster",
     "titleEdit": "Edit Cluster",
     "currentLocation": "Current location",
-
     "form": {
       "panelName": "Cluster Name",
       "panelNamePlaceholder": "Enter panel name",
@@ -201,7 +190,6 @@
       "description": "Description",
       "quantityPlaceholder": "Enter quantity",
       "cluster": "Cluster",
-
       "clusterInfo": "The location must be selected on the map, and these fields are for display only.",
       "selectInverter": "Select an Inverter",
       "clusterPlaceholder": "Select a cluster",
@@ -214,7 +202,6 @@
       "submitButtonAdd": "Create",
       "submitButtonEdit": "Update"
     },
-
     "mapSection": {
       "header": "Select location on the map",
       "defaultCountry": "Lithuania",
@@ -239,16 +226,14 @@
     "role": "Role",
     "user": "User",
     "admin": "Admin",
-
     "country": "Country",
-      "countryPlaceholder": "Enter your country",
-      "city": "City or Town",
-      "cityPlaceholder": "Enter your city or town",
-      "district": "District",
-      "districtPlaceholder": "Enter your district",
-
-      "save": "Save Changes",
-      "discard": "Discard Changes",
+    "countryPlaceholder": "Enter your country",
+    "city": "City or Town",
+    "cityPlaceholder": "Enter your city or town",
+    "district": "District",
+    "districtPlaceholder": "Enter your district",
+    "save": "Save Changes",
+    "discard": "Discard Changes",
     "mapSection": {
       "header": "Select location on the map",
       "defaultCountry": "Lithuania",
@@ -261,9 +246,5 @@
       "successUpdate": "Profile updated successfully!",
       "errorUpdate": "An error occurred while updating the profile."
     }
-
+  }
 }
-
-
-}
-

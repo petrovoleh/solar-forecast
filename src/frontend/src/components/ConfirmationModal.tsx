@@ -1,4 +1,3 @@
-// ConfirmationModal.tsx
 import React from 'react';
 
 interface ConfirmationModalProps {

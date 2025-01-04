@@ -3,13 +3,13 @@
     "title": "Prisijungti",
     "emailOrUsername": "El. paštas arba vartotojo vardas",
     "emailOrUsernameError": "El. paštas arba vartotojo vardas yra privalomas",
-    "emailInvalidError": "El. pašto adresas yra neteisingas",
+    "emailInvalidError": "Neteisingas el. paštas",
     "password": "Slaptažodis",
     "passwordError": "Slaptažodis yra privalomas",
-    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis nei 8 simboliai",
+    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis kaip 8 simboliai",
     "submitButton": "Prisijungti",
     "signInSuccess": "Prisijungimas sėkmingas",
-    "signInFailed": "Prisijungimas nepavyko",
+    "signInFailed": "Nepavyko prisijungti",
     "errorOccurred": "Įvyko klaida: "
   },
   "signUp": {
@@ -18,11 +18,11 @@
     "nameError": "Vardas yra privalomas",
     "email": "El. paštas",
     "emailError": "El. paštas yra privalomas",
-    "emailInvalidError": "El. paštas yra neteisingas",
+    "emailInvalidError": "Neteisingas el. paštas",
     "password": "Slaptažodis",
     "passwordError": "Slaptažodis yra privalomas",
-    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis nei 6 simboliai",
-    "confirmPassword": "Patvirtinkite slaptažodį",
+    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis kaip 6 simboliai",
+    "confirmPassword": "Patvirtinti slaptažodį",
     "confirmPasswordError": "Slaptažodžiai nesutampa",
     "submitButton": "Registruotis",
     "signUpSuccess": "Registracija sėkminga",
@@ -35,68 +35,65 @@
     "email": "El. paštas",
     "address": "Adresas",
     "edit": "Redaguoti profilį",
-    "exit": "Išeiti",
-    "loading": "Kraunasi...",
+    "exit": "Atsijungti",
     "error": "Klaida gaunant profilio duomenis",
-    "notSet": "Nenustatyta",
-    "confirmExitMessage": "Ar tikrai norite išeiti?"
+    "notSet": "Nenurodyta",
+    "confirmExitMessage": "Ar tikrai norite atsijungti?"
   },
   "nav": {
-    "home": "Pagrindinis",
+    "home": "Pradžia",
     "profile": "Profilis",
-    "dashboard": "Prietaisų skydelis",
-    "myPanels": "Mano plokštės",
+    "dashboard": "Skydelis",
+    "myPanels": "Mano skydeliai",
     "myClusters": "Mano klasteriai",
     "forecast": "Prognozė",
     "signIn": "Prisijungti",
     "signUp": "Registruotis"
   },
-
   "clusterList": {
-    "title": "Klasterių Sąrašas",
-    "loadingMessage": "Apdorojamas jūsų užklausa, tai gali užtrukti kelias sekundes...",
-    "noPanelsMessage": "Dar nėra pridėtų klasterių ar saulės panelių",
-    "filterPlaceholder": "Filtruoti pagal pavadinimą ar vietą",
-    "addCluster": "Pridėti Naują Klasterį",
-    "listView": "Sąrašo Vaizdas",
-    "gridView": "Tinklelio Vaizdas",
+    "title": "Klasterių sąrašas",
+    "noPanelsMessage": "Klasterių ar skydelių dar nėra pridėta",
+    "loadingMessage": "Apdorojama užklausa, tai gali užtrukti kelias sekundes...",
+    "filterPlaceholder": "Filtruoti pagal pavadinimą arba vietą",
+    "addCluster": "Pridėti naują klasterį",
+    "listView": "Sąrašas",
+    "gridView": "Tinklelis",
     "sortBy": "Rūšiuoti pagal:",
     "name": "Pavadinimas",
     "description": "Aprašymas",
     "location": "Vieta",
-    "inverter": "Inverteris",
+    "inverter": "Keitiklis",
     "efficiency": "Efektyvumas",
     "actions": "Veiksmai",
     "view": "Peržiūrėti",
     "edit": "Redaguoti",
-    "type": "Typas",
     "delete": "Ištrinti",
-    "barForecast": "Juostos prognozė",
+    "type": "Tipas",
+    "barForecast": "Juostinė prognozė",
     "graphForecast": "Grafiko prognozė",
-    "noClustersMessage": "Klasterių dar nepridėta.",
+    "noClustersMessage": "Klasterių dar nėra pridėta.",
     "addButton": "Pridėti naują skydelį",
-    "powerRating": "Galingumo reitingas",
+    "powerRating": "Galia",
     "quantity": "Kiekis",
     "cluster": "Klasteris",
     "capacity": "Talpa",
     "manufacturer": "Gamintojas",
-    "inverterInformation": "Keitiklio informacija",
-    "solarPanelsInCluster": "Saulės moduliai šiame klasteryje"
-
+    "inverterInformation": "Informacija apie keitiklį",
+    "solarPanelsInCluster": "Saulės skydeliai šiame klasteryje"
   },
   "barForecast": {
-    "fromDate": "Pradžios data",
-    "toDate": "Pabaigos data",
+    "fromDate": "Nuo datos",
+    "toDate": "Iki datos",
     "okButton": "OK",
-    "totalEnergyGenerated": "Bendras sugeneruotas energijos kiekis šiuo laikotarpiu: {{total}} kWh",
-    "yAxisLabel": "Energija (kWh)",
+    "totalEnergyGenerated": "Bendra energija per šį laikotarpį: {{total}} kWh",
+    "yAxisLabel": "Bendra energija (kWh)",
     "errorRetrievingData": "Nepavyko gauti dienos sumų.",
-    "tokenNotFound": "Nepavyko rasti žetono. Prašome prisijungti."
+    "tokenNotFound": "Žetonas nerastas. Prašome prisijungti."
   },
   "notFound": {
     "title": "404 - Puslapis nerastas",
     "errorTitle": "Klaida",
-    "message": "Oi! Puslapis, kurio ieškote, neegzistuoja.",
+    "message": "Oi! Ieškomo puslapio nėra.",
     "goBack": "Grįžti į pradžią"
   },
   "viewPanel": {
@@ -108,64 +105,59 @@
     "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
     "efficiency": "Efektyvumas (%)",
     "quantity": "Kiekis",
-    "location": "Informacija apie vietą",
+    "location": "Vietos informacija",
     "country": "Šalis",
     "city": "Miestas",
     "district": "Rajonas",
     "editButton": "Redaguoti skydelį",
     "backButton": "Grįžti į sąrašą",
-    "errorFetchingData": "Nepavyko gauti skydelio duomenų"
+    "errorFetchingData": "Klaida gaunant skydelio duomenis"
   },
-  "lt": {
-    "addUser": {
-      "title": "Pridėti naują vartotoją",
-      "username": "Vartotojo vardas",
-      "email": "El. paštas",
-      "password": "Slaptažodis",
-      "role": "Rolė",
-      "submitButton": "Sukurti vartotoją",
-      "usernameError": "Vartotojo vardas yra būtinas.",
-      "emailError": "El. paštas yra būtinas.",
-      "emailInvalidError": "Neteisingas el. pašto formatas.",
-      "passwordError": "Slaptažodis yra būtinas.",
-      "passwordLengthError": "Slaptažodis turi būti bent 8 simbolių ilgio.",
-      "roleError": "Rolė yra būtina.",
-      "success": "Vartotojas sėkmingai sukurtas!",
-      "error": "Nepavyko sukurti vartotojo",
-      "errorOccurred": "Įvyko klaida:",
-      "authError": "Jūs turite būti administratorius, kad atliktumėte šį veiksmą."
-    }
+  "addUser": {
+    "title": "Pridėti naują vartotoją",
+    "username": "Vartotojo vardas",
+    "email": "El. paštas",
+    "password": "Slaptažodis",
+    "role": "Rolė",
+    "submitButton": "Sukurti vartotoją",
+    "usernameError": "Vartotojo vardas yra privalomas.",
+    "emailError": "El. paštas yra privalomas.",
+    "emailInvalidError": "Neteisingas el. pašto formatas.",
+    "passwordError": "Slaptažodis yra privalomas.",
+    "passwordLengthError": "Slaptažodis turi būti ne trumpesnis kaip 8 simboliai.",
+    "roleError": "Rolė yra privaloma.",
+    "success": "Vartotojas sėkmingai sukurtas!",
+    "error": "Nepavyko sukurti vartotojo",
+    "errorOccurred": "Įvyko klaida:",
+    "authError": "Jūs turite būti administratorius, kad galėtumėte atlikti šį veiksmą."
   },
   "addPanel": {
-    "titleAdd": "Pridėti saulės bateriją",
-    "titleEdit": "Redaguoti saulės bateriją",
+    "titleAdd": "Pridėti saulės skydelį",
+    "titleEdit": "Redaguoti saulės skydelį",
     "currentLocation": "Dabartinė vieta",
-    "profileLocation": "Vieta profilyje",
-
-
-
+    "profileLocation": "Profilio vieta",
     "form": {
-      "panelName": "Baterijos pavadinimas",
-      "panelNamePlaceholder": "Įveskite baterijos pavadinimą",
-      "powerRating": "Galingumas (W)",
-      "powerRatingPlaceholder": "Įveskite galingumą",
+      "panelName": "Skydelio pavadinimas",
+      "panelNamePlaceholder": "Įveskite skydelio pavadinimą",
+      "powerRating": "Galia (W)",
+      "powerRatingPlaceholder": "Įveskite galią",
       "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
       "temperatureCoefficientPlaceholder": "Įveskite temperatūros koeficientą",
       "efficiency": "Efektyvumas (%)",
       "efficiencyPlaceholder": "Įveskite efektyvumą",
       "quantity": "Kiekis",
       "quantityPlaceholder": "Įveskite kiekį",
-      "cluster": "Klastė",
-      "clusterInfo": "Jei pasirinktas klasteris, vietos čia pakeisti negalite. Jums reikia atnaujinti klasterio vietą. Vieta turi būti pasirinkta žemėlapyje, o šie laukai skirti tik patogiam peržiūrėjimui.",
-      "clusterPlaceholder": "Pasirinkite klastę",
+      "cluster": "Klasteris",
+      "clusterInfo": "Jei pasirinktas klasteris, vietos čia pakeisti negalima. Reikia atnaujinti klasterio vietą. Vieta turi būti pasirinkta žemėlapyje, o šie laukai skirti tik rodymui.",
+      "clusterPlaceholder": "Pasirinkite klasterį",
       "country": "Šalis",
       "countryPlaceholder": "Įveskite šalį",
       "city": "Miestas",
       "cityPlaceholder": "Įveskite miestą",
       "district": "Rajonas",
       "districtPlaceholder": "Įveskite rajoną",
-      "submitButtonAdd": "Pridėti bateriją",
-      "submitButtonEdit": "Atnaujinti bateriją"
+      "submitButtonAdd": "Pridėti skydelį",
+      "submitButtonEdit": "Atnaujinti skydelį"
     },
     "mapSection": {
       "header": "Pasirinkite vietą žemėlapyje",
@@ -174,25 +166,23 @@
       "defaultDistrict": "Vilniaus apskritis"
     },
     "responseMessages": {
-      "successAdd": "Baterija sėkmingai pridėta!",
-      "successEdit": "Baterija sėkmingai atnaujinta!",
+      "successAdd": "Skydelis sėkmingai pridėtas!",
+      "successEdit": "Skydelis sėkmingai atnaujintas!",
       "errorFetchClusters": "Nepavyko gauti klasterių.",
-      "errorFetchPanel": "Nepavyko gauti baterijos duomenų.",
-      "errorSubmit": "Įvyko klaida pateikiant bateriją.",
-      "notLoggedIn": "Norėdami pridėti ar redaguoti bateriją, turite prisijungti."
+      "errorFetchPanel": "Nepavyko gauti skydelio duomenų.",
+      "errorSubmit": "Įvyko klaida siunčiant skydelį.",
+      "notLoggedIn": "Jūs turite būti prisijungęs, kad galėtumėte pridėti ar redaguoti skydelį."
     }
   },
   "addCluster": {
     "titleAdd": "Pridėti klasterį",
     "titleEdit": "Redaguoti klasterį",
     "currentLocation": "Dabartinė vieta",
-
     "form": {
-      "selectInverter": "Pasirinkite інверterį",
       "panelName": "Klasterio pavadinimas",
-      "panelNamePlaceholder": "Įveskite pavadinimą",
-      "powerRating": "Galingumas (W)",
-      "powerRatingPlaceholder": "Įveskite galingumą",
+      "panelNamePlaceholder": "Įveskite klasterio pavadinimą",
+      "powerRating": "Galia (W)",
+      "powerRatingPlaceholder": "Įveskite galią",
       "temperatureCoefficient": "Temperatūros koeficientas (%/°C)",
       "temperatureCoefficientPlaceholder": "Įveskite temperatūros koeficientą",
       "efficiency": "Efektyvumas (%)",
@@ -200,9 +190,8 @@
       "description": "Aprašymas",
       "quantityPlaceholder": "Įveskite kiekį",
       "cluster": "Klasteris",
-
-      "clusterInfo": "Vieta turi būti pažymėta žemėlapyje, o šie laukai yra tik rodymui.",
-
+      "clusterInfo": "Vieta turi būti pasirinkta žemėlapyje, o šie laukai skirti tik rodymui.",
+      "selectInverter": "Pasirinkite keitiklį",
       "clusterPlaceholder": "Pasirinkite klasterį",
       "country": "Šalis",
       "countryPlaceholder": "Įveskite šalį",
@@ -213,7 +202,6 @@
       "submitButtonAdd": "Sukurti",
       "submitButtonEdit": "Atnaujinti"
     },
-
     "mapSection": {
       "header": "Pasirinkite vietą žemėlapyje",
       "defaultCountry": "Lietuva",
@@ -221,12 +209,12 @@
       "defaultDistrict": "Vilniaus apskritis"
     },
     "responseMessages": {
-      "successAdd": "Baterija sėkmingai pridėta!",
-      "successEdit": "Baterija sėkmingai atnaujinta!",
+      "successAdd": "Klasteris sėkmingai pridėtas!",
+      "successEdit": "Klasteris sėkmingai atnaujintas!",
       "errorFetchClusters": "Nepavyko gauti klasterių.",
-      "errorFetchPanel": "Nepavyko gauti baterijos duomenų.",
-      "errorSubmit": "Įvyko klaida pateikiant bateriją.",
-      "notLoggedIn": "Norėdami pridėti ar redaguoti bateriją, turite prisijungti."
+      "errorFetchPanel": "Nepavyko gauti skydelio duomenų.",
+      "errorSubmit": "Įvyko klaida siunčiant klasterį.",
+      "notLoggedIn": "Jūs turite būti prisijungęs, kad galėtumėte pridėti ar redaguoti klasterį."
     }
   },
   "editProfile": {
@@ -235,18 +223,17 @@
     "usernamePlaceholder": "Įveskite savo vardą",
     "email": "El. paštas",
     "emailPlaceholder": "Įveskite savo el. paštą",
-    "role": "Vaidmuo",
+    "role": "Rolė",
     "user": "Vartotojas",
     "admin": "Administratorius",
-      "country": "Šalis",
-      "countryPlaceholder": "Įveskite savo šalį",
-      "city": "Miestas arba miestelis",
-      "cityPlaceholder": "Įveskite savo miestą arba miestelį",
-      "district": "Rajonas",
-      "districtPlaceholder": "Įveskite savo rajoną",
-
-      "save": "Išsaugoti pakeitimus",
-      "discard": "Atšaukti pakeitimus",
+    "country": "Šalis",
+    "countryPlaceholder": "Įveskite savo šalį",
+    "city": "Miestas ar gyvenvietė",
+    "cityPlaceholder": "Įveskite savo miestą ar gyvenvietę",
+    "district": "Rajonas",
+    "districtPlaceholder": "Įveskite savo rajoną",
+    "save": "Išsaugoti pakeitimus",
+    "discard": "Atmesti pakeitimus",
     "mapSection": {
       "header": "Pasirinkite vietą žemėlapyje",
       "defaultCountry": "Lietuva",
@@ -260,5 +247,4 @@
       "errorUpdate": "Įvyko klaida atnaujinant profilį."
     }
   }
-
 }

@@ -1,9 +1,8 @@
-// Header.tsx
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {useAuth} from '../context/AuthContext'; // Import the Auth context
+import {useAuth} from '../context/AuthContext';
 import LanguageSwitcher from "./LanguageSwitcher";
-import {useTranslation} from "react-i18next"; // Optional styling
+import {useTranslation} from "react-i18next";
 
 const Header: React.FC = () => {
     // Using the auth context to get the current authentication state

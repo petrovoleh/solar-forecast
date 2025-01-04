@@ -11,7 +11,7 @@ interface ForecastData {
     power_kw: number;
 }
 
-const PanelForecast: React.FC = () => {
+const GraphForecast: React.FC = () => {
     const { t } = useTranslation();
     const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -161,4 +161,4 @@ const PanelForecast: React.FC = () => {
     );
 };
 
-export default PanelForecast;
+export default GraphForecast;

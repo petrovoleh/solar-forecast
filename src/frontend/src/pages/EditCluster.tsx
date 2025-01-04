@@ -35,7 +35,7 @@ interface Inverter {
     name: string;
 }
 
-const AddCluster: React.FC = () => {
+const EditCluster: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
     const { t } = useTranslation();
@@ -314,4 +314,4 @@ const AddCluster: React.FC = () => {
     );
 };
 
-export default AddCluster;
+export default EditCluster;

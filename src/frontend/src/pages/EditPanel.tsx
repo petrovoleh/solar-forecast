@@ -32,7 +32,7 @@ interface PanelFormData {
     clusterId?: string; // Add clusterId to the form data
 }
 
-const AddPanel: React.FC = () => {
+const EditPanel: React.FC = () => {
     const {id} = useParams<{ id: string }>(); // Extract the ID from the route
     const { t } = useTranslation();
 
@@ -356,4 +356,4 @@ const AddPanel: React.FC = () => {
         ;
 };
 
-export default AddPanel;
+export default EditPanel;
