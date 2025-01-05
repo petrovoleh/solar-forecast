@@ -16,9 +16,9 @@ COPY . .
 # Build the React app
 RUN npm run build
 
+ENV PORT=13415
 # Expose the port the app will run on
-EXPOSE 3000
-ENV REACT_APP_WEBSOCKET_URL=ws://193.219.91.103:13415/
+EXPOSE 13415
 
 # Start the application
 CMD ["npm", "start"]
