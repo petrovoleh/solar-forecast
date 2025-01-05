@@ -33,20 +33,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF protection for stateless APIs
+                // Enable CORS and disable CSRF
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                // Configure authentication and authorization
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()  // Allow access to signup and signin
-                        .anyRequest().authenticated()  // All other requests require authentication
+                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()
+                        .anyRequest().authenticated()
                 )
+                // Use stateless session management
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // Use stateless session management
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        // Add JWT filter before UsernamePasswordAuthenticationFilter
+        // Add JWT filter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
