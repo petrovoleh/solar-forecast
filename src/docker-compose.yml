@@ -3,15 +3,13 @@ version: '3.8'
 services:
   # MongoDB service
   mongo:
-    build:
-      context: ./data  # Path to the directory with the Dockerfile for MongoDB
-      dockerfile: Dockerfile  # The actual MongoDB Dockerfile in ./data
+    image: mongo:4.4  # Use MongoDB 4.4 instead of the default latest version
     environment:
       - MONGO_INITDB_ROOT_USERNAME=rootuser
       - MONGO_INITDB_ROOT_PASSWORD=rootpassword
-      - MONGO_INITDB_DATABASE=mydatabase
+      - MONGO_INITDB_DATABASE=solarpanelapp
     volumes:
-      - mongo-data:/data/db  # Persist MongoDB data
+      - mongo-data:/data/db
     ports:
       - "27017:27017"
 
