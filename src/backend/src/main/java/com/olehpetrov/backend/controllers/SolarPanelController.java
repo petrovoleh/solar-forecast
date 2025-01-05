@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/panel")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SolarPanelController {
 
     private static final Logger logger = LoggerFactory.getLogger(SolarPanelController.class);

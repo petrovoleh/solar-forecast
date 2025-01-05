@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inverter")
-@CrossOrigin(origins = "http://localhost:3000")
 public class InverterController {
 
     private static final Logger logger = LoggerFactory.getLogger(InverterController.class);

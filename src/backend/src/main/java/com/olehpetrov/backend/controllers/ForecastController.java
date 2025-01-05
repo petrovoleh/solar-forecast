@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/forecast")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ForecastController {
 
     private static final Logger logger = LoggerFactory.getLogger(ForecastController.class);

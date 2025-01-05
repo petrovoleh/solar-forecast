@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cluster")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ClusterController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterController.class);

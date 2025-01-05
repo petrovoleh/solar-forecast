@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
