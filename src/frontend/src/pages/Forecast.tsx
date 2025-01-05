@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './PanelList.css';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { backend_url } from "../config";

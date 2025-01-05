@@ -3,7 +3,6 @@ import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {format, parseISO} from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import './Forecast.css';
 import {backend_url} from "../config";
 
 interface ForecastData {
