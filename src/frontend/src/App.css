@@ -1436,7 +1436,7 @@ body {
     background-color: #004d40;
     color: white;
     text-align: center;
-    padding: 2rem;
+    /*padding: 2rem;*/
     width: 100%;
 }
 .header h1 {
