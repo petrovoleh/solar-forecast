@@ -24,7 +24,7 @@ import static com.olehpetrov.backend.models.Role.ROLE_USER;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://193.219.91.103:13415")
 @RequestMapping("/api/auth")
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
