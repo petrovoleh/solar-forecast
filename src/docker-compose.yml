@@ -21,7 +21,7 @@ services:
       context: ./frontend  # Path to the directory with the Dockerfile for React
       dockerfile: Dockerfile  # The React Dockerfile in ./frontend
     ports:
-      - "3000:13415"  # Expose React app on port 3000
+      - "3000:3000"  # Expose React app on port 3000
     depends_on:
       - mongo  # Ensure MongoDB starts before frontend
 
