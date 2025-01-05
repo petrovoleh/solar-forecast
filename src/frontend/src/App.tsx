@@ -22,10 +22,12 @@ import NotFound from "./pages/NotFound";
 import AddInverter from "./pages/AddInverter";
 import './i18n';
 import ViewCluster from "./pages/ViewCluster";
-import ErrorPage from "./pages/ErrorPage"; // Import the i18n configuration
+import ErrorPage from "./pages/ErrorPage";
+import {ws_url} from "./config"; // Import the i18n configuration
 
 
 const App: React.FC = () => {
+    // const wsClient = new WebSocketClient(ws_url);
     return (
         <AuthProvider>
             <Helmet>
