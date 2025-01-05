@@ -40,10 +40,23 @@ services:
       context: ./backend  # Path to the directory with the Dockerfile for FastAPI
       dockerfile: Dockerfile  # The FastAPI Dockerfile in ./model
     ports:
-      - "8080:8080"  # Expose FastAPI app on port 8000
+      - "8080:8088"  # Expose FastAPI app on port 8000
     depends_on:
       - model  # Ensure MongoDB starts before backend
     environment:
       - FORECAST_URL=http://model:8000/forecast
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "8030:8030"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - inference-server
+      - grafana
+    restart: always
+
 volumes:
   mongo-data:  # Volume for MongoDB to persist data
