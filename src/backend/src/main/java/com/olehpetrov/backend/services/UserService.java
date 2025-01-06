@@ -1,8 +1,7 @@
 package com.olehpetrov.backend.services;
 
-import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Location;
-import com.olehpetrov.backend.models.Panel;
+import com.olehpetrov.backend.models.Role;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.repositories.LocationRepository;
 import com.olehpetrov.backend.repositories.UserRepository;
@@ -12,8 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+
+import static com.olehpetrov.backend.models.Role.ROLE_ADMIN;
 
 @Service
 public class UserService {
@@ -68,4 +68,25 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public void createAdminUserIfNotExists() {
+        String adminUsername = "admin";
+
+        // Check if the user already exists
+        if (userRepository.findByUsername(adminUsername).isEmpty()) {
+            // Create a new user instance
+            User adminUser = new User();
+            adminUser.setUsername(adminUsername);
+            adminUser.setPassword(passwordEncoder.encode("admin"));
+            adminUser.setEmail("admin@example.com"); // Optional, set as needed
+
+            adminUser.setRole(ROLE_ADMIN);
+
+            // Save the user to the database
+            userRepository.save(adminUser);
+
+            System.out.println("Admin user created successfully.");
+        } else {
+            System.out.println("Admin user already exists.");
+        }
+    }
 }

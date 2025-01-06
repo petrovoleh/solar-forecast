@@ -89,6 +89,11 @@ public class UserController {
 
         return ResponseEntity.ok("User details and location updated successfully.");
     }
+    @PostMapping("/createAdmin")
+    public ResponseEntity<String> createAdminUserIfNotExists() {
+        userService.createAdminUserIfNotExists();
+        return ResponseEntity.ok("Created");
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")

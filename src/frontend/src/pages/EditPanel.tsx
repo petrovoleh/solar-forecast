@@ -35,6 +35,7 @@ interface PanelFormData {
 const EditPanel: React.FC = () => {
     const {id} = useParams<{ id: string }>(); // Extract the ID from the route
     const { t } = useTranslation();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Track if the form is being submitted
 
     const isEditMode = Boolean(id); // Determine if we're in edit mode based on presence of id
     const [formData, setFormData] = useState<PanelFormData>({
@@ -111,11 +112,16 @@ const EditPanel: React.FC = () => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
             ...prevState,
-            [name]: name === 'powerRating' || name === 'efficiency' || name === 'quantity'
-                ? Math.max(parseInt(value), 1) // Ensure value is at least 1
-                : value
+            [name]: name === 'powerRating'
+                ? Math.min(Math.max(parseInt(value), 100), 10000) // Ensure value is between 100 and 10000
+                : name === 'efficiency'
+                    ? Math.min(Math.max(parseInt(value), 20), 100) // Ensure value is between 20 and 100
+                    : name === 'quantity'
+                        ? Math.min(Math.max(parseInt(value), 1), 20) // Ensure value is between 1 and 20
+                        : value
         }));
     };
+
 
     // Handle cluster selection
     const handleClusterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -200,6 +206,8 @@ const EditPanel: React.FC = () => {
 
             if (response.ok) {
                 setResponseMessage(isEditMode ? 'Panel updated successfully!' : 'Panel added successfully!');
+                setIsSubmitting(true); // Disable the button
+
             } else {
                 const errorMessage = await response.text();
                 setResponseMessage(`Error: ${errorMessage}`);
@@ -333,7 +341,11 @@ const EditPanel: React.FC = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn-submit">
+                        <button
+                            type="submit"
+                            className="btn-submit"
+                            disabled={isSubmitting} // Disable button if isSubmitting is true
+                        >
                             {isEditMode ? t('addPanel.form.submitButtonEdit') : t('addPanel.form.submitButtonAdd')}
                         </button>
                     </form>
