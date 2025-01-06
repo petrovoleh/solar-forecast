@@ -1,4 +1,4 @@
-export const backend_url = 'http://193.219.91.103:7438';
+export const backend_url = 'http://193.219.91.103:2300';
 export const ws_url = 'ws://193.219.91.103:13415/ws'
 
 
