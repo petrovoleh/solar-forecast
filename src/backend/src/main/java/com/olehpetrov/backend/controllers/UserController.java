@@ -32,7 +32,11 @@ public class UserController {
 
     @Autowired
     private JwtUtils jwtUtil;
-
+    @PostMapping("/create_admin")
+    public ResponseEntity<String> createAdminUserIfNotExists() {
+        userService.createAdminUserIfNotExists();
+        return ResponseEntity.ok("Created");
+    }
     // Endpoint to update user information (email, password, etc.)
     @PutMapping("/update")
     public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserRequest updateUserRequest) {
@@ -89,11 +93,7 @@ public class UserController {
 
         return ResponseEntity.ok("User details and location updated successfully.");
     }
-    @PostMapping("/createAdmin")
-    public ResponseEntity<String> createAdminUserIfNotExists() {
-        userService.createAdminUserIfNotExists();
-        return ResponseEntity.ok("Created");
-    }
+
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")

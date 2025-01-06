@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // Configure authentication and authorization
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll()
+                        .requestMatchers("/api/auth/signup", "/api/auth/signin","/api/user/create_admin").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Use stateless session management
