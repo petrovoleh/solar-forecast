@@ -39,9 +39,9 @@ const EditPanel: React.FC = () => {
     const isEditMode = Boolean(id); // Determine if we're in edit mode based on presence of id
     const [formData, setFormData] = useState<PanelFormData>({
         name: '',
-        powerRating: 0,
+        powerRating: 1000,
         temperatureCoefficient: 0,
-        efficiency: 0,
+        efficiency: 100,
         quantity: 1,
         location: {
             lat: 54.6872, // Default latitude (Vilnius)
@@ -108,10 +108,12 @@ const EditPanel: React.FC = () => {
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData((prevState) => ({
             ...prevState,
-            [name]: name === 'powerRating' || name === 'temperatureCoefficient' || name === 'efficiency' || name === 'quantity' ? parseInt(value) : value
+            [name]: name === 'powerRating' || name === 'efficiency' || name === 'quantity'
+                ? Math.max(parseInt(value), 1) // Ensure value is at least 1
+                : value
         }));
     };
 
@@ -182,7 +184,10 @@ const EditPanel: React.FC = () => {
             setResponseMessage('You must be logged in to add or edit a panel.');
             return;
         }
-
+        if (formData.powerRating < 1 || formData.efficiency < 1 || !formData.location?.lat || !formData.location?.lon) {
+            setResponseMessage('Power rating, efficiency, latitude, and longitude must be valid and greater than 1.');
+            return;
+        }
         try {
             const response = await fetch(isEditMode ? `${backend_url}/api/panel/${id}` : `${backend_url}/api/panel/add`, {
                 method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding

@@ -9,7 +9,7 @@ interface InverterFormData {
     efficiency: number;
 }
 
-const AddInverter: React.FC = () => {
+const EditInverter: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
     const [formData, setFormData] = useState<InverterFormData>({
@@ -145,4 +145,4 @@ const AddInverter: React.FC = () => {
     );
 };
 
-export default AddInverter;
+export default EditInverter;

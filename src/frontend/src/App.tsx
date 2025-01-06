@@ -19,7 +19,7 @@ import Forecast from "./pages/Forecast";
 import ClusterList from "./pages/ClusterList";
 import EditCluster from "./pages/EditCluster";
 import NotFound from "./pages/NotFound";
-import AddInverter from "./pages/AddInverter";
+import EditInverter from "./pages/EditInverter";
 import './i18n';
 import ViewCluster from "./pages/ViewCluster";
 import ErrorPage from "./pages/ErrorPage";
@@ -58,8 +58,8 @@ const App: React.FC = () => {
                         <Route path="/view-user/:id" element={<Profile/>}/>
 
                         <Route path="/add-cluster" element={<EditCluster/>}/>
-                        <Route path="/add-inverter" element={<AddInverter/>}/>
-                        <Route path="/edit-inverter/:id" element={<AddInverter/>}/>
+                        <Route path="/add-inverter" element={<EditInverter/>}/>
+                        <Route path="/edit-inverter/:id" element={<EditInverter/>}/>
 
                         <Route path="/edit-cluster/:id" element={<EditCluster/>}/>
                         <Route path="/view/:id" element={<ViewPanel/>}/> {/* View route */}
