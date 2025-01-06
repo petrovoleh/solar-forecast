@@ -36,9 +36,7 @@ const SignIn: React.FC = () => {
 
         if (!formState.password) {
             newErrors.password = t('signIn.passwordError');
-        } else if (formState.password.length < 8) {
-            newErrors.password = t('signIn.passwordLengthError');
-        }
+        } 
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
