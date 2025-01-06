@@ -1499,6 +1499,13 @@ body {
     width: 100vw;
     color: #333;
 }
+.home-container p {
+    font-size: 1.3rem;
+    padding-left: 20vw;
+    padding-right: 20vw;
+
+
+}
 .hero-section {
     background-color: #e0f7fa;
     text-align: center;
@@ -1509,7 +1516,12 @@ body {
     color: #004d40;
 }
 .hero-section p {
-    font-size: 1.2rem;
+    padding-left: 20vw;
+    padding-right: 20vw;
+
+    align-items: center;
+
+    font-size: 1.3rem;
     color: #00796b;
     margin: 1rem 0;
 }
