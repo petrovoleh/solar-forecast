@@ -57,7 +57,7 @@ const Forecast: React.FC = () => {
             setLoading(true); // Show loader
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/cluster/user`, {
+                const response = await fetch(`${backend_url}/api/cluster/user`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

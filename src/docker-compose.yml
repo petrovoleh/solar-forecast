@@ -1,9 +1,8 @@
 version: '3.8'
 
 services:
-  # MongoDB service
   mongo:
-    image: mongo:4.4  # Use MongoDB 4.4 instead of the default latest version
+    image: mongo:4.4
     environment:
       - MONGO_INITDB_ROOT_USERNAME=rootuser
       - MONGO_INITDB_ROOT_PASSWORD=rootpassword
@@ -13,48 +12,59 @@ services:
     ports:
       - "27017:27017"
 
-  # Frontend (React) service
-  frontend:
-    build:
-      context: ./frontend  # Path to the directory with the Dockerfile for React
-      dockerfile: Dockerfile  # The React Dockerfile in ./frontend
-    ports:
-      - "3000:3000"  # Expose React app on port 3000
-    depends_on:
-      - mongo  # Ensure MongoDB starts before frontend
+  
 
-  # Backend (FastAPI) service
   model:
     build:
-      context: ./model  # Path to the directory with the Dockerfile for FastAPI
-      dockerfile: Dockerfile  # The FastAPI Dockerfile in ./model
+      context: ./model
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"  # Expose FastAPI app on port 8000
+      - "8000:8000"
+    volumes:
+      - ./model:/app  # мапимо FastAPI код у контейнер
     depends_on:
-      - mongo  # Ensure MongoDB starts before backend
+      - mongo
 
   backend:
     build:
-      context: ./backend  # Path to the directory with the Dockerfile for FastAPI
-      dockerfile: Dockerfile  # The FastAPI Dockerfile in ./model
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"  # Expose FastAPI app on port 8000
+      - "8082:8082"
+    # volumes:
+    #   - ./backend:/app  # мапимо бекенд-код
     depends_on:
-      - model  # Ensure MongoDB starts before backend
+      - model
     environment:
       - FORECAST_URL=http://model:8000/forecast
-  nginx:
-    image: nginx:latest
-    container_name: nginx
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "8088:8088"
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8082
+      - REACT_APP_WS_URL=""
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/app  
+      - /app/node_modules 
     depends_on:
-      - backend
-      - frontend
-    restart: always
+      - mongo
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #     - "8088:8088"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   restart: always
 
 volumes:
-  mongo-data:  # Volume for MongoDB to persist data
+  mongo-data:

@@ -84,7 +84,7 @@ const PanelList: React.FC = () => {
         if (!token) return;
 
         try {
-            const response = await fetch(`${backend_url || 'http://localhost:8080'}/api/panel/${id}`, {
+            const response = await fetch(`${backend_url}/api/panel/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
