@@ -11,7 +11,12 @@ import EditProfile from './pages/EditProfile'; // Import the EditProfile page
 import Dashboard from './pages/Dashboard';
 import Header from './components/Header';
 import PanelsList from "./pages/PanelsList";
-import "./App.css"
+import './styles/base.css';
+import './styles/forms.css';
+import './styles/lists.css';
+import './styles/components.css';
+import './styles/header.css';
+import './styles/forecast.css';
 import EditPanel from "./pages/EditPanel";
 import ViewPanel from "./pages/ViewPanel";
 import {AuthProvider} from './context/AuthContext';
@@ -24,9 +29,11 @@ import './i18n';
 import ViewCluster from "./pages/ViewCluster";
 import ErrorPage from "./pages/ErrorPage";
 import {ws_url} from "./config"; // Import the i18n configuration
+import {useTranslation} from 'react-i18next';
 
 
 const App: React.FC = () => {
+    const {t} = useTranslation();
     // const wsClient = new WebSocketClient(ws_url);
     return (
         <AuthProvider>
@@ -74,8 +81,7 @@ const App: React.FC = () => {
                     </Routes>
                 </div>
                 <footer className="footer">
-                    <p>2025 Oleh Petrov | Vilnius University</p>
-
+                    <p>{t('footer.copyright')}</p>
                 </footer>
             </Router>
         </AuthProvider>

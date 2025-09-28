@@ -196,11 +196,11 @@ const ClusterList: React.FC = () => {
                             </div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.inverter')}: </strong>}
-                                {cluster.inverter?.name ? cluster.inverter.name : 'N/A'}
+                                {cluster.inverter?.name ? cluster.inverter.name : t('clusterList.notAvailable')}
                             </div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.efficiency')}: </strong>}
-                                {cluster.inverter?.efficiency ? `${cluster.inverter.efficiency}%` : 'N/A'}
+                                {cluster.inverter?.efficiency ? `${cluster.inverter.efficiency}%` : t('clusterList.notAvailable')}
                             </div>
                             <div className="cluster-actions">
                                 <button onClick={() => navigate(`/view-cluster/${cluster.id}`)} className="view-button">

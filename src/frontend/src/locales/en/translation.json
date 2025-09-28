@@ -68,6 +68,7 @@
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
+    "notAvailable": "Not available",
     "type": "Type",
     "barForecast": "Bar forecast",
     "graphForecast": "Graph Forecast",
@@ -246,5 +247,8 @@
       "successUpdate": "Profile updated successfully!",
       "errorUpdate": "An error occurred while updating the profile."
     }
+  },
+  "footer": {
+    "copyright": "2025 Oleh Petrov | Vilnius University"
   }
 }

@@ -1,0 +1,359 @@
+.cluster-container,
+.panel-container,
+.inverter-container,
+.profile-layout {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 80px 1.5rem 40px;
+    background-color: var(--color-surface-muted);
+}
+
+.cluster-card2,
+.panel-card,
+.inverter-card,
+.profile-card,
+.cluster-map-container,
+.panel-map-container,
+.cluster-view-container,
+.panel-view-container,
+.auth-form {
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: var(--shadow-elevated);
+    padding: 2rem;
+    width: min(600px, 100%);
+}
+
+.cluster-card2,
+.panel-card,
+.inverter-card,
+.profile-card,
+.cluster-map-container,
+.panel-map-container,
+.cluster-view-container,
+.panel-view-container {
+    text-align: left;
+}
+
+.auth-form {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.cluster-card2 h2,
+.panel-card h2,
+.inverter-card h2,
+.profile-card h2,
+.cluster-map-container h2,
+.panel-map-container h2,
+.cluster-view-container h2,
+.panel-view-container h2,
+.auth-form h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.cluster-info,
+.panel-info,
+.inverter-info,
+.profile-info {
+    margin-bottom: 1.5rem;
+}
+
+.location_header {
+    color: var(--color-primary-dark);
+}
+
+.location-manual-input {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label,
+label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-item p,
+.info-item input {
+    margin: 0;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background-color: var(--color-surface-alt);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    background-color: var(--color-surface);
+    box-shadow: 0 0 10px rgba(0, 121, 107, 0.1);
+}
+
+select option {
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-alt);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.auth-form a {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.auth-form a:hover {
+    text-decoration: underline;
+}
+
+.spacer {
+    margin-bottom: 1rem;
+}
+
+.error {
+    border-color: var(--color-error);
+}
+
+.error-message {
+    color: var(--color-error);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+button,
+.cluster-button,
+.panel-button,
+.inverter-button,
+.edit-button,
+.exit-button,
+.discard-button,
+.btn-submit,
+.add-panel-button,
+.add-cluster-button,
+.add-button,
+.view-button,
+.delete-button,
+.current-location-button,
+.pagination-button,
+.cta-button,
+.language-button,
+.view-toggle-buttons button,
+.panel-sort-options button,
+.cluster-sort-options button,
+.cluster-actions button,
+.panel-actions button,
+.button-group button {
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cluster-button,
+.panel-button,
+.inverter-button,
+.edit-button,
+.btn-submit,
+.add-panel-button,
+.add-cluster-button,
+.add-button,
+.view-button,
+.current-location-button,
+.pagination-button,
+.cta-button {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cluster-button:hover,
+.panel-button:hover,
+.inverter-button:hover,
+.edit-button:hover,
+.btn-submit:hover,
+.add-panel-button:hover,
+.add-cluster-button:hover,
+.add-button:hover,
+.view-button:hover,
+.current-location-button:hover,
+.pagination-button:hover,
+.cta-button:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.edit-button,
+.current-location-button {
+    width: 100%;
+}
+
+.exit-button,
+.discard-button,
+.delete-button,
+.cancel-button {
+    background-color: var(--color-danger);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 0.9rem;
+}
+
+.exit-button:hover,
+.discard-button:hover,
+.delete-button:hover,
+.cancel-button:hover {
+    background-color: var(--color-danger-dark);
+}
+
+.confirm-button {
+    background-color: var(--color-success);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+.confirm-button:hover {
+    background-color: #3d8b40;
+}
+
+.language-button {
+    background-color: var(--color-primary);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.language-button:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.cluster-actions .edit-button,
+.panel-actions .edit-button,
+.edit-button2 {
+    background-color: var(--color-warning);
+}
+
+.cluster-actions .edit-button:hover,
+.panel-actions .edit-button:hover,
+.edit-button2:hover {
+    background-color: var(--color-warning-dark);
+}
+
+.view-toggle-buttons button,
+.panel-sort-options button,
+.cluster-sort-options button {
+    background-color: #e0e0e0;
+    color: var(--color-text);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.view-toggle-buttons button.active,
+.panel-sort-options button.active,
+.cluster-sort-options button.active {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.view-toggle-buttons button:hover,
+.panel-sort-options button:hover,
+.cluster-sort-options button:hover {
+    background-color: #bdbdbd;
+}
+
+.cluster-actions,
+.panel-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.button-group button {
+    min-width: 70px;
+    height: 40px;
+}
+
+.margin10 {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .cluster-container,
+    .panel-container,
+    .inverter-container,
+    .profile-layout {
+        padding: 60px 1rem 30px;
+    }
+
+    .cluster-card2,
+    .panel-card,
+    .inverter-card,
+    .profile-card,
+    .cluster-map-container,
+    .panel-map-container,
+    .cluster-view-container,
+    .panel-view-container,
+    .auth-form {
+        padding: 1.5rem;
+    }
+
+    .cluster-card2 h2,
+    .panel-card h2,
+    .inverter-card h2,
+    .profile-card h2,
+    .cluster-map-container h2,
+    .panel-map-container h2,
+    .cluster-view-container h2,
+    .panel-view-container h2,
+    .auth-form h2 {
+        font-size: 1.25rem;
+    }
+}

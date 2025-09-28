@@ -1,0 +1,220 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: min(320px, 90vw);
+    text-align: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.75rem;
+    margin-top: 20px;
+}
+
+.map-card {
+    box-shadow: none;
+    padding: 0;
+}
+
+.map-container {
+    height: 565px;
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.map-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loader-container,
+.mini-loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-container {
+    min-height: calc(90vh - 200px);
+}
+
+.mini-loader-container {
+    min-height: calc(85vh - 300px);
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-container p {
+    margin-top: 16px;
+    font-size: 1.125rem;
+    color: #555555;
+}
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--color-text);
+}
+
+.hero-section {
+    background-color: #e0f7fa;
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.hero-section h2 {
+    font-size: 2.5rem;
+    color: var(--color-primary-dark);
+}
+
+.hero-section p,
+.home-container p {
+    font-size: 1.2rem;
+    color: #00796b;
+    margin: 1rem auto;
+    max-width: 60ch;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.stats-section {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fafafa;
+    padding: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    color: var(--color-primary-dark);
+}
+
+.stat-item p {
+    font-size: 1.1rem;
+    color: #555555;
+}
+
+.features-section,
+.testimonials-section {
+    background-color: var(--color-surface);
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.features-section h2,
+.testimonials-section h2 {
+    font-size: 2rem;
+    color: var(--color-text);
+}
+
+.feature-card,
+.testimonial {
+    margin: 1.5rem auto;
+    max-width: 720px;
+    background-color: var(--color-surface-alt);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+}
+
+.testimonial {
+    font-style: italic;
+    color: #555555;
+}
+
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 85px - 2rem);
+    text-align: center;
+    color: var(--color-text);
+}
+
+.not-found-container h1 {
+    font-size: 3rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 1rem;
+}
+
+.not-found-container p {
+    font-size: 1.5rem;
+    color: #555555;
+    margin-bottom: 2rem;
+}
+
+.not-found-container .btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.not-found-container .btn:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.profile-container {
+    padding: 20px;
+    color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        flex-direction: column;
+        align-items: center;
+    }
+}

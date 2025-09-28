@@ -1,0 +1,96 @@
+:root {
+    --color-primary: #00796b;
+    --color-primary-dark: #004d40;
+    --color-accent: #61dafb;
+    --color-warning: #ff9800;
+    --color-warning-dark: #e65100;
+    --color-danger: #970000;
+    --color-danger-dark: #4d0000;
+    --color-success: #4caf50;
+    --color-error: #ff3b30;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f9f9f9;
+    --color-surface-muted: #f4f4f9;
+    --color-text: #1d1d1f;
+    --color-text-muted: #6e6e73;
+    --color-border: #d2d2d7;
+    --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-surface-muted);
+    color: var(--color-text);
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: var(--color-accent);
+}
+
+.page-content {
+    margin-top: calc(60px + 1rem);
+    min-height: calc(100vh - 85px - 2rem);
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.footer {
+    background-color: var(--color-primary-dark);
+    color: #ffffff;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.footer p {
+    margin: 0.25rem 0 0;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

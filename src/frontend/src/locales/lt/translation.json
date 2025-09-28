@@ -68,6 +68,7 @@
     "view": "Peržiūrėti",
     "edit": "Redaguoti",
     "delete": "Ištrinti",
+    "notAvailable": "Nėra duomenų",
     "type": "Tipas",
     "barForecast": "Juostinė prognozė",
     "graphForecast": "Grafiko prognozė",
@@ -246,5 +247,8 @@
       "successUpdate": "Profilis sėkmingai atnaujintas!",
       "errorUpdate": "Įvyko klaida atnaujinant profilį."
     }
+  },
+  "footer": {
+    "copyright": "2025 Oleh Petrov | Vilniaus universitetas"
   }
 }
