@@ -70,7 +70,7 @@ code {
 
 .page-content {
     margin-top: calc(60px + 1rem);
-    min-height: calc(100vh - 85px - 2rem);
+    min-height: calc(100vh - 84px - 2rem);
     width: 100%;
     padding: 0 1rem;
 }
