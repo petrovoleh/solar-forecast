@@ -80,3 +80,6 @@ src/backend/src/main/resources/application.properties
 
 
 src/frontend/dist/
+
+
+*.pyc

@@ -12,8 +12,6 @@ services:
     ports:
       - "27017:27017"
 
-  
-
   model:
     build:
       context: ./model

@@ -19,7 +19,7 @@ COPY --from=build /app/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8082
 
 # Set active Spring profile (if needed)
-ENV SPRING_PROFILES_ACTIVE=prod
+# ENV SPRING_PROFILES_ACTIVE=prod
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

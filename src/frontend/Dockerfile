@@ -18,7 +18,7 @@ RUN npm run build
 
 # Expose the port the app will run on
 EXPOSE 3000
-ENV REACT_APP_WEBSOCKET_URL=ws://193.219.91.103:13415/
+# ENV REACT_APP_WEBSOCKET_URL=ws://193.219.91.103:13415/
 
 # Start the application
 CMD ["npm", "start"]
