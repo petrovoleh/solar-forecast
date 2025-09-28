@@ -30,7 +30,7 @@ body {
     background-color: var(--color-surface-muted);
     color: var(--color-text);
     width: 100%;
-    min-height: 100vh;
+    /* min-height: 100vh; */
     overflow-x: hidden;
 }
 
