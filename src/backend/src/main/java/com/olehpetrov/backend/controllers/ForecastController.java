@@ -42,6 +42,9 @@ public class ForecastController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     private boolean isValidDateRange(String fromDateStr, String toDateStr) {
         LocalDate fromDate = LocalDate.parse(fromDateStr.split(" ")[0]);
         LocalDate toDate = LocalDate.parse(toDateStr.split(" ")[0]);
@@ -140,7 +143,6 @@ public class ForecastController {
         }
 
         // Send the request to the forecast API
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -275,7 +277,6 @@ public class ForecastController {
 
         requestBody.put("capacity_kwp", capacity_kwp);
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);

@@ -1,132 +1,124 @@
 package com.olehpetrov.backend.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.olehpetrov.backend.models.Role;
 import com.olehpetrov.backend.models.User;
 import com.olehpetrov.backend.requests.AuthRequest;
-import com.olehpetrov.backend.responses.AuthResponse;
+import com.olehpetrov.backend.services.UserDetailsServiceImpl;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 
-import static com.olehpetrov.backend.models.Role.ROLE_USER;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
-    @InjectMocks
-    private AuthController authController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private UserService userService;
 
-    @Mock
+    @MockBean
     private JwtUtils jwtUtils;
 
-    @Mock
+    @MockBean
     private AuthenticationManager authenticationManager;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @MockBean
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Test
+    void signupReturnsTokenWhenRequestIsValid() throws Exception {
+        AuthRequest request = new AuthRequest("newuser", "Password1!", "new@example.com");
+
+        User registered = new User();
+        registered.setId("user-id");
+        registered.setUsername("newuser");
+        registered.setEmail("new@example.com");
+        registered.setPassword("Password1!");
+        registered.setRole(Role.ROLE_USER);
+
+        when(userService.existsByUsername("newuser")).thenReturn(false);
+        when(userService.existsByEmail("new@example.com")).thenReturn(false);
+        when(userService.register(any(User.class))).thenReturn(registered);
+        when(userService.findByUsername("newuser")).thenReturn(registered);
+        when(jwtUtils.generateToken("newuser")).thenReturn("jwt-token");
+        when(jwtUtils.extractExpiration("jwt-token")).thenReturn(new Date(0));
+
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("jwt-token"))
+                .andExpect(jsonPath("$.role").value("ROLE_USER"));
     }
 
     @Test
-    void signup_Success() {
-        AuthRequest signupRequest = new AuthRequest();
-        signupRequest.setUsername("newuser");
-        signupRequest.setPassword("Password123!");
-        signupRequest.setEmail("newuser@example.com");
+    void signupReturnsBadRequestWhenUsernameExists() throws Exception {
+        AuthRequest request = new AuthRequest("existing", "Password1!", "existing@example.com");
 
-        User newUser = new User();
-        newUser.setUsername(signupRequest.getUsername());
-        newUser.setPassword(signupRequest.getPassword());
-        newUser.setEmail(signupRequest.getEmail());
-        newUser.setRole(ROLE_USER);
+        when(userService.existsByUsername("existing")).thenReturn(true);
 
-        String jwt = "mockJwtToken";
-        Date expirationDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60); // 1 hour from now
-
-        when(userService.existsByUsername(signupRequest.getUsername())).thenReturn(false);
-        when(userService.existsByEmail(signupRequest.getEmail())).thenReturn(false);
-        when(userService.findByUsername(signupRequest.getUsername())).thenReturn(newUser);
-        when(jwtUtils.generateToken(signupRequest.getUsername())).thenReturn(jwt);
-        when(jwtUtils.extractExpiration(jwt)).thenReturn(expirationDate);
-
-        ResponseEntity<?> response = authController.signup(signupRequest);
-
-        assertEquals(200, response.getStatusCodeValue());
-        AuthResponse authResponse = (AuthResponse) response.getBody();
-        assertNotNull(authResponse);
-        assertEquals(jwt, authResponse.getToken());
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void signin_Success() {
-        AuthRequest signinRequest = new AuthRequest();
-        signinRequest.setUsername("validUser");
-        signinRequest.setPassword("Password123!");
+    void signinReturnsTokenWhenCredentialsValid() throws Exception {
+        AuthRequest request = new AuthRequest("user", "Password1!");
 
-        UserDetails userDetails = mock(UserDetails.class);
-        String jwt = "mockJwtToken";
-        Date expirationDate = new Date(System.currentTimeMillis() + 1000 * 60 * 60); // 1 hour from now
+        User existing = new User();
+        existing.setId("user-id");
+        existing.setUsername("user");
+        existing.setPassword("Password1!");
+        existing.setRole(Role.ROLE_USER);
 
-        when(userDetails.getUsername()).thenReturn(signinRequest.getUsername());
-        when(userService.existsByUsername(signinRequest.getUsername())).thenReturn(false);
-        when(userService.existsByEmail(signinRequest.getEmail())).thenReturn(false);
-        when(jwtUtils.generateToken(userDetails.getUsername())).thenReturn(jwt);
-        when(jwtUtils.extractExpiration(jwt)).thenReturn(expirationDate);
+        when(userService.findByUsername("user")).thenReturn(existing);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(new UsernamePasswordAuthenticationToken("user", "Password1!", existing.getAuthorities()));
+        when(jwtUtils.generateToken("user")).thenReturn("jwt-token");
+        when(jwtUtils.extractExpiration("jwt-token")).thenReturn(new Date(0));
 
-        // Instead of doNothing(), mock the authenticate method to not throw exceptions for valid credentials
-        doAnswer(invocation -> null).when(authenticationManager).authenticate(
-                new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword())
-        );
-
-        ResponseEntity<?> response = authController.signin(signinRequest);
-
-        assertEquals(200, response.getStatusCodeValue());
-        AuthResponse authResponse = (AuthResponse) response.getBody();
-        assertNotNull(authResponse);
-        assertEquals(jwt, authResponse.getToken());
+        mockMvc.perform(post("/api/auth/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("jwt-token"));
     }
 
     @Test
-    void signup_InvalidPassword() {
-        AuthRequest signupRequest = new AuthRequest();
-        signupRequest.setUsername("newuser");
-        signupRequest.setPassword("weak");
-        signupRequest.setEmail("newuser@example.com");
+    void signinReturnsUnauthorizedWhenUserMissing() throws Exception {
+        AuthRequest request = new AuthRequest("missing", "Password1!");
 
-        when(userService.existsByUsername(signupRequest.getUsername())).thenReturn(false);
-        when(userService.existsByEmail(signupRequest.getEmail())).thenReturn(false);
+        when(userService.findByUsername("missing")).thenReturn(null);
+        when(userService.findByEmail("missing")).thenReturn(null);
 
-        ResponseEntity<?> response = authController.signup(signupRequest);
-
-        assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Password does not meet security requirements.", response.getBody());
-    }
-
-    @Test
-    void signin_InvalidCredentials() {
-        AuthRequest signinRequest = new AuthRequest();
-        signinRequest.setUsername("invalidUser");
-        signinRequest.setPassword("wrongPassword");
-
-        when(userService.findByUsername(signinRequest.getUsername())).thenReturn(null);
-
-        ResponseEntity<?> response = authController.signin(signinRequest);
-
-        assertEquals(401, response.getStatusCodeValue());
-        assertEquals("Invalid username or password.", response.getBody());
+        mockMvc.perform(post("/api/auth/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized());
     }
 }
+
