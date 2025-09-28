@@ -1,31 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import React, {useEffect, useState} from 'react';
+import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@fortawesome/fontawesome-free/css/all.css';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {backend_url} from "../config";
+import {LocationData, LocationDetails} from '../types/location';
+import {reverseGeocode} from '../utils/geocoding';
+import {apiRequest, requireOk} from '../utils/apiClient';
 
 interface MapComponentProps {
     onLocationChange: (lat: number, lon: number) => void;
-    address: {
-        country: string;
-        city: string;
-        district: string;
-    };
-    onAddressChange: (address: { country: string; city: string; district: string }) => void;
+    address: LocationDetails;
+    onAddressChange: (address: LocationDetails) => void;
     lat: number; // Initial latitude
     lon: number; // Initial longitude
     disabled?: boolean; // Disable map interactions
 }
 
 const MapClickHandler: React.FC<{
-
     onLocationChange: (lat: number, lon: number) => void;
-    onAddressChange: (address: { country: string; city: string; district: string }) => void;
+    onAddressChange: (address: LocationDetails) => void;
     disabled?: boolean;
-}> = ({ onLocationChange, onAddressChange, disabled }) => {
-
+}> = ({onLocationChange, onAddressChange, disabled}) => {
     useMapEvents({
         click(e) {
             if (disabled) return;
@@ -34,17 +31,8 @@ const MapClickHandler: React.FC<{
             const lng = e.latlng.lng;
             onLocationChange(lat, lng);
 
-            // Geocode the clicked location
-            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
-                .then((response) => response.json())
-                .then((data) => {
-                    const address = data.address;
-                    onAddressChange({
-                        country: address.country || 'Unknown',
-                        city: address.city || address.town || address.village || address.hamlet || 'Unknown',
-                        district: address.state || address.county || 'Unknown',
-                    });
-                })
+            reverseGeocode(lat, lng)
+                .then(onAddressChange)
                 .catch((error) => console.error('Geocoding error:', error));
         },
     });
@@ -59,7 +47,7 @@ const customIcon = L.divIcon({
     iconAnchor: [12, 41],
 });
 
-const MoveMapToLocation: React.FC<{ lat: number; lng: number }> = ({ lat, lng }) => {
+const MoveMapToLocation: React.FC<{ lat: number; lng: number }> = ({lat, lng}) => {
     const map = useMap();
 
     // Fly to the new location with animation
@@ -71,16 +59,15 @@ const MoveMapToLocation: React.FC<{ lat: number; lng: number }> = ({ lat, lng })
 };
 
 const MapComponent: React.FC<MapComponentProps> = ({
-                                                       onLocationChange,
-                                                       address,
-                                                       onAddressChange,
-                                                       lat,
-                                                       lon,
-                                                       disabled = false,
-                                                   }) => {
+    onLocationChange,
+    address,
+    onAddressChange,
+    lat,
+    lon,
+    disabled = false,
+}) => {
     const [position, setPosition] = useState<[number, number]>([lat, lon]); // Initialize with props lat and lon
-    const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     // Update position when props change
     useEffect(() => {
@@ -88,34 +75,25 @@ const MapComponent: React.FC<MapComponentProps> = ({
     }, [lat, lon]);
     const handleProfileLocation = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${backend_url}/api/user/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const data = await requireOk<{ location?: Partial<LocationData> }>(
+                apiRequest(`${backend_url}/api/user/profile`, {auth: true}),
+            );
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch profile');
-            }
+            if (data.location) {
+                const {lat: profileLat, lon: profileLon, ...profileAddress} = data.location;
 
-            const data = await response.json();
-
-            if (data.location ) {
                 onAddressChange({
-                    country: data.location.country || 'Unknown',
-                    city: data.location.city || 'Unknown',
-                    district: data.location.district || 'Unknown',
-                })
-                const { lat, lon } = data.location;
-                if (lat && lon ) {
-                    onLocationChange(lat, lon)
+                    country: profileAddress.country || 'Unknown',
+                    city: profileAddress.city || 'Unknown',
+                    district: profileAddress.district || 'Unknown',
+                });
+
+                if (profileLat && profileLon) {
+                    onLocationChange(profileLat, profileLon);
                 }
             }
-
-
         } catch (err) {
-            console.error(err)
+            console.error(err);
         }
     };
     const handleCurrentLocation = () => {
@@ -123,22 +101,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const { latitude, longitude } = position.coords;
+                const {latitude, longitude} = position.coords;
                 setPosition([latitude, longitude]);
-                setCurrentLocation([latitude, longitude]);
                 onLocationChange(latitude, longitude);
 
                 // Geocode the current location to get address details
-                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        const address = data.address;
-                        onAddressChange({
-                            country: address.country || 'Unknown',
-                            city: address.city || address.town || address.village || address.hamlet || 'Unknown',
-                            district: address.state || address.county || 'Unknown',
-                        });
-                    })
+                reverseGeocode(latitude, longitude)
+                    .then(onAddressChange)
                     .catch((error) => console.error('Geocoding error:', error));
             },
             (error) => {

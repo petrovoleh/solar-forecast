@@ -3,6 +3,7 @@ import {useAuth} from '../context/AuthContext';
 import {backend_url} from "../config";
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next'; // Import useTranslation
+import {apiRequest} from '../utils/apiClient';
 
 interface SignInFormState {
     emailOrUsername: string;
@@ -54,47 +55,44 @@ const SignIn: React.FC = () => {
         e.preventDefault();
         if (validate()) {
             try {
-                const response = await fetch(`${backend_url}/api/auth/signin`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        username: formState.emailOrUsername,
-                        password: formState.password
-                    })
-                });
-
-                const contentType = response.headers.get('Content-Type');
+                const {response, data} = await apiRequest(
+                    `${backend_url}/api/auth/signin`,
+                    {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            username: formState.emailOrUsername,
+                            password: formState.password,
+                        }),
+                    },
+                );
 
                 if (response.ok) {
-                    if (contentType && contentType.includes('application/json')) {
-                        const result = await response.json();
+                    if (data && typeof data === 'object') {
+                        const result = data as { token?: string; expirationDate?: string; role?: string };
                         if (result.token) {
                             localStorage.setItem('token', result.token);
-                            localStorage.setItem("expirationDate", result.expirationDate);
-
+                            if (result.expirationDate) {
+                                localStorage.setItem('expirationDate', result.expirationDate);
+                            }
                         }
                         setIsLoggedIn(true);
-                        if(result.role === "ROLE_ADMIN"){
-                            localStorage.setItem("role", result.role);
+                        if (result.role === "ROLE_ADMIN") {
+                            localStorage.setItem('role', result.role);
                             setIsAdmin(true);
                         }
-                        setMessage(t('signIn.signInSuccess'));
-                    } else {
-                        const result = await response.text();
-                        localStorage.setItem('token', result);
+                    } else if (typeof data === 'string') {
+                        localStorage.setItem('token', data);
                         setIsLoggedIn(true);
-
-                        setMessage(t('signIn.signInSuccess'));
                     }
+
+                    setMessage(t('signIn.signInSuccess'));
                     navigate('/profile');
                 } else {
-                    if (contentType && contentType.includes('application/json')) {
-                        const error = await response.json();
-                        setMessage(`${t('signIn.signInFailed')}: ${error.message}`);
-                    } else {
-                        const error = await response.text();
-                        setMessage(`${t('signIn.signInFailed')}: ${error}`);
-                    }
+                    const errorMessage = typeof data === 'string'
+                        ? data
+                        : (data as { message?: string } | null)?.message;
+                    setMessage(`${t('signIn.signInFailed')}: ${errorMessage || response.statusText}`);
                 }
             } catch (error) {
                 setMessage(`${t('signIn.errorOccurred')} ${(error as Error).message}`);

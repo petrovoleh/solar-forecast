@@ -3,30 +3,14 @@ import {useParams} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config";
 import {useTranslation} from "react-i18next";
+import {LocationData, LocationDetails} from '../types/location';
+import {DEFAULT_LOCATION, updateLocationState} from '../utils/location';
+import {apiRequest, requireOk} from '../utils/apiClient';
 
-interface LocationRequest {
-    lat: number;
-    lon: number;
-    city: string;
-    district: string;
-    country: string;
-}
-interface User {
-    username: string;
-    email: string;
-    location: Address | null;
-}
-interface Address {
-    country: string;
-    city: string;
-    district: string;
-    lat: number;
-    lon: number;
-}
 interface ClusterFormData {
     name: string;
     description: string;
-    location?: LocationRequest;
+    location?: Partial<LocationData>;
     inverterId?: string; // Add inverterId to ClusterFormData
 }
 
@@ -38,46 +22,25 @@ interface Inverter {
 const EditCluster: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const [inverters, setInverters] = useState<Inverter[]>([]); // State for list of inverters
     const [formData, setFormData] = useState<ClusterFormData>({
         name: '',
         description: '',
-        location: {
-            lat: 54.6872, // Default latitude (Vilnius)
-            lon: 25.2797, // Default longitude (Vilnius)
-            city: '',
-            district: '',
-            country: ''
-        },
+        location: {...DEFAULT_LOCATION},
         inverterId: '' // Initialize selected inverter ID
     });
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-
 
     // Fetch the list of inverters on component mount
     useEffect(() => {
         const fetchInverters = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${backend_url}/api/inverter/all`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const content = data.content
-                    setInverters(content); // Set the inverter list
-
-                } else {
-                    console.error('Failed to fetch inverters');
-                }
+                const data = await requireOk<{content: Inverter[]}>(
+                    apiRequest(`${backend_url}/api/inverter/all`, {auth: true}),
+                );
+                setInverters(data.content);
             } catch (error) {
                 console.error('Error fetching inverters:', error);
             }
@@ -88,35 +51,32 @@ const EditCluster: React.FC = () => {
 
     // Fetch existing cluster data if in edit mode
     useEffect(() => {
-        if (isEditMode) {
-            const fetchClusterData = async () => {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${backend_url}/api/cluster/${id}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-                    if (response.ok) {
-                        const clusterData = await response.json();
-                        setFormData({
-                            ...clusterData,
-                            inverterId: clusterData.inverter?.id || ''
-                        });
-                    } else {
-                        setResponseMessage('Failed to fetch cluster data.');
-                    }
-                } catch (error) {
-                    setResponseMessage('An error occurred while fetching cluster data.');
-                }
-            };
-            fetchClusterData();
+        if (!isEditMode) {
+            return;
         }
+
+        const fetchClusterData = async () => {
+            try {
+                const clusterData = await requireOk<ClusterFormData & { inverter?: { id: string } }>(
+                    apiRequest(`${backend_url}/api/cluster/${id}`, {auth: true}),
+                );
+                setFormData({
+                    ...clusterData,
+                    inverterId: clusterData.inverter?.id || '',
+                    location: clusterData.location ? {...clusterData.location} : {...DEFAULT_LOCATION},
+                });
+            } catch (error) {
+                console.error('Error fetching cluster data:', error);
+                setResponseMessage('An error occurred while fetching cluster data.');
+            }
+        };
+
+        fetchClusterData();
     }, [id, isEditMode]);
 
     // Update form state on input change for non-location data
     const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const {name, value} = e.target;
         setFormData((prevState) => ({
@@ -127,25 +87,12 @@ const EditCluster: React.FC = () => {
 
     // Function to handle map location changes (lat, lon)
     const handleLocationChange = (lat: number, lon: number) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                lat,
-                lon
-            }
-        }));
+        setFormData((prevState) => updateLocationState(prevState, {lat, lon}));
     };
 
     // Function to handle address changes from map component
-    const handleAddressChange = (address: { country: string; city: string; district: string }) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                ...address
-            }
-        }));
+    const handleAddressChange = (address: LocationDetails) => {
+        setFormData((prevState) => updateLocationState(prevState, address));
     };
 
     // Function to update the map when manual address is entered
@@ -153,43 +100,33 @@ const EditCluster: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const {name, value} = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                [name]: value
-            }
-        }));
+        setFormData((prevState) => updateLocationState(prevState, {[name]: value} as Partial<LocationData>));
     };
 
     // Submit form for add or edit
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!localStorage.getItem('token')) {
             setResponseMessage('You must be logged in to add or edit a cluster.');
             return;
         }
 
         try {
-            const response = await fetch(
+            const {response, data} = await apiRequest(
                 isEditMode ? `${backend_url}/api/cluster/${id}` : `${backend_url}/api/cluster/add`,
                 {
                     method: isEditMode ? 'PUT' : 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(formData),
-                }
+                    auth: true,
+                },
             );
 
             if (response.ok) {
                 setResponseMessage(isEditMode ? 'Cluster updated successfully!' : 'Cluster added successfully!');
             } else {
-                const errorMessage = await response.text();
-                setResponseMessage(`Error: ${errorMessage}`);
+                setResponseMessage(`Error: ${data || 'Unknown error'}`);
             }
         } catch (error) {
             setResponseMessage('An error occurred while submitting the cluster.');
@@ -198,117 +135,103 @@ const EditCluster: React.FC = () => {
     };
 
     return (
-        <div className="cluster-container">
-            <div className="cluster-card2">
-                <h2>{isEditMode ? t('addCluster.titleEdit') : t('addCluster.titleAdd')}</h2>
+        <div className="panel-container">
+            <div className="panel-card">
+                <h2>{isEditMode ? t('editCluster.titleEdit') : t('editCluster.titleAdd')}</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="cluster-info">
+                    <div className="panel-info">
                         <div className="info-item">
-                            <label>{t('addCluster.form.panelName')}:</label>
+                            <label>{t('editCluster.form.clusterName')}:</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                placeholder={t('addCluster.form.panelNamePlaceholder')}
+                                placeholder={t('editCluster.form.clusterNamePlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>{t('addCluster.form.description')}:</label>
+                            <label>{t('editCluster.form.description')}:</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
-                                required
-                                placeholder={t('addCluster.form.description')}
+                                placeholder={t('editCluster.form.descriptionPlaceholder')}
                             />
+                        </div>
+                        <div className="info-item">
+                            <label>{t('editCluster.form.inverter')}:</label>
+                            <select
+                                name="inverterId"
+                                value={formData.inverterId || ''}
+                                onChange={handleInputChange}
+                            >
+                                <option value="">{t('editCluster.form.inverterPlaceholder')}</option>
+                                {inverters.map((inverter) => (
+                                    <option key={inverter.id} value={inverter.id}>
+                                        {inverter.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
-                    {/* Inverter Selection Dropdown */}
-                    <div className="info-item">
-                        <label>{t('clusterList.inverter')}:</label>
-                        <select
-                            required
-                            name="inverterId"
-                            value={formData.inverterId || ''} // Default to empty if no inverter selected
-                            onChange={(e) =>
-                                setFormData((prevState) => ({
-                                    ...prevState,
-                                    inverterId: e.target.value
-                                }))
-                            }
-                        >
-                            <option value="">{t('addCluster.form.selectInverter')}</option>
-                            {inverters.map((inverter) => (
-                                <option key={inverter.id} value={inverter.id}>
-                                    {inverter.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <p>{t('addCluster.form.clusterInfo')}</p>
+                    <p>{t('editCluster.form.locationInfo')}</p>
 
                     {/* Manual Address Input */}
                     <div className="location-manual-input">
                         <div className="info-item">
-                            <label>{t('addCluster.form.country')}:</label>
+                            <label>{t('editCluster.form.country')}:</label>
                             <input
                                 type="text"
-                                required
                                 name="country"
                                 value={formData.location?.country || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder={t('addCluster.form.countryPlaceholder')}
+                                placeholder={t('editCluster.form.countryPlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>{t('addCluster.form.city')}:</label>
+                            <label>{t('editCluster.form.city')}:</label>
                             <input
                                 type="text"
-                                required
                                 name="city"
                                 value={formData.location?.city || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder={t('addCluster.form.cityPlaceholder')}
+                                placeholder={t('editCluster.form.cityPlaceholder')}
                             />
                         </div>
                         <div className="info-item">
-                            <label>{t('addCluster.form.district')}:</label>
+                            <label>{t('editCluster.form.district')}:</label>
                             <input
                                 type="text"
-                                required
                                 name="district"
                                 value={formData.location?.district || ''}
                                 onChange={handleAddressManualChange}
-                                placeholder={t('addCluster.form.districtPlaceholder')}
+                                placeholder={t('editCluster.form.districtPlaceholder')}
                             />
                         </div>
                     </div>
 
                     <button type="submit" className="btn-submit">
-                        {isEditMode ? t('addCluster.form.submitButtonEdit') : t('addCluster.form.submitButtonAdd')}
+                        {isEditMode ? t('editCluster.form.submitButtonEdit') : t('editCluster.form.submitButtonAdd')}
                     </button>
-                    {responseMessage && <p>{responseMessage}</p>}
                 </form>
+                {responseMessage && <div className="response-message">{responseMessage}</div>}
             </div>
-
-            {/* Right side: Map */}
-            <div className="cluster-map-container">
-                <h2 className="location_header">{t('addCluster.mapSection.header')}</h2>
+            <div className="panel-map-container">
+                <h2 className="location_header">{t('editCluster.mapSection.header')}</h2>
                 <MapComponent
                     onLocationChange={handleLocationChange}
-                    address={formData.location || {
-                        country: "Lithuania",
-                        city: "Vilnius",
-                        district: "Vilnius County",
+                    address={{
+                        country: formData.location?.country || t('editCluster.mapSection.defaultCountry'),
+                        city: formData.location?.city || t('editCluster.mapSection.defaultCity'),
+                        district: formData.location?.district || t('editCluster.mapSection.defaultDistrict'),
                     }}
                     onAddressChange={handleAddressChange}
-                    lat={formData.location?.lat || 54.6872} // Default latitude (Vilnius)
-                    lon={formData.location?.lon || 25.2797} // Default longitude (Vilnius)
+                    lat={formData.location?.lat || DEFAULT_LOCATION.lat}
+                    lon={formData.location?.lon || DEFAULT_LOCATION.lon}
                 />
-
             </div>
         </div>
     );

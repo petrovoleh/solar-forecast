@@ -1,24 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom'; // Import for reading route parameters
+import {useTranslation} from 'react-i18next';
 import MapComponent from '../components/MapComponent';
 import {backend_url} from "../config"; // Import MapComponent
-import { useTranslation } from 'react-i18next';
+import {LocationData, LocationDetails} from '../types/location';
+import {DEFAULT_LOCATION, updateLocationState} from '../utils/location';
+import {apiRequest, requireOk} from '../utils/apiClient';
 
 // Define the type for cluster
 interface Cluster {
     id: string;
     name: string;
-    location: LocationRequest; // Address is of the same type as in panel
-}
-
-
-// Define the type for location request
-interface LocationRequest {
-    lat: number;
-    lon: number;
-    city: string;
-    district: string;
-    country: string;
+    location: LocationData; // Address is of the same type as in panel
 }
 
 // Define the type for the panel form data
@@ -28,13 +21,13 @@ interface PanelFormData {
     temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
-    location?: LocationRequest;
+    location?: Partial<LocationData>;
     clusterId?: string; // Add clusterId to the form data
 }
 
 const EditPanel: React.FC = () => {
     const {id} = useParams<{ id: string }>(); // Extract the ID from the route
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Track if the form is being submitted
 
     const isEditMode = Boolean(id); // Determine if we're in edit mode based on presence of id
@@ -44,13 +37,7 @@ const EditPanel: React.FC = () => {
         temperatureCoefficient: 0,
         efficiency: 100,
         quantity: 1,
-        location: {
-            lat: 54.6872, // Default latitude (Vilnius)
-            lon: 25.2797, // Default longitude (Vilnius)
-            city: '',
-            district: '',
-            country: ''
-        }
+        location: {...DEFAULT_LOCATION},
     });
     const [clusters, setClusters] = useState<Cluster[]>([]); // State to store clusters
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -59,49 +46,39 @@ const EditPanel: React.FC = () => {
     useEffect(() => {
         const fetchClusters = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${backend_url}/api/cluster/user`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
-                if (response.ok) {
-                    const clusterData = await response.json();
-                    setClusters(clusterData);
-                } else {
-                    setResponseMessage('Failed to fetch clusters.');
-                }
+                const clusterData = await requireOk<Cluster[]>(
+                    apiRequest(`${backend_url}/api/cluster/user`, {auth: true}),
+                );
+                setClusters(clusterData);
             } catch (error) {
+                console.error(error);
                 setResponseMessage('An error occurred while fetching clusters.');
             }
         };
 
-        fetchClusters();
+        const fetchPanelData = async () => {
+            if (!isEditMode) {
+                return;
+            }
 
-        if (isEditMode) {
-            const fetchPanelData = async () => {
-                try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${backend_url}/api/panel/${id}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                        },
-                    });
-                    if (response.ok) {
-                        const panelData = await response.json();
-                        setFormData({
-                            ...panelData,
-                            clusterId: panelData.cluster?.id || '', // Pre-select the cluster if it exists
-                        });
-                    } else {
-                        setResponseMessage('Failed to fetch panel data.');
-                    }
-                } catch (error) {
-                    setResponseMessage('An error occurred while fetching panel data.');
-                }
-            };
-            fetchPanelData();
-        }
+            try {
+                const panelData = await requireOk<{ cluster?: { id: string } } & PanelFormData>(
+                    apiRequest(`${backend_url}/api/panel/${id}`, {auth: true}),
+                );
+                const {cluster, ...panelDetails} = panelData;
+                setFormData({
+                    ...panelDetails,
+                    clusterId: cluster?.id || '', // Pre-select the cluster if it exists
+                    location: panelData.location ? {...panelData.location} : {...DEFAULT_LOCATION},
+                });
+            } catch (error) {
+                console.error(error);
+                setResponseMessage('An error occurred while fetching panel data.');
+            }
+        };
+
+        fetchClusters();
+        fetchPanelData();
     }, [id, isEditMode]);
     const isClusterSelected = Boolean(formData.clusterId);
 
@@ -109,15 +86,15 @@ const EditPanel: React.FC = () => {
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [name]: name === 'powerRating'
-                ? Math.min(Math.max(parseInt(value), 100), 10000) // Ensure value is between 100 and 10000
+                ? Math.min(Math.max(parseInt(value, 10), 100), 10000) // Ensure value is between 100 and 10000
                 : name === 'efficiency'
-                    ? Math.min(Math.max(parseInt(value), 20), 100) // Ensure value is between 20 and 100
+                    ? Math.min(Math.max(parseInt(value, 10), 20), 100) // Ensure value is between 20 and 100
                     : name === 'quantity'
-                        ? Math.min(Math.max(parseInt(value), 1), 20) // Ensure value is between 1 and 20
+                        ? Math.min(Math.max(parseInt(value, 10), 1), 20) // Ensure value is between 1 and 20
                         : value
         }));
     };
@@ -129,42 +106,25 @@ const EditPanel: React.FC = () => {
 
         // Find the selected cluster
         const selectedCluster = clusters.find((cluster) => cluster.id === value);
+        const fallbackLocation: LocationData = selectedCluster
+            ? selectedCluster.location
+            : {...DEFAULT_LOCATION, lat: 0, lon: 0};
 
         setFormData((prevState) => ({
-            ...prevState,
+            ...updateLocationState(prevState, fallbackLocation),
             clusterId: value,
-            location: selectedCluster ? {...selectedCluster.location} : {
-                lat: 0,
-                lon: 0,
-                country: '',
-                city: '',
-                district: '',
-            },
         }));
     };
 
 
     // Function to handle map location changes (lat, lon)
     const handleLocationChange = (lat: number, lon: number) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                lat,
-                lon
-            }
-        }));
+        setFormData((prevState) => updateLocationState(prevState, {lat, lon}));
     };
 
     // Function to handle address changes from map component
-    const handleAddressChange = (address: { country: string; city: string; district: string }) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                ...address
-            }
-        }));
+    const handleAddressChange = (address: LocationDetails) => {
+        setFormData((prevState) => updateLocationState(prevState, address));
     };
 
     // Function to update the map when manual address is entered
@@ -172,21 +132,14 @@ const EditPanel: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const {name, value} = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            location: {
-                ...prevState.location!,
-                [name]: value
-            }
-        }));
+        setFormData((prevState) => updateLocationState(prevState, {[name]: value} as Partial<LocationData>));
     };
 
     // Submit form for add or edit
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!localStorage.getItem('token')) {
             setResponseMessage('You must be logged in to add or edit a panel.');
             return;
         }
@@ -195,22 +148,22 @@ const EditPanel: React.FC = () => {
             return;
         }
         try {
-            const response = await fetch(isEditMode ? `${backend_url}/api/panel/${id}` : `${backend_url}/api/panel/add`, {
-                method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+            const {response, data} = await apiRequest(
+                isEditMode ? `${backend_url}/api/panel/${id}` : `${backend_url}/api/panel/add`,
+                {
+                    method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData),
+                    auth: true,
                 },
-                body: JSON.stringify(formData),
-            });
+            );
 
             if (response.ok) {
                 setResponseMessage(isEditMode ? 'Panel updated successfully!' : 'Panel added successfully!');
                 setIsSubmitting(true); // Disable the button
 
             } else {
-                const errorMessage = await response.text();
-                setResponseMessage(`Error: ${errorMessage}`);
+                setResponseMessage(`Error: ${data || 'Unknown error'}`);
             }
         } catch (error) {
             setResponseMessage('An error occurred while submitting the panel.');
@@ -356,14 +309,14 @@ const EditPanel: React.FC = () => {
                     <MapComponent
                         disabled={isClusterSelected}
                         onLocationChange={handleLocationChange}
-                        address={formData.location || {
-                            country: t('addPanel.mapSection.defaultCountry'),
-                            city: t('addPanel.mapSection.defaultCity'),
-                            district: t('addPanel.mapSection.defaultDistrict'),
+                        address={{
+                            country: formData.location?.country || t('addPanel.mapSection.defaultCountry'),
+                            city: formData.location?.city || t('addPanel.mapSection.defaultCity'),
+                            district: formData.location?.district || t('addPanel.mapSection.defaultDistrict'),
                         }}
                         onAddressChange={handleAddressChange}
-                        lat={formData.location?.lat || 54.6872}
-                        lon={formData.location?.lon || 25.2797}
+                        lat={formData.location?.lat || DEFAULT_LOCATION.lat}
+                        lon={formData.location?.lon || DEFAULT_LOCATION.lon}
                     />
                 </div>
             </div>

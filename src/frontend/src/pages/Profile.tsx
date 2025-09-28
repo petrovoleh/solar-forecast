@@ -4,17 +4,13 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import {useAuth} from '../context/AuthContext';
 import {backend_url} from "../config";
 import {useTranslation} from 'react-i18next'; // Import the useTranslation hook
-
-interface Address {
-    country: string;
-    city: string;
-    district: string;
-}
+import {LocationDetails} from '../types/location';
+import {apiRequest, requireOk} from '../utils/apiClient';
 
 interface User {
     username: string;
     email: string;
-    location: Address | null;
+    location: Partial<LocationDetails> | null;
 }
 
 const Profile: React.FC = () => {
@@ -30,23 +26,15 @@ const Profile: React.FC = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('token');
-                var url = `${backend_url}/api/user/profile`
+                let url = `${backend_url}/api/user/profile`;
 
                 if (id) {
-                    url = `${backend_url}/api/user/${id}`
-                }
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch profile');
+                    url = `${backend_url}/api/user/${id}`;
                 }
 
-                const data = await response.json();
+                const data = await requireOk<User>(
+                    apiRequest(url, {auth: true}),
+                );
                 setUser(data);
             } catch (err) {
                 setError(t('profile.error')); // Use translation for error message
@@ -56,7 +44,7 @@ const Profile: React.FC = () => {
         };
 
         fetchProfile();
-    }, [t]);
+    }, [id, t]);
 
     const handleEditClick = () => {
         if (id){
@@ -84,7 +72,7 @@ const Profile: React.FC = () => {
         setModalOpen(false);
     };
 
-    const displayAddress = (location: Address | null | undefined) => {
+    const displayAddress = (location: Partial<LocationDetails> | null | undefined) => {
         if (!location || (!location.country && !location.city && !location.district)) {
             return t('profile.notSet'); // Use translation for "Not set"
         }
