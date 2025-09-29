@@ -176,6 +176,7 @@ public class ForecastController {
             logger.error("Date range is out of bounds for user: {}", username);
             return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.\"}");
         }
+        Map<String, Double> aggregatedTotals = new TreeMap<>();
         Set<String> allRequestedDates = null;
         List<DailyEnergyTotal> existingRecords = null;
         Panel panel2 = null;
@@ -185,6 +186,9 @@ public class ForecastController {
                 return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
             }
             existingRecords = panelService.getDailyEnergyTotalsByDateRange(panel2, from, to);
+            for (DailyEnergyTotal record : existingRecords) {
+                aggregatedTotals.merge(record.getDate(), record.getTotalEnergy_kwh(), Double::sum);
+            }
             Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
             logger.info(String.valueOf(existingRecords.size()));
             logger.info(String.valueOf(existingDates.size()));
@@ -193,15 +197,8 @@ public class ForecastController {
             allRequestedDates.removeAll(existingDates);  // Now only missing dates remain
 
             if (allRequestedDates.isEmpty()) {
-                JSONArray dailyTotals = new JSONArray();
-                for (DailyEnergyTotal record : existingRecords) {
-                    JSONObject dayTotal = new JSONObject();
-                    dayTotal.put("date", record.getDate());
-                    dayTotal.put("totalEnergy_kwh", record.getTotalEnergy_kwh());
-                    dailyTotals.put(dayTotal);
-                }
                 logger.info("Returning cached daily energy totals for user: {}", username);
-                return ResponseEntity.ok(dailyTotals.toString());
+                return ResponseEntity.ok(buildDailyTotalsJson(aggregatedTotals));
             }
         }else   if ("cluster".equalsIgnoreCase(type)) {
             Cluster cl = clusterService.getClusterById(panelId);
@@ -228,9 +225,16 @@ public class ForecastController {
             existingRecords = panels.stream()
                     .flatMap(panel -> panelService.getDailyEnergyTotalsByDateRange(panel, from, to).stream())
                     .collect(Collectors.toList());
+            for (DailyEnergyTotal record : existingRecords) {
+                aggregatedTotals.merge(record.getDate(), record.getTotalEnergy_kwh(), Double::sum);
+            }
 
             Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
             allRequestedDates.removeAll(existingDates);
+            if (allRequestedDates.isEmpty()) {
+                logger.info("Returning cached cluster daily energy totals for user: {}", username);
+                return ResponseEntity.ok(buildDailyTotalsJson(aggregatedTotals));
+            }
             capacity_kwp = panelService.calculateTotalCapacityKwp(panels);
             Cluster cl = clusterService.getClusterById(panelId);
             if (cl != null && cl.getInverter() != null) {
@@ -297,17 +301,6 @@ public class ForecastController {
                 }
             }
 
-            JSONArray dailyTotals = new JSONArray();
-            if ( existingRecords  != null ){
-                for (DailyEnergyTotal record : existingRecords) {
-                    JSONObject dayTotal = new JSONObject();
-                    dayTotal.put("date", record.getDate());
-                    dayTotal.put("totalEnergy_kwh", record.getTotalEnergy_kwh());
-                    dailyTotals.put(dayTotal);
-                }
-            }
-
-
             for (Map.Entry<String, Double> entry : dailyEnergyMap.entrySet()) {
                 String date = entry.getKey();
                 double totalEnergy = entry.getValue();
@@ -319,17 +312,13 @@ public class ForecastController {
                     newDailyTotal.setTotalEnergy_kwh(totalEnergy);
                     panelService.saveDailyEnergyTotal(newDailyTotal);
                 }
-                JSONObject dayTotal = new JSONObject();
-                dayTotal.put("date", date);
-                dayTotal.put("totalEnergy_kwh", totalEnergy);
-                dailyTotals.put(dayTotal);
-                logger.info("put: {}", dayTotal);
-
+                aggregatedTotals.merge(date, totalEnergy, Double::sum);
             }
 
             logger.info("Daily energy totals for user: {}", username);
-            logger.info("Totals: {}", dailyTotals.toString());
-            return ResponseEntity.ok(dailyTotals.toString());
+            String totalsJson = buildDailyTotalsJson(aggregatedTotals);
+            logger.info("Totals: {}", totalsJson);
+            return ResponseEntity.ok(totalsJson);
         } else {
             logger.error("Failed to retrieve forecast for user: {}", username);
             return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
@@ -346,6 +335,17 @@ public class ForecastController {
             start = start.plusDays(1);
         }
         return dates;
+    }
+
+    private String buildDailyTotalsJson(Map<String, Double> dailyTotals) {
+        JSONArray dailyTotalsArray = new JSONArray();
+        for (Map.Entry<String, Double> entry : dailyTotals.entrySet()) {
+            JSONObject dayTotal = new JSONObject();
+            dayTotal.put("date", entry.getKey());
+            dayTotal.put("totalEnergy_kwh", entry.getValue());
+            dailyTotalsArray.put(dayTotal);
+        }
+        return dailyTotalsArray.toString();
     }
 
 
