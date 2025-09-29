@@ -26,9 +26,17 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Register a user without setting an location
+    // Register a user without setting a location
     public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public void updatePassword(User user, String rawPassword) {
+        user.setPassword(passwordEncoder.encode(rawPassword));
+    }
+
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 

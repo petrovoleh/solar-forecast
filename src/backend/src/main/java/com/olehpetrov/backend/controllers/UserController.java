@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -42,56 +43,7 @@ public class UserController {
     public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserRequest updateUserRequest) {
         String username = jwtUtil.extractUsername(token.substring(7)); // Отримання username з токена
         User user = userService.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
-        }
-
-        // Оновлення електронної пошти, якщо вона присутня
-        if (updateUserRequest.getEmail() != null && !updateUserRequest.getEmail().isEmpty()) {
-            if (!updateUserRequest.getEmail().equals(user.getEmail()) && userService.existsByEmail(updateUserRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Email is already taken.");
-            }
-            user.setEmail(updateUserRequest.getEmail());
-        }
-
-        // Оновлення пароля, якщо він присутній
-        if (updateUserRequest.getPassword() != null && !updateUserRequest.getPassword().isEmpty()) {
-            if (!isValidPassword(updateUserRequest.getPassword())) {
-                return ResponseEntity.badRequest().body("Password does not meet security requirements.");
-            }
-            user.setPassword(updateUserRequest.getPassword());
-        }
-
-        // Оновлення адреси, якщо вона присутня в запиті
-        if (updateUserRequest.getLocation() != null) {
-            Location location;
-            if (user.getLocation() != null) {
-                location = user.getLocation(); // Existing location
-                // Update the location fields
-                location.setLat(updateUserRequest.getLocation().getLat());
-                location.setLon(updateUserRequest.getLocation().getLon());
-                location.setCity(updateUserRequest.getLocation().getCity());
-                location.setDistrict(updateUserRequest.getLocation().getDistrict());
-                location.setCountry(updateUserRequest.getLocation().getCountry());
-            } else {
-                // Create a new location only if the user does not have one
-                location = new Location();
-                location.setLat(updateUserRequest.getLocation().getLat());
-                location.setLon(updateUserRequest.getLocation().getLon());
-                location.setCity(updateUserRequest.getLocation().getCity());
-                location.setDistrict(updateUserRequest.getLocation().getDistrict());
-                location.setCountry(updateUserRequest.getLocation().getCountry());
-
-            }
-            locationService.register(location);
-            user.setLocation(location);
-        }
-
-
-        userService.register(user); // Збереження оновленого користувача
-        logger.info("User updated successfully: {}", user.getUsername());
-
-        return ResponseEntity.ok("User details and location updated successfully.");
+        return handleUserUpdate(user, updateUserRequest, false);
     }
 
 
@@ -99,59 +51,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUserById(@PathVariable String id, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User user = userService.getById(id);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
-        }
-
-        // Оновлення електронної пошти, якщо вона присутня
-        if (updateUserRequest.getEmail() != null && !updateUserRequest.getEmail().isEmpty()) {
-            if (!updateUserRequest.getEmail().equals(user.getEmail()) && userService.existsByEmail(updateUserRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Email is already taken.");
-            }
-            user.setEmail(updateUserRequest.getEmail());
-        }
-
-        // Оновлення пароля, якщо він присутній
-        if (updateUserRequest.getPassword() != null && !updateUserRequest.getPassword().isEmpty()) {
-            if (!isValidPassword(updateUserRequest.getPassword())) {
-                return ResponseEntity.badRequest().body("Password does not meet security requirements.");
-            }
-            user.setPassword(updateUserRequest.getPassword());
-        }
-        if (updateUserRequest.getRole() != null) {
-            user.setRole(updateUserRequest.getRole());
-        }
-
-        // Оновлення адреси, якщо вона присутня в запиті
-        if (updateUserRequest.getLocation() != null) {
-            Location location;
-            if (user.getLocation() != null) {
-                location = user.getLocation(); // Existing location
-                // Update the location fields
-                location.setLat(updateUserRequest.getLocation().getLat());
-                location.setLon(updateUserRequest.getLocation().getLon());
-                location.setCity(updateUserRequest.getLocation().getCity());
-                location.setDistrict(updateUserRequest.getLocation().getDistrict());
-                location.setCountry(updateUserRequest.getLocation().getCountry());
-            } else {
-                // Create a new location only if the user does not have one
-                location = new Location();
-                location.setLat(updateUserRequest.getLocation().getLat());
-                location.setLon(updateUserRequest.getLocation().getLon());
-                location.setCity(updateUserRequest.getLocation().getCity());
-                location.setDistrict(updateUserRequest.getLocation().getDistrict());
-                location.setCountry(updateUserRequest.getLocation().getCountry());
-
-            }
-            locationService.register(location);
-            user.setLocation(location);
-        }
-
-
-        userService.register(user); // Збереження оновленого користувача
-        logger.info("User updated successfully: {}", user.getUsername());
-
-        return ResponseEntity.ok("User details and location updated successfully.");
+        return handleUserUpdate(user, updateUserRequest, true);
     }
 
 
@@ -232,6 +132,54 @@ public class UserController {
     // Utility method to validate password
     private boolean isValidPassword(String password) {
         return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
+    }
+    private ResponseEntity<String> handleUserUpdate(User user, UpdateUserRequest updateUserRequest, boolean allowRoleChange) {
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+
+        if (StringUtils.hasText(updateUserRequest.getEmail())) {
+            if (!updateUserRequest.getEmail().equals(user.getEmail()) && userService.existsByEmail(updateUserRequest.getEmail())) {
+                return ResponseEntity.badRequest().body("Email is already taken.");
+            }
+            user.setEmail(updateUserRequest.getEmail());
+        }
+
+        if (StringUtils.hasText(updateUserRequest.getPassword())) {
+            if (!isValidPassword(updateUserRequest.getPassword())) {
+                return ResponseEntity.badRequest().body("Password does not meet security requirements.");
+            }
+            userService.updatePassword(user, updateUserRequest.getPassword());
+        }
+
+        if (allowRoleChange && updateUserRequest.getRole() != null) {
+            user.setRole(updateUserRequest.getRole());
+        }
+
+        if (updateUserRequest.getLocation() != null) {
+            applyLocationUpdate(user, updateUserRequest.getLocation());
+        }
+
+        userService.saveUser(user);
+        logger.info("User updated successfully: {}", user.getUsername());
+
+        return ResponseEntity.ok("User details and location updated successfully.");
+    }
+
+    private void applyLocationUpdate(User user, LocationRequest locationRequest) {
+        Location location = user.getLocation();
+        if (location == null) {
+            location = new Location();
+        }
+
+        location.setLat(locationRequest.getLat());
+        location.setLon(locationRequest.getLon());
+        location.setCity(locationRequest.getCity());
+        location.setDistrict(locationRequest.getDistrict());
+        location.setCountry(locationRequest.getCountry());
+
+        location = locationService.register(location);
+        user.setLocation(location);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
