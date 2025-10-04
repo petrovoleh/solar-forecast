@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format, parseISO } from 'date-fns';
@@ -9,6 +9,14 @@ interface DailyTotalData {
     date: string;
     totalEnergy_kwh: number;
 }
+
+interface SummaryTotals {
+    lastDay: number | null;
+    lastWeek: number | null;
+    lastMonth: number | null;
+}
+
+type SummaryLoadingState = Record<keyof SummaryTotals, boolean>;
 
 const BarForecast: React.FC = () => {
     const { t } = useTranslation();
@@ -22,6 +30,16 @@ const BarForecast: React.FC = () => {
 
     const [dailyTotals, setDailyTotals] = useState<DailyTotalData[]>([]);
     const [totalEnergySum, setTotalEnergySum] = useState<number>(0);
+    const [summaryTotals, setSummaryTotals] = useState<SummaryTotals>({
+        lastDay: null,
+        lastWeek: null,
+        lastMonth: null,
+    });
+    const [summaryLoading, setSummaryLoading] = useState<SummaryLoadingState>({
+        lastDay: false,
+        lastWeek: false,
+        lastMonth: false,
+    });
     const [fromDate, setFromDate] = useState<string>(
         new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     );
@@ -32,11 +50,17 @@ const BarForecast: React.FC = () => {
     const params = new URLSearchParams(location.search);
     const type = params.get('type');
 
-    const fetchDailyTotals = async () => {
+    const buildRangeParam = (date: string, options?: { endOfDay?: boolean }) =>
+        `${date} ${options?.endOfDay ? '23:59:59' : '00:00:00'}`;
+
+    const fetchDailyTotals = useCallback(async () => {
+        if (!token || !id || !type) {
+            return;
+        }
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await fetch(
-                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
+                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${buildRangeParam(fromDate)}&to=${buildRangeParam(toDate, { endOfDay: true })}&type=${type}`,
                 {
                     method: 'GET',
                     headers: {
@@ -48,11 +72,10 @@ const BarForecast: React.FC = () => {
 
             if (!response.ok) {
                 const responseBody = await response.json(); // Wait for the JSON body
-                // throw new Error(`Error: ${response.status} - ${responseBody.statusText}`);
-                if(responseBody.statusText) {
+                if (responseBody.statusText) {
                     navigate(`/error?error_text=${encodeURIComponent(responseBody.statusText)}&error_code=${response.status}`);
                     return;
-                }else{
+                } else {
                     navigate(`/error?error_text=Unknown%20error%20occurred&error_code=${response.status}`);
                     return;
                 }
@@ -71,23 +94,121 @@ const BarForecast: React.FC = () => {
             setError(null);
         } catch (error) {
             navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
-
-            // setError(t('barForecast.errorRetrievingData'));
             console.error(error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false)
 
-    };
+    }, [fromDate, id, navigate, toDate, token, type]);
+
+    const fetchTotalSumForRange = useCallback(async (from: string, to: string): Promise<number | null> => {
+        if (!token || !id || !type) {
+            return null;
+        }
+
+        try {
+            const response = await fetch(
+                `${backend_url}/api/forecast/getTotal?panelId=${id}&from=${buildRangeParam(from)}&to=${buildRangeParam(to, { endOfDay: true })}&type=${type}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                return null;
+            }
+
+            const data: DailyTotalData[] = await response.json();
+            return data.reduce((sum: number, item: DailyTotalData) => sum + item.totalEnergy_kwh, 0);
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }, [id, token, type]);
+
+    const fetchSummaryTotals = useCallback(async () => {
+        if (!token || !id || !type) {
+            return;
+        }
+
+        const formatDateOnly = (date: Date) => date.toISOString().split('T')[0];
+        const clampToMinDate = (date: Date) => {
+            const minDate = new Date('2020-01-01T00:00:00');
+            return date < minDate ? formatDateOnly(minDate) : formatDateOnly(date);
+        };
+
+        const endDate = new Date();
+        const ranges: { key: keyof SummaryTotals; length: number }[] = [
+            { key: 'lastDay', length: 1 },
+            { key: 'lastWeek', length: 7 },
+            { key: 'lastMonth', length: 30 },
+        ];
+
+        setSummaryLoading({
+            lastDay: true,
+            lastWeek: true,
+            lastMonth: true,
+        });
+
+        for (const range of ranges) {
+            const rangeEnd = new Date(endDate);
+            const rangeStart = new Date(rangeEnd);
+            rangeStart.setDate(rangeStart.getDate() - (range.length - 1));
+
+            const from = clampToMinDate(rangeStart);
+            const to = clampToMinDate(rangeEnd);
+
+            if (new Date(from) > new Date(to)) {
+                setSummaryTotals((prev) => ({
+                    ...prev,
+                    [range.key]: null,
+                }));
+                setSummaryLoading((prev) => ({
+                    ...prev,
+                    [range.key]: false,
+                }));
+                continue;
+            }
+
+            const sum = await fetchTotalSumForRange(from, to);
+            setSummaryTotals((prev) => ({
+                ...prev,
+                [range.key]: sum !== null ? sum : null,
+            }));
+            setSummaryLoading((prev) => ({
+                ...prev,
+                [range.key]: false,
+            }));
+        }
+    }, [fetchTotalSumForRange, id, token, type]);
 
     useEffect(() => {
+        if (!token) {
+            setError(t('barForecast.tokenNotFound'));
+            setLoading(false);
+            return;
+        }
+        if (!type || !id) {
+            setError(t('barForecast.errorRetrievingData'));
+            setLoading(false);
+            return;
+        }
         if (fromDate && toDate) {
             fetchDailyTotals();
         }
-        if (!token) {
-            setError(t('barForecast.tokenNotFound'));
-            return;
-        }
-    }, [fromDate, toDate, token]);
+    }, [fetchDailyTotals, fromDate, toDate, token, type, id, t]);
+
+    useEffect(() => {
+        const loadSummary = async () => {
+            await fetchSummaryTotals();
+        };
+
+        loadSummary();
+    }, [fetchSummaryTotals]);
 
     const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFromDate(e.target.value);
@@ -129,6 +250,41 @@ const BarForecast: React.FC = () => {
                         <p className="total-energy-text">
                             {t('barForecast.totalEnergyGenerated', { total: totalEnergySum.toFixed(2) })}
                         </p>
+                        <div className="summary-section">
+                            <h2>{t('barForecast.summaryTitle')}</h2>
+                            <div className="summary-totals">
+                                <div className="summary-card">
+                                    <span className="summary-label">{t('barForecast.lastDayLabel')}</span>
+                                    <span className="summary-value">
+                                        {summaryLoading.lastDay
+                                            ? t('barForecast.summaryLoading')
+                                            : summaryTotals.lastDay !== null
+                                                ? summaryTotals.lastDay.toFixed(2)
+                                                : t('barForecast.noSummaryData')}
+                                    </span>
+                                </div>
+                                <div className="summary-card">
+                                    <span className="summary-label">{t('barForecast.lastWeekLabel')}</span>
+                                    <span className="summary-value">
+                                        {summaryLoading.lastWeek
+                                            ? t('barForecast.summaryLoading')
+                                            : summaryTotals.lastWeek !== null
+                                                ? summaryTotals.lastWeek.toFixed(2)
+                                                : t('barForecast.noSummaryData')}
+                                    </span>
+                                </div>
+                                <div className="summary-card">
+                                    <span className="summary-label">{t('barForecast.lastMonthLabel')}</span>
+                                    <span className="summary-value">
+                                        {summaryLoading.lastMonth
+                                            ? t('barForecast.summaryLoading')
+                                            : summaryTotals.lastMonth !== null
+                                                ? summaryTotals.lastMonth.toFixed(2)
+                                                : t('barForecast.noSummaryData')}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {loading &&

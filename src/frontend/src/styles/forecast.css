@@ -42,6 +42,66 @@
     border: 1px solid var(--color-border);
 }
 
+.summary-section {
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.summary-section h2 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.summary-totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.summary-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    min-width: 180px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.summary-label {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.summary-value {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 768px) {
+    .summary-card {
+        flex: 1 1 calc(50% - 1rem);
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-totals {
+        flex-direction: column;
+    }
+
+    .summary-card {
+        flex: 1 1 100%;
+    }
+}
+
 .forecast-card {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

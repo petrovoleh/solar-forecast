@@ -89,7 +89,13 @@
     "totalEnergyGenerated": "Загальна енергія, згенерована за цей період: {{total}} кВт-год",
     "yAxisLabel": "Загальна енергія (кВт-год)",
     "errorRetrievingData": "Не вдалося отримати щоденні підсумки.",
-    "tokenNotFound": "Токен не знайдено. Будь ласка, увійдіть."
+    "tokenNotFound": "Токен не знайдено. Будь ласка, увійдіть.",
+    "summaryTitle": "Останні підсумки",
+    "lastDayLabel": "Остання 1 доба",
+    "lastWeekLabel": "Останній 1 тиждень",
+    "lastMonthLabel": "Останній 1 місяць",
+    "noSummaryData": "Немає даних",
+    "summaryLoading": "Завантаження..."
   },
   "notFound": {
     "title": "404 - Сторінку не знайдено",
