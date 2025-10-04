@@ -89,7 +89,14 @@
     "totalEnergyGenerated": "Total energy generated over this period: {{total}} kWh",
     "yAxisLabel": "Total Energy (kWh)",
     "errorRetrievingData": "Failed to retrieve daily totals.",
-    "tokenNotFound": "Token not found. Please log in."
+    "tokenNotFound": "Token not found. Please log in.",
+    "quickTotalsTitle": "Recent totals",
+    "summaryLoading": "Loading quick totals...",
+    "summary": {
+      "day": "Last day",
+      "week": "Last 7 days",
+      "month": "Last 30 days"
+    }
   },
   "notFound": {
     "title": "404 - Page Not Found",

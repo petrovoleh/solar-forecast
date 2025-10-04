@@ -89,7 +89,14 @@
     "totalEnergyGenerated": "Bendra energija per šį laikotarpį: {{total}} kWh",
     "yAxisLabel": "Bendra energija (kWh)",
     "errorRetrievingData": "Nepavyko gauti dienos sumų.",
-    "tokenNotFound": "Žetonas nerastas. Prašome prisijungti."
+    "tokenNotFound": "Žetonas nerastas. Prašome prisijungti.",
+    "quickTotalsTitle": "Greitos suvestinės",
+    "summaryLoading": "Įkeliamos greitos suvestinės...",
+    "summary": {
+      "day": "Paskutinė diena",
+      "week": "Paskutinės 7 dienos",
+      "month": "Paskutinės 30 dienų"
+    }
   },
   "notFound": {
     "title": "404 - Puslapis nerastas",
