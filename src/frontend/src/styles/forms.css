@@ -24,7 +24,6 @@
     border-radius: 12px;
     box-shadow: var(--shadow-elevated);
     padding: 2rem;
-    margin: auto;
     width: min(600px, 100%);
 }
 
@@ -188,21 +187,7 @@ button,
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.exit-button{
-    width: 100%
-}
-.cluster-button,
-.panel-button,
-.inverter-button,
-.edit-button,
-.btn-submit,
-.add-panel-button,
-.add-cluster-button,
-.add-button,
-.view-button,
-.current-location-button,
-.pagination-button,
-.cta-button {
+.primary-button {
     background-color: var(--color-primary);
     color: #ffffff;
     font-weight: 600;
@@ -214,18 +199,7 @@ button,
     gap: 0.5rem;
 }
 
-.cluster-button:hover,
-.panel-button:hover,
-.inverter-button:hover,
-.edit-button:hover,
-.btn-submit:hover,
-.add-panel-button:hover,
-.add-cluster-button:hover,
-.add-button:hover,
-.view-button:hover,
-.current-location-button:hover,
-.pagination-button:hover,
-.cta-button:hover {
+.primary-button:hover {
     background-color: var(--color-primary-dark);
 }
 

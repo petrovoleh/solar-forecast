@@ -127,7 +127,7 @@ const GraphForecast: React.FC = () => {
                             />
                         </label>
 
-                        <button className="cta-button" onClick={fetchForecast}>{t('barForecast.okButton')}
+                        <button className="primary-button cta-button" onClick={fetchForecast}>{t('barForecast.okButton')}
                         </button>
                     </div>
                 </div>

@@ -296,7 +296,7 @@ const EditPanel: React.FC = () => {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="btn-submit"
+                            className="primary-button btn-submit"
                             disabled={isSubmitting} // Disable button if isSubmitting is true
                         >
                             {isEditMode ? t('addPanel.form.submitButtonEdit') : t('addPanel.form.submitButtonAdd')}

@@ -156,7 +156,7 @@ const Forecast: React.FC = () => {
             </div>
 
             {viewMode === 'list' && (
-                <div className="forecast-list-headers">
+                <div className="grid-headers forecast-list-headers">
                     <div>{t('clusterList.name')}</div>
                     <div>{t('clusterList.location')}</div>
                     <div>{t('clusterList.type')}</div>
@@ -173,7 +173,10 @@ const Forecast: React.FC = () => {
             ) : (
                 <div className={`panel-list ${viewMode}`}>
                     {filteredPanels.map((panel) => (
-                        <div key={panel.id} className="panel-cardd forecast-card">
+                        <div
+                            key={panel.id}
+                            className={`panel-cardd forecast-card ${viewMode === 'list' ? 'list-layout-card' : ''}`}
+                        >
                             <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{panel.name}</div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
@@ -183,13 +186,13 @@ const Forecast: React.FC = () => {
                             <div className="panel-actions">
                                 <button
                                     onClick={() => navigate(`/bar_forecast/${panel.id}?type=${panel.type}`)}
-                                    className="view-button"
+                                    className="primary-button view-button"
                                 >
                                     {t('clusterList.barForecast')}
                                 </button>
                                 <button
                                     onClick={() => navigate(`/panel_forecast/${panel.id}?type=${panel.type}`)}
-                                    className="view-button"
+                                    className="primary-button view-button"
                                 >
                                     {t('clusterList.graphForecast')}
                                 </button>

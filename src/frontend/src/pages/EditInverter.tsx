@@ -137,7 +137,7 @@ const EditInverter: React.FC = () => {
                         </div>
                     </div>
                     <button type="submit"
-                            className="inverter-button">{isEditMode ? 'Update Inverter' : 'Add Inverter'}</button>
+                            className="primary-button inverter-button">{isEditMode ? 'Update Inverter' : 'Add Inverter'}</button>
                     {responseMessage && <p>{responseMessage}</p>}
                 </form>
             </div>

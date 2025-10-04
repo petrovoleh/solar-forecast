@@ -132,7 +132,7 @@ const ClusterList: React.FC = () => {
                         onChange={handleFilter}
                         className="filter-input"
                     />
-                    <button onClick={() => navigate('/add-cluster')} className="add-cluster-button">
+                    <button onClick={() => navigate('/add-cluster')} className="primary-button add-cluster-button">
                         {t('clusterList.addCluster')}
                     </button>
                     <div className="view-toggle-buttons">
@@ -164,7 +164,7 @@ const ClusterList: React.FC = () => {
                 </div>
             </div>
             {viewMode === 'list' && (
-                <div className="list-headers">
+                <div className="grid-headers list-headers">
                     <div>{t('clusterList.name')}</div>
                     <div>{t('clusterList.description')}</div>
 
@@ -184,7 +184,7 @@ const ClusterList: React.FC = () => {
             ) : (
                 <div className={`cluster-list ${viewMode}`}>
                     {filteredClusters.map((cluster) => (
-                        <div key={cluster.id} className="cluster-card">
+                        <div key={cluster.id} className={`cluster-card ${viewMode === 'list' ? 'list-layout-card' : ''}`}>
                             <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{cluster.name}</div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.description')}: </strong>}
@@ -203,10 +203,10 @@ const ClusterList: React.FC = () => {
                                 {cluster.inverter?.efficiency ? `${cluster.inverter.efficiency}%` : t('clusterList.notAvailable')}
                             </div>
                             <div className="cluster-actions">
-                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)} className="view-button">
+                                <button onClick={() => navigate(`/view-cluster/${cluster.id}`)} className="primary-button view-button">
                                     {t('clusterList.view')}
                                 </button>
-                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)} className="edit-button">
+                                <button onClick={() => navigate(`/edit-cluster/${cluster.id}`)} className="primary-button edit-button">
                                     {t('clusterList.edit')}
                                 </button>
                                 <button onClick={() => handleDelete(cluster.id)} className="delete-button">

@@ -244,7 +244,7 @@ const BarForecast: React.FC = () => {
                                 min={fromDate > "2020-01-01" ? fromDate : "2020-01-01"}
                             />
                         </label>
-                        <button className="cta-button" onClick={fetchDailyTotals}>
+                        <button className="primary-button cta-button" onClick={fetchDailyTotals}>
                             {t('barForecast.okButton')}
                         </button>
                         <p className="total-energy-text">

@@ -10,17 +10,14 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.list-header,
-.panel-list-header {
+.list-header {
     display: flex;
     flex-direction: column;
     gap: 20px;
     margin-bottom: 20px;
 }
 
-.list-headers,
-.panel-list-headers,
-.forecast-list-headers {
+.grid-headers {
     display: grid;
     gap: 0.5rem;
     background-color: #f1f1f1;
@@ -41,8 +38,7 @@
     grid-template-columns: repeat(4, 1fr);
 }
 
-.list-controls,
-.panel-list-controls {
+.list-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -78,8 +74,7 @@
     flex-direction: column;
 }
 
-.cluster-list.list .cluster-card,
-.panel-list.list .panel-cardd {
+.list-layout-card {
     display: grid;
     gap: 0.5rem;
     align-items: center;
@@ -97,6 +92,10 @@
 
 .panel-list.list .panel-cardd {
     grid-template-columns: repeat(7, minmax(120px, 1fr));
+}
+
+.panel-list.list .forecast-card {
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .cluster-list.grid,
@@ -220,16 +219,13 @@
 }
 
 @media (max-width: 768px) {
-    .list-headers,
-    .panel-list-headers,
+    .grid-headers,
     .cluster-list.list .cluster-card,
-    .panel-list.list .panel-cardd,
-    .forecast-list-headers {
+    .panel-list.list .panel-cardd {
         grid-template-columns: repeat(2, 1fr);
     }
 
     .list-controls,
-    .panel-list-controls,
     .cluster-sort-options,
     .panel-sort-options {
         justify-content: center;

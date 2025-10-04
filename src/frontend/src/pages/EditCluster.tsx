@@ -213,7 +213,7 @@ const EditCluster: React.FC = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn-submit">
+                    <button type="submit" className="primary-button btn-submit">
                         {isEditMode ? t('editCluster.form.submitButtonEdit') : t('editCluster.form.submitButtonAdd')}
                     </button>
                 </form>

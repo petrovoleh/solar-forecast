@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
             <section className="dashboard-section">
                 <div className="section-header" onClick={() => navigate(`/add-user/`)}>
                     <h2>Users</h2>
-                    <button className="add-button">Create new User</button>
+                    <button className="primary-button add-button">Create new User</button>
                 </div>
                 <ul className="dashboard-list">
                     {users.map((user) => (
@@ -126,7 +126,7 @@ const Dashboard: React.FC = () => {
                             <span>{user.name || user.id}</span>
                             <div className="button-group">
                                 <button
-                                    className="view-button"
+                                    className="primary-button view-button"
                                     onClick={() => navigate(`/view-user/${user.id}`)}
                                 >
                                     View
@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
             <section className="dashboard-section">
                 <div className="section-header">
                     <h2>Clusters</h2>
-                    <button className="add-button" onClick={() => navigate(`/add-cluster/`)}>Create new Cluster</button>
+                    <button className="primary-button add-button" onClick={() => navigate(`/add-cluster/`)}>Create new Cluster</button>
                 </div>
                 <ul className="dashboard-list">
                     {clusters.map((cluster) => (
@@ -161,7 +161,7 @@ const Dashboard: React.FC = () => {
                             <span>{cluster.name || cluster.id}</span>
                             <div className="button-group">
                                 <button
-                                    className="view-button"
+                                    className="primary-button view-button"
                                     onClick={() => navigate(`/view-cluster/${cluster.id}`)}
                                 >
                                     View
@@ -188,7 +188,7 @@ const Dashboard: React.FC = () => {
             <section className="dashboard-section">
                 <div className="section-header">
                     <h2>Panels</h2>
-                    <button className="add-button" onClick={() => navigate(`/add-panel/`)}>Create new Panel</button>
+                    <button className="primary-button add-button" onClick={() => navigate(`/add-panel/`)}>Create new Panel</button>
                 </div>
                 <ul className="dashboard-list">
                     {panels.map((panel) => (
@@ -196,7 +196,7 @@ const Dashboard: React.FC = () => {
                             <span>{panel.name || panel.id}</span>
                             <div className="button-group">
                                 <button
-                                    className="view-button"
+                                    className="primary-button view-button"
                                     onClick={() => navigate(`/view-panel/${panel.id}`)}
                                 >
                                     View
@@ -223,10 +223,10 @@ const Dashboard: React.FC = () => {
             <section className="dashboard-section">
                 <div className="section-header">
                     <h2>Inverters</h2>
-                    <button className="add-button" onClick={()=>generateInverters("inverter")}>Generate Inverters
+                    <button className="primary-button add-button" onClick={()=>generateInverters("inverter")}>Generate Inverters
                     </button>
 
-                    <button className="add-button" onClick={() => navigate(`/add-inverter/`)}>Create new Inverter
+                    <button className="primary-button add-button" onClick={() => navigate(`/add-inverter/`)}>Create new Inverter
                     </button>
                 </div>
                 <ul className="dashboard-list">
@@ -262,7 +262,7 @@ const Dashboard: React.FC = () => {
         </div>
     <footer className="pagination-controls">
         <button
-            className="pagination-button"
+            className="primary-button pagination-button"
             onClick={() => handlePageChange('prev')}
             disabled={page === 0}
         >
@@ -270,7 +270,7 @@ const Dashboard: React.FC = () => {
         </button>
         <span className="pagination-info">Page: {page + 1}</span>
         <button
-            className="pagination-button"
+            className="primary-button pagination-button"
             onClick={() => handlePageChange('next')}
         >
             Next

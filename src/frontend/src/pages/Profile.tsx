@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
                         <p>{displayAddress(user?.location)}</p>
                     </div>
                 </div>
-                <button className="edit-button" onClick={handleEditClick}>
+                <button className="primary-button edit-button" onClick={handleEditClick}>
                     {t('profile.edit')} {/* Use translation for "Edit Profile" */}
                 </button>
                 {!id &&

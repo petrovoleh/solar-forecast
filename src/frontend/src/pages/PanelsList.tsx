@@ -114,7 +114,7 @@ const PanelList: React.FC = () => {
     return (
         <div className="panel-list-container">
             <div className="list-header">
-                <div className="panel-list-controls">
+                <div className="list-controls">
                     <input
                         type="text"
                         placeholder={t("clusterList.filterPlaceholder")}
@@ -122,7 +122,7 @@ const PanelList: React.FC = () => {
                         onChange={handleFilter}
                         className="filter-input"
                     />
-                    <button onClick={() => navigate('/add')} className="add-panel-button">
+                    <button onClick={() => navigate('/add')} className="primary-button add-panel-button">
                         {t("clusterList.addButton")}
                     </button>
                     <div className="view-toggle-buttons">
@@ -167,7 +167,7 @@ const PanelList: React.FC = () => {
             </div>
 
             {viewMode === 'list' && (
-                <div className="panel-list-headers">
+                <div className="grid-headers panel-list-headers">
                     <div>{t("clusterList.name")}</div>
                     <div>{t("clusterList.powerRating")}</div>
                     <div>{t("clusterList.efficiency")}</div>
@@ -187,7 +187,7 @@ const PanelList: React.FC = () => {
             ) : (
                 <div className={`panel-list ${viewMode}`}>
                     {filteredPanels.map((panel) => (
-                        <div key={panel.id} className="panel-cardd">
+                        <div key={panel.id} className={`panel-cardd ${viewMode === 'list' ? 'list-layout-card' : ''}`}>
                             <div>{viewMode === 'grid' && <strong>{t("clusterList.name")}: </strong>}{panel.name}</div>
                             <div>{viewMode === 'grid' && <strong>{t("clusterList.powerRating")}: </strong>}{panel.powerRating}W</div>
                             <div>{viewMode === 'grid' && <strong>{t("clusterList.efficiency")}: </strong>}{panel.efficiency}%</div>
@@ -195,10 +195,10 @@ const PanelList: React.FC = () => {
                             <div>{viewMode === 'grid' && <strong>{t("clusterList.cluster")}: </strong>}{panel.cluster?.name}</div>
                             <div>{viewMode === 'grid' && <strong>{t("clusterList.location")}: </strong>}{panel.location.city}, {panel.location.country}</div>
                             <div className="panel-actions">
-                                <button onClick={() => navigate(`/view/${panel.id}`)} className="view-button">
+                                <button onClick={() => navigate(`/view/${panel.id}`)} className="primary-button view-button">
                                     {t("clusterList.view")}
                                 </button>
-                                <button onClick={() => navigate(`/edit/${panel.id}`)} className="edit-button">
+                                <button onClick={() => navigate(`/edit/${panel.id}`)} className="primary-button edit-button">
                                     {t("clusterList.edit")}
                                 </button>
                                 <button onClick={() => handleDelete(panel.id)} className="delete-button">

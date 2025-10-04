@@ -96,7 +96,7 @@ const ViewPanel: React.FC = () => {
                     )}
                 </div>
 
-                <button className="edit-button" onClick={() => navigate(`/edit/{id}`)}>
+                <button className="primary-button edit-button" onClick={() => navigate(`/edit/{id}`)}>
                     {t('viewPanel.editButton')}
                 </button>
                 <button className="exit-button" onClick={() => navigate(`/panelslist`)}>

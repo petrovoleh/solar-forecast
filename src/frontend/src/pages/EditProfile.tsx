@@ -208,7 +208,7 @@ const EditProfile: React.FC = () => {
 
                         </div>}
                     </div>
-                    <button type="submit" className="edit-button">
+                    <button type="submit" className="primary-button edit-button">
                         {t('editProfile.save')} {/* Translation for "Save Changes" */}
                     </button>
                     <button
