@@ -10,6 +10,10 @@ interface DailyTotalData {
     totalEnergy_kwh: number;
 }
 
+type SummaryPeriod = 'day' | 'week' | 'month';
+
+const SUMMARY_PERIODS: SummaryPeriod[] = ['day', 'week', 'month'];
+
 const BarForecast: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
@@ -22,6 +26,12 @@ const BarForecast: React.FC = () => {
 
     const [dailyTotals, setDailyTotals] = useState<DailyTotalData[]>([]);
     const [totalEnergySum, setTotalEnergySum] = useState<number>(0);
+    const [periodTotals, setPeriodTotals] = useState<Record<SummaryPeriod, number | null>>({
+        day: null,
+        week: null,
+        month: null,
+    });
+    const [summaryLoading, setSummaryLoading] = useState<boolean>(false);
     const [fromDate, setFromDate] = useState<string>(
         new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     );
@@ -31,6 +41,57 @@ const BarForecast: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const params = new URLSearchParams(location.search);
     const type = params.get('type');
+
+    const fetchSummaryTotals = async () => {
+        if (!token || !type || !id) {
+            setSummaryLoading(false);
+            return;
+        }
+
+        try {
+            setSummaryLoading(true);
+            const totals: Record<SummaryPeriod, number | null> = { day: null, week: null, month: null };
+
+            for (const period of SUMMARY_PERIODS) {
+                const response = await fetch(
+                    `${backend_url}/api/forecast/getPeriodTotal?panelId=${id}&type=${type}&period=${period}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    let responseBody: any = null;
+                    try {
+                        responseBody = await response.json();
+                    } catch (parseError) {
+                        console.error('Failed to parse summary error', parseError);
+                    }
+
+                    if (responseBody?.statusText) {
+                        navigate(`/error?error_text=${encodeURIComponent(responseBody.statusText)}&error_code=${response.status}`);
+                    } else {
+                        navigate(`/error?error_text=Unknown%20error%20occurred&error_code=${response.status}`);
+                    }
+                    return;
+                }
+
+                const summary = await response.json();
+                totals[period] = typeof summary.totalEnergy_kwh === 'number' ? summary.totalEnergy_kwh : 0;
+            }
+
+            setPeriodTotals(totals);
+        } catch (error) {
+            console.error('Error fetching summary totals', error);
+            setPeriodTotals({ day: null, week: null, month: null });
+        } finally {
+            setSummaryLoading(false);
+        }
+    };
 
     const fetchDailyTotals = async () => {
         try {
@@ -68,6 +129,7 @@ const BarForecast: React.FC = () => {
 
             setDailyTotals(sortedData);
             setTotalEnergySum(totalSum);
+            await fetchSummaryTotals();
             setError(null);
         } catch (error) {
             navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
@@ -80,14 +142,14 @@ const BarForecast: React.FC = () => {
     };
 
     useEffect(() => {
-        if (fromDate && toDate) {
-            fetchDailyTotals();
-        }
         if (!token) {
             setError(t('barForecast.tokenNotFound'));
             return;
         }
-    }, [fromDate, toDate, token]);
+        if (fromDate && toDate) {
+            fetchDailyTotals();
+        }
+    }, [fromDate, toDate, token, type, id]);
 
     const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFromDate(e.target.value);
@@ -129,6 +191,24 @@ const BarForecast: React.FC = () => {
                         <p className="total-energy-text">
                             {t('barForecast.totalEnergyGenerated', { total: totalEnergySum.toFixed(2) })}
                         </p>
+                        <div className="summary-cards">
+                            <h4>{t('barForecast.quickTotalsTitle')}</h4>
+                            {summaryLoading && (
+                                <p className="summary-loading">{t('barForecast.summaryLoading')}</p>
+                            )}
+                            <div className="summary-grid">
+                                {SUMMARY_PERIODS.map((period) => (
+                                    <div key={period} className="summary-card">
+                                        <span className="summary-label">{t(`barForecast.summary.${period}`)}</span>
+                                        <span className="summary-value">
+                                            {summaryLoading || periodTotals[period] === null
+                                                ? '—'
+                                                : `${(periodTotals[period] ?? 0).toFixed(2)} kWh`}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {loading &&
