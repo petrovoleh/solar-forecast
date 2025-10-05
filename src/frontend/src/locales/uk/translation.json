@@ -181,6 +181,33 @@
       "notLoggedIn": "Ви повинні бути авторизовані, щоб додати або редагувати панель."
     }
   },
+  "editCluster": {
+    "titleAdd": "Додати кластер",
+    "titleEdit": "Редагувати кластер",
+    "form": {
+      "clusterName": "Назва кластера",
+      "clusterNamePlaceholder": "Введіть назву кластера",
+      "description": "Опис",
+      "descriptionPlaceholder": "Введіть опис",
+      "inverter": "Інвертор",
+      "inverterPlaceholder": "Оберіть інвертор",
+      "locationInfo": "Місце потрібно обрати на карті. Ці поля призначені лише для відображення.",
+      "country": "Країна",
+      "countryPlaceholder": "Введіть країну",
+      "city": "Місто",
+      "cityPlaceholder": "Введіть місто",
+      "district": "Район",
+      "districtPlaceholder": "Введіть район",
+      "submitButtonAdd": "Створити",
+      "submitButtonEdit": "Оновити"
+    },
+    "mapSection": {
+      "header": "Оберіть місце на карті",
+      "defaultCountry": "Литва",
+      "defaultCity": "Вільнюс",
+      "defaultDistrict": "Вільнюський повіт"
+    }
+  },
   "addCluster": {
     "titleAdd": "Додати кластер",
     "titleEdit": "Редагувати кластер",

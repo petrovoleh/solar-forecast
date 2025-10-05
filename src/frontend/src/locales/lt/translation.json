@@ -181,6 +181,33 @@
       "notLoggedIn": "Jūs turite būti prisijungęs, kad galėtumėte pridėti ar redaguoti skydelį."
     }
   },
+  "editCluster": {
+    "titleAdd": "Pridėti klasterį",
+    "titleEdit": "Redaguoti klasterį",
+    "form": {
+      "clusterName": "Klasterio pavadinimas",
+      "clusterNamePlaceholder": "Įveskite klasterio pavadinimą",
+      "description": "Aprašymas",
+      "descriptionPlaceholder": "Įveskite aprašymą",
+      "inverter": "Keitiklis",
+      "inverterPlaceholder": "Pasirinkite keitiklį",
+      "locationInfo": "Vieta turi būti pasirinkta žemėlapyje. Šie laukai skirti tik rodymui.",
+      "country": "Šalis",
+      "countryPlaceholder": "Įveskite šalį",
+      "city": "Miestas",
+      "cityPlaceholder": "Įveskite miestą",
+      "district": "Rajonas",
+      "districtPlaceholder": "Įveskite rajoną",
+      "submitButtonAdd": "Sukurti",
+      "submitButtonEdit": "Atnaujinti"
+    },
+    "mapSection": {
+      "header": "Pasirinkite vietą žemėlapyje",
+      "defaultCountry": "Lietuva",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilniaus apskritis"
+    }
+  },
   "addCluster": {
     "titleAdd": "Pridėti klasterį",
     "titleEdit": "Redaguoti klasterį",

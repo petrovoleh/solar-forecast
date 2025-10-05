@@ -181,6 +181,33 @@
       "notLoggedIn": "You must be logged in to add or edit a panel."
     }
   },
+  "editCluster": {
+    "titleAdd": "Add a Cluster",
+    "titleEdit": "Edit Cluster",
+    "form": {
+      "clusterName": "Cluster Name",
+      "clusterNamePlaceholder": "Enter cluster name",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter description",
+      "inverter": "Inverter",
+      "inverterPlaceholder": "Select an inverter",
+      "locationInfo": "The location must be selected on the map. These fields are for display only.",
+      "country": "Country",
+      "countryPlaceholder": "Enter country",
+      "city": "City",
+      "cityPlaceholder": "Enter city",
+      "district": "District",
+      "districtPlaceholder": "Enter district",
+      "submitButtonAdd": "Create",
+      "submitButtonEdit": "Update"
+    },
+    "mapSection": {
+      "header": "Select location on the map",
+      "defaultCountry": "Lithuania",
+      "defaultCity": "Vilnius",
+      "defaultDistrict": "Vilnius County"
+    }
+  },
   "addCluster": {
     "titleAdd": "Add a Cluster",
     "titleEdit": "Edit Cluster",

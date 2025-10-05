@@ -306,7 +306,9 @@ button,
 .margin10 {
     margin-top: 10px;
 }
-
+.profile-card{
+    margin: calc(50vh - 300px) auto auto;
+}
 @media (max-width: 768px) {
     .cluster-container,
     .panel-container,
