@@ -308,6 +308,9 @@ button,
 }
 .profile-card{
     margin: calc(50vh - 300px) auto auto;
+    button{
+        margin-top: 5px;
+    }
 }
 @media (max-width: 768px) {
     .cluster-container,

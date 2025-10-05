@@ -125,20 +125,7 @@ const PanelList: React.FC = () => {
                     <button onClick={() => navigate('/add')} className="primary-button add-panel-button">
                         {t("clusterList.addButton")}
                     </button>
-                    <div className="view-toggle-buttons">
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={viewMode === 'list' ? 'active' : ''}
-                        >
-                            {t("clusterList.listView")}
-                        </button>
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={viewMode === 'grid' ? 'active' : ''}
-                        >
-                            {t("clusterList.gridView")}
-                        </button>
-                    </div>
+
                 </div>
                 <div className="panel-sort-options">
                     <span className="sortby">{t("clusterList.sortBy")}</span>
@@ -163,7 +150,23 @@ const PanelList: React.FC = () => {
                     >
                         {t("clusterList.quantity")}
                     </button>
+                    <span className="sortby">{t("clusterList.view")}:</span>
+                    <div className="view-toggle-buttons">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={viewMode === 'list' ? 'active' : ''}
+                        >
+                            {t("clusterList.listView")}
+                        </button>
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={viewMode === 'grid' ? 'active' : ''}
+                        >
+                            {t("clusterList.gridView")}
+                        </button>
+                    </div>
                 </div>
+
             </div>
 
             {viewMode === 'list' && (
