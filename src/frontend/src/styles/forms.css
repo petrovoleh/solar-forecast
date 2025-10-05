@@ -312,6 +312,9 @@ button,
         margin-top: 5px;
     }
 }
+.sortby{
+    margin-top: 5px;
+}
 @media (max-width: 768px) {
     .cluster-container,
     .panel-container,

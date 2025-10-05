@@ -135,7 +135,22 @@ const ClusterList: React.FC = () => {
                     <button onClick={() => navigate('/add-cluster')} className="primary-button add-cluster-button">
                         {t('clusterList.addCluster')}
                     </button>
+
+                </div>
+                <div className="cluster-sort-options">
+                    <span className="sortby">{t('clusterList.sortBy')}</span>
+                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>
+                        {t('clusterList.name')}
+                    </button>
+                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>
+                        {t('clusterList.location')}
+                    </button>
+                    <button onClick={() => handleSort('inverter')} className={sortKey === 'inverter' ? 'active' : ''}>
+                        {t('clusterList.inverter')}
+                    </button>
                     <div className="view-toggle-buttons">
+                        <span className="sortby">{t('clusterList.view')}:</span>
+
                         <button
                             onClick={() => setViewMode('list')}
                             className={viewMode === 'list' ? 'active' : ''}
@@ -149,18 +164,6 @@ const ClusterList: React.FC = () => {
                             {t('clusterList.gridView')}
                         </button>
                     </div>
-                </div>
-                <div className="cluster-sort-options">
-                    <span className="sortby">{t('clusterList.sortBy')}</span>
-                    <button onClick={() => handleSort('name')} className={sortKey === 'name' ? 'active' : ''}>
-                        {t('clusterList.name')}
-                    </button>
-                    <button onClick={() => handleSort('location')} className={sortKey === 'location' ? 'active' : ''}>
-                        {t('clusterList.location')}
-                    </button>
-                    <button onClick={() => handleSort('inverter')} className={sortKey === 'inverter' ? 'active' : ''}>
-                        {t('clusterList.inverter')}
-                    </button>
                 </div>
             </div>
             {viewMode === 'list' && (
