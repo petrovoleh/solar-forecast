@@ -11,17 +11,25 @@ services:
       - mongo-data:/data/db
     ports:
       - "27017:27017"
-
   model:
     build:
-      context: ./model
+      context: ./XGBoost
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - ./model:/app  # мапимо FastAPI код у контейнер
-    depends_on:
-      - mongo
+      - ./XGBoost:/app  # мапимо FastAPI код у контейнер
+
+#  model:
+#    build:
+#      context: ./model
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - ./model:/app  # мапимо FastAPI код у контейнер
+#    depends_on:
+#      - mongo
 
   backend:
     build:
