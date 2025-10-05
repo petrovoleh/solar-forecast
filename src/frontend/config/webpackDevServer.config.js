@@ -12,6 +12,7 @@ const host = process.env.HOST || '193.219.91.103';
 const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/ws'
 const sockPort = 13415;
+const disableWss = process.env.WDS_SOCKET_DISABLE === 'true';
 // process.env.WDS_SOCKET_PORT
 module.exports = function (proxy, allowedHost) {
   const disableFirewall =
@@ -70,14 +71,18 @@ module.exports = function (proxy, allowedHost) {
       },
     },
     client: {
-      webSocketURL: {
-        // Enable custom sockjs pathname for websocket connection to hot reloading server.
-        // Enable custom sockjs hostname, pathname and port for websocket connection
-        // to hot reloading server.
-        hostname: sockHost,
-        pathname: sockPath,
-        port: sockPort,
-      },
+      ...(disableWss
+        ? {}
+        : {
+            webSocketURL: {
+              // Enable custom sockjs pathname for websocket connection to hot reloading server.
+              // Enable custom sockjs hostname, pathname and port for websocket connection
+              // to hot reloading server.
+              hostname: sockHost,
+              pathname: sockPath,
+              port: sockPort,
+            },
+          }),
       overlay: {
         errors: true,
         warnings: false,
