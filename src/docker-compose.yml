@@ -42,7 +42,7 @@ services:
     depends_on:
       - model
     environment:
-      - FORECAST_URL=http://model:8000/forecast
+      - FORECAST_URL=http://model:8000
 
   frontend:
     build:

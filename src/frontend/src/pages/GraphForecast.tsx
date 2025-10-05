@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import {backend_url} from "../config";
 
 interface ForecastData {
-    datetime: string;
-    power_kw: number;
+    timr: string;
+    pred_kW: number;
 }
 
 const GraphForecast: React.FC = () => {
@@ -142,7 +142,7 @@ const GraphForecast: React.FC = () => {
                     <LineChart data={forecastData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
                         <XAxis
-                            dataKey="datetime"
+                            dataKey="time"
                             tickFormatter={(tick) => format(parseISO(tick), 'MM-dd HH:mm')}
                             stroke="#333"
                         />
@@ -151,7 +151,7 @@ const GraphForecast: React.FC = () => {
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
                             contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}
                         />
-                        <Line type="monotone" dataKey="power_kw" stroke="#004d40" strokeWidth={2} dot={false}/>
+                        <Line type="monotone" dataKey="pred_kW" stroke="#004d40" strokeWidth={2} dot={false}/>
                     </LineChart>
                 </ResponsiveContainer>
                 }

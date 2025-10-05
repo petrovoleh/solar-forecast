@@ -32,30 +32,68 @@ def load_model():
 # 2️⃣ Отримання погоди
 # ============================================================
 def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> pd.DataFrame:
-    url = (
-        "https://archive-api.open-meteo.com/v1/era5?"
-        f"latitude={lat}&longitude={lon}"
-        f"&start_date={start_date}&end_date={end_date}"
-        f"&hourly=temperature_2m,cloudcover,shortwave_radiation,wind_speed_10m"
-        "&timezone=UTC"
-    )
+    start_date = start_date.split(" ")[0]
+    end_date = end_date.split(" ")[0]
 
-    r = requests.get(url, timeout=30)
-    if r.status_code != 200:
-        raise HTTPException(status_code=500, detail=f"Open-Meteo error: {r.text[:200]}")
-    data = r.json()
+    today = datetime.utcnow().date()
 
-    if "hourly" not in data:
-        raise HTTPException(status_code=500, detail="❌ Open-Meteo did not return hourly data")
+    df_parts = []
 
-    df = pd.DataFrame({
-        "time": pd.to_datetime(data["hourly"]["time"], utc=True),
-        "temperature_2m": data["hourly"]["temperature_2m"],
-        "cloudcover": data["hourly"]["cloudcover"],
-        "shortwave_radiation": data["hourly"]["shortwave_radiation"],
-        "wind_speed_10m": data["hourly"]["wind_speed_10m"],
-    })
+    # ---------------------- ARCHIVE (past data) ----------------------
+    if datetime.strptime(start_date, "%Y-%m-%d").date() <= today:
+        archive_end = min(datetime.strptime(end_date, "%Y-%m-%d").date(), today)
+        url_archive = (
+            "https://archive-api.open-meteo.com/v1/era5?"
+            f"latitude={lat}&longitude={lon}"
+            f"&start_date={start_date}&end_date={archive_end}"
+            f"&hourly=temperature_2m,cloudcover,shortwave_radiation,wind_speed_10m"
+            "&timezone=UTC"
+        )
+        r = requests.get(url_archive, timeout=30)
+        if r.status_code != 200:
+            raise HTTPException(status_code=500, detail=f"Open-Meteo (archive) error: {r.text[:200]}")
+        data = r.json()
+        if "hourly" in data:
+            df_archive = pd.DataFrame({
+                "time": pd.to_datetime(data["hourly"]["time"], utc=True),
+                "temperature_2m": data["hourly"]["temperature_2m"],
+                "cloudcover": data["hourly"]["cloudcover"],
+                "shortwave_radiation": data["hourly"]["shortwave_radiation"],
+                "wind_speed_10m": data["hourly"]["wind_speed_10m"],
+            })
+            df_parts.append(df_archive)
+
+    # ---------------------- FORECAST (future data) ----------------------
+    if datetime.strptime(end_date, "%Y-%m-%d").date() > today:
+        forecast_start = max(datetime.strptime(start_date, "%Y-%m-%d").date(), today)
+        url_forecast = (
+            "https://api.open-meteo.com/v1/forecast?"
+            f"latitude={lat}&longitude={lon}"
+            f"&start_date={forecast_start}&end_date={end_date}"
+            f"&hourly=temperature_2m,cloudcover,shortwave_radiation,wind_speed_10m"
+            "&timezone=UTC"
+        )
+        r2 = requests.get(url_forecast, timeout=30)
+        if r2.status_code != 200:
+            raise HTTPException(status_code=500, detail=f"Open-Meteo (forecast) error: {r2.text[:200]}")
+        data2 = r2.json()
+        if "hourly" in data2:
+            df_forecast = pd.DataFrame({
+                "time": pd.to_datetime(data2["hourly"]["time"], utc=True),
+                "temperature_2m": data2["hourly"]["temperature_2m"],
+                "cloudcover": data2["hourly"]["cloudcover"],
+                "shortwave_radiation": data2["hourly"]["shortwave_radiation"],
+                "wind_speed_10m": data2["hourly"]["wind_speed_10m"],
+            })
+            df_parts.append(df_forecast)
+
+    # ---------------------- MERGE RESULTS ----------------------
+    if not df_parts:
+        raise HTTPException(status_code=500, detail="❌ No weather data available for requested range")
+
+    df = pd.concat(df_parts).drop_duplicates(subset=["time"]).sort_values("time").reset_index(drop=True)
     return df
+
 
 
 # ============================================================
@@ -81,6 +119,11 @@ def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
     X = df_feat[features].fillna(0)
     preds_w_per_kwp = model.predict(X)
     preds_w = preds_w_per_kwp * float(kWp)
+
+    # 🩵 Фільтруємо всі від’ємні значення (нічний шум або похибку)
+    preds_w = np.maximum(preds_w, 0)
+    preds_w_per_kwp = np.maximum(preds_w_per_kwp, 0)
+
     res = pd.DataFrame({
         "time": df_feat["time"],
         "pred_W": preds_w,

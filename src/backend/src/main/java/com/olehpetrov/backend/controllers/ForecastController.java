@@ -31,7 +31,7 @@ public class ForecastController {
 
     private static final Logger logger = LoggerFactory.getLogger(ForecastController.class);
 //    private final String url = "http://model:8000/forecast";
-    @Value("${FORECAST_URL:http://localhost:8000/forecast}") // Default value if env variable not found
+    @Value("${FORECAST_URL:http://localhost:8000}") // Default value if env variable not found
     private String forecastUrl;
     @Autowired
     private SolarPanelService panelService;
@@ -126,32 +126,34 @@ public class ForecastController {
                     .body("{\"statusText\": \"Panel or cluster power rating is zero or lower, please change values and try again.\"}");
         }
 
-        // Prepare request body for the forecast service
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("init_time_freq", 6);
-        requestBody.put("start_datetime", from);
-        requestBody.put("end_datetime", to);
-        requestBody.put("frequency", "hourly");
-        requestBody.put("capacity_kwp", capacity_kwp);
+        // Build GET URL for FastAPI forecast service
+        double latitude;
+        double longitude;
 
         if ("cluster".equalsIgnoreCase(type)) {
-            // Use first panel's location for the cluster forecast
             Panel representativePanel = panelService.getPanelsByClusterId(panelId).get(0);
-            requestBody.put("latitude", representativePanel.getLocation().getLat());
-            requestBody.put("longitude", representativePanel.getLocation().getLon());
+            latitude = representativePanel.getLocation().getLat();
+            longitude = representativePanel.getLocation().getLon();
         } else {
             Panel panel = panelService.getPanelById(panelId);
-            requestBody.put("latitude", panel.getLocation().getLat());
-            requestBody.put("longitude", panel.getLocation().getLon());
+            latitude = panel.getLocation().getLat();
+            longitude = panel.getLocation().getLon();
         }
+
+        String url = String.format(
+                "%s/forecast?lat=%.6f&lon=%.6f&start=%s&end=%s&kwp=%.3f",
+                forecastUrl, latitude, longitude, from, to, capacity_kwp
+        );
+        logger.info("🌍 Sending GET request to: {}", url);
 
         // Send the request to the forecast API
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-        logger.info("request");
-        ResponseEntity<String> response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
         logger.info(String.valueOf(response));
         if (response.getStatusCode().is2xxSuccessful()) {
             logger.info("Forecast retrieved successfully for user: {}", username);
@@ -307,8 +309,8 @@ public class ForecastController {
 
             for (int i = 0; i < forecastData.length(); i++) {
                 JSONObject entry = forecastData.getJSONObject(i);
-                String datetime = entry.getString("datetime").split("T")[0];
-                double powerKW = entry.optDouble("power_kw", 0.0);
+                String datetime = entry.getString("time").split("T")[0];
+                double powerKW = entry.optDouble("pred_kW", 0.0);
 
                 if (allRequestedDates != null && allRequestedDates.contains(datetime)) {  // Only add missing dates
                     dailyEnergyMap.put(datetime, dailyEnergyMap.getOrDefault(datetime, 0.0) + (powerKW * 0.25));
