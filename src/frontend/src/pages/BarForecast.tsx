@@ -14,6 +14,7 @@ interface SummaryTotals {
     lastDay: number | null;
     lastWeek: number | null;
     lastMonth: number | null;
+    lastYear: number | null;
 }
 
 type SummaryLoadingState = Record<keyof SummaryTotals, boolean>;
@@ -34,11 +35,13 @@ const BarForecast: React.FC = () => {
         lastDay: null,
         lastWeek: null,
         lastMonth: null,
+        lastYear: null,
     });
     const [summaryLoading, setSummaryLoading] = useState<SummaryLoadingState>({
         lastDay: false,
         lastWeek: false,
         lastMonth: false,
+        lastYear: false,
     });
     const [fromDate, setFromDate] = useState<string>(
         new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -146,12 +149,14 @@ const BarForecast: React.FC = () => {
             { key: 'lastDay', length: 1 },
             { key: 'lastWeek', length: 7 },
             { key: 'lastMonth', length: 30 },
+            { key: 'lastYear', length: 365 },
         ];
 
         setSummaryLoading({
             lastDay: true,
             lastWeek: true,
             lastMonth: true,
+            lastYear: true,
         });
 
         for (const range of ranges) {
@@ -280,6 +285,16 @@ const BarForecast: React.FC = () => {
                                             ? t('barForecast.summaryLoading')
                                             : summaryTotals.lastMonth !== null
                                                 ? summaryTotals.lastMonth.toFixed(2)
+                                                : t('barForecast.noSummaryData')}
+                                    </span>
+                                </div>
+                                <div className="summary-card">
+                                    <span className="summary-label">{t('barForecast.lastYearLabel')}</span>
+                                    <span className="summary-value">
+                                        {summaryLoading.lastYear
+                                            ? t('barForecast.summaryLoading')
+                                            : summaryTotals.lastYear !== null
+                                                ? summaryTotals.lastYear.toFixed(2)
                                                 : t('barForecast.noSummaryData')}
                                     </span>
                                 </div>

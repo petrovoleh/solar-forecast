@@ -1,7 +1,7 @@
 package com.olehpetrov.backend.controllers;
 
 import com.olehpetrov.backend.models.Cluster;
-import com.olehpetrov.backend.models.DailyEnergyTotal;
+import com.olehpetrov.backend.models.Inverter;
 import com.olehpetrov.backend.models.Location;
 import com.olehpetrov.backend.models.Panel;
 import com.olehpetrov.backend.models.Role;
@@ -12,7 +12,6 @@ import com.olehpetrov.backend.services.SolarPanelService;
 import com.olehpetrov.backend.services.UserDetailsServiceImpl;
 import com.olehpetrov.backend.services.UserService;
 import com.olehpetrov.backend.utils.JwtUtils;
-import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,10 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -132,121 +128,88 @@ class ForecastControllerTest {
     }
 
     @Test
-    void getTotalReturnsCachedTotalsForPanel() throws Exception {
+    void getTotalReturnsDailyForecastForPanel() throws Exception {
         User user = buildUser();
         Panel panel = buildPanel();
-        DailyEnergyTotal total = new DailyEnergyTotal();
-        total.setPanel(panel);
-        LocalDate today = LocalDate.now();
-        total.setDate(today.toString());
-        total.setTotalEnergy_kwh(5.0);
 
         when(jwtUtils.extractUsername("token")).thenReturn("user");
         when(userService.findByUsername("user")).thenReturn(user);
         when(panelService.getPanelById("panel-id")).thenReturn(panel);
-        when(panelService.getDailyEnergyTotalsByDateRange(eq(panel), anyString(), anyString()))
-                .thenReturn(List.of(total));
+
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+
+        double capacity = panel.getPowerRating() / 1000.0 * (panel.getEfficiency() / 100.0);
+        String expectedUrl = String.format(
+                "http://localhost:8000/daily_forecast?lat=%.6f&lon=%.6f&start=%s&end=%s&kwp=%.3f",
+                panel.getLocation().getLat(),
+                panel.getLocation().getLon(),
+                today,
+                tomorrow,
+                capacity
+        );
+
+        String forecastResponse = "[{\"date\":\"" + today + "\",\"pred_kWh\":5.0}]";
+        when(restTemplate.exchange(eq(expectedUrl), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(ResponseEntity.ok(forecastResponse));
 
         mockMvc.perform(get("/api/forecast/getTotal")
                         .header("Authorization", "Bearer token")
                         .param("panelId", "panel-id")
-                        .param("from", today.toString() + " 00:00:00")
-                        .param("to", today.toString() + " 00:00:00")
+                        .param("from", today + " 00:00:00")
+                        .param("to", tomorrow + " 00:00:00")
                         .param("type", "panel"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{\"date\":\"" + today + "\",\"totalEnergy_kwh\":5.0}]"));
     }
 
-
     @Test
-    void getTotalFetchesMissingPanelDatesAndSavesTotals() throws Exception {
-        User user = buildUser();
-        Panel panel = buildPanel();
-
-        DailyEnergyTotal cachedTotal = new DailyEnergyTotal();
-        cachedTotal.setPanel(panel);
-        LocalDate today = LocalDate.now();
-        cachedTotal.setDate(today.toString());
-        cachedTotal.setTotalEnergy_kwh(5.0);
-
-        LocalDate tomorrow = today.plusDays(1);
-
-        when(jwtUtils.extractUsername("token")).thenReturn("user");
-        when(userService.findByUsername("user")).thenReturn(user);
-        when(panelService.getPanelById("panel-id")).thenReturn(panel);
-        when(panelService.getDailyEnergyTotalsByDateRange(eq(panel), anyString(), anyString()))
-                .thenReturn(List.of(cachedTotal));
-
-        String forecastResponse = "[{\"datetime\":\"" + tomorrow + "T00:00:00\",\"power_kw\":4.0},{\"datetime\":\"" + tomorrow + "T00:15:00\",\"power_kw\":2.0}]";
-        when(restTemplate.exchange(eq("http://localhost:8000/forecast"), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(ResponseEntity.ok(forecastResponse));
-
-        mockMvc.perform(get("/api/forecast/getTotal")
-                        .header("Authorization", "Bearer token")
-                        .param("panelId", "panel-id")
-                        .param("from", today.toString() + " 00:00:00")
-                        .param("to", tomorrow.toString() + " 00:00:00")
-                        .param("type", "panel"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[{\"date\":\"" + today + "\",\"totalEnergy_kwh\":5.0},{\"date\":\"" + tomorrow + "\",\"totalEnergy_kwh\":1.5}]"));
-
-        ArgumentCaptor<DailyEnergyTotal> captor = ArgumentCaptor.forClass(DailyEnergyTotal.class);
-        verify(panelService).saveDailyEnergyTotal(captor.capture());
-        DailyEnergyTotal savedTotal = captor.getValue();
-        org.junit.jupiter.api.Assertions.assertEquals(tomorrow.toString(), savedTotal.getDate());
-        org.junit.jupiter.api.Assertions.assertEquals(1.5, savedTotal.getTotalEnergy_kwh());
-    }
-
-    @Test
-    void getTotalAggregatesClusterRecordsAndForecast() throws Exception {
+    void getTotalReturnsDailyForecastForCluster() throws Exception {
         User user = buildUser();
         Cluster cluster = new Cluster();
         cluster.setId("cluster-id");
         cluster.setUserId("user-id");
 
-        Panel panel1 = buildPanel();
-        panel1.setId("panel-1");
-        panel1.setCluster(cluster);
+        Inverter inverter = new Inverter();
+        inverter.setId("inverter-id");
+        inverter.setEfficiency(90.0);
+        cluster.setInverter(inverter);
 
-        Panel panel2 = buildPanel();
-        panel2.setId("panel-2");
-        panel2.setCluster(cluster);
-
-        DailyEnergyTotal panel1Total = new DailyEnergyTotal();
-        panel1Total.setPanel(panel1);
-        LocalDate today = LocalDate.now();
-        panel1Total.setDate(today.toString());
-        panel1Total.setTotalEnergy_kwh(5.0);
-
-        DailyEnergyTotal panel2Total = new DailyEnergyTotal();
-        panel2Total.setPanel(panel2);
-        panel2Total.setDate(today.toString());
-        panel2Total.setTotalEnergy_kwh(3.0);
-
-        LocalDate tomorrow = today.plusDays(1);
+        Panel panel = buildPanel();
+        panel.setCluster(cluster);
 
         when(jwtUtils.extractUsername("token")).thenReturn("user");
         when(userService.findByUsername("user")).thenReturn(user);
         when(clusterService.getClusterById("cluster-id")).thenReturn(cluster);
-        when(panelService.getPanelsByClusterId("cluster-id")).thenReturn(List.of(panel1, panel2));
-        when(panelService.calculateTotalCapacityKwp(anyList())).thenReturn(10.0);
-        when(panelService.getDailyEnergyTotalsByDateRange(eq(panel1), anyString(), anyString()))
-                .thenReturn(List.of(panel1Total));
-        when(panelService.getDailyEnergyTotalsByDateRange(eq(panel2), anyString(), anyString()))
-                .thenReturn(List.of(panel2Total));
+        when(panelService.getPanelsByClusterId("cluster-id")).thenReturn(List.of(panel));
+        when(panelService.calculateTotalCapacityKwp(List.of(panel))).thenReturn(10.0);
+        when(inverterService.getInverterById("inverter-id")).thenReturn(inverter);
 
-        String forecastResponse = "[{\"datetime\":\"" + tomorrow + "T00:00:00\",\"power_kw\":4.0}]";
-        when(restTemplate.exchange(eq("http://localhost:8000/forecast"), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+
+        double expectedCapacity = 10.0 * (inverter.getEfficiency() / 100.0);
+        String expectedUrl = String.format(
+                "http://localhost:8000/daily_forecast?lat=%.6f&lon=%.6f&start=%s&end=%s&kwp=%.3f",
+                panel.getLocation().getLat(),
+                panel.getLocation().getLon(),
+                today,
+                tomorrow,
+                expectedCapacity
+        );
+
+        String forecastResponse = "[{\"date\":\"" + today + "\",\"pred_kWh\":8.0}]";
+        when(restTemplate.exchange(eq(expectedUrl), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(ResponseEntity.ok(forecastResponse));
 
         mockMvc.perform(get("/api/forecast/getTotal")
                         .header("Authorization", "Bearer token")
                         .param("panelId", "cluster-id")
-                        .param("from", today.toString() + " 00:00:00")
-                        .param("to", tomorrow.toString() + " 00:00:00")
+                        .param("from", today + " 00:00:00")
+                        .param("to", tomorrow + " 00:00:00")
                         .param("type", "cluster"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"date\":\"" + today + "\",\"totalEnergy_kwh\":8.0},{\"date\":\"" + tomorrow + "\",\"totalEnergy_kwh\":1.0}]"));
+                .andExpect(content().json("[{\"date\":\"" + today + "\",\"totalEnergy_kwh\":8.0}]"));
     }
 }
 

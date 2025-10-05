@@ -22,8 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/forecast")
@@ -181,40 +182,10 @@ public class ForecastController {
             logger.error("Date range is out of bounds for user: {}", username);
             return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid date range. 'From' date must be after 2020-01-01, and both dates within the next 13 days.\"}");
         }
-        Map<String, Double> aggregatedTotals = new TreeMap<>();
-        Set<String> allRequestedDates = null;
-        List<DailyEnergyTotal> existingRecords = null;
-        Panel panel2 = null;
-        if ("panel".equalsIgnoreCase(type)) {
-            panel2 = panelService.getPanelById(panelId);
-            if (panel2 == null || !panel2.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
-            }
-            existingRecords = panelService.getDailyEnergyTotalsByDateRange(panel2, from, to);
-            for (DailyEnergyTotal record : existingRecords) {
-                aggregatedTotals.merge(record.getDate(), record.getTotalEnergy_kwh(), Double::sum);
-            }
-            Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
-            logger.info(String.valueOf(existingRecords.size()));
-            logger.info(String.valueOf(existingDates.size()));
-            // Determine which dates are missing from existing records
-            allRequestedDates = getDatesInRange(from, to);
-            allRequestedDates.removeAll(existingDates);  // Now only missing dates remain
 
-            if (allRequestedDates.isEmpty()) {
-                logger.info("Returning cached daily energy totals for user: {}", username);
-                return ResponseEntity.ok(buildDailyTotalsJson(aggregatedTotals));
-            }
-        }else   if ("cluster".equalsIgnoreCase(type)) {
-            Cluster cl = clusterService.getClusterById(panelId);
-            if (cl == null || !cl.getUserId().equals(user.getId())) {
-                return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Cluster does not belong to the user.\"}");
-            }
-        }else {
-            return ResponseEntity.status(400).body("{\"statusText\": \"No panels found for the given ID.\"}");
-        }
-        // If there are missing dates, make an API call to fetch them
         double capacity_kwp;
+        double latitude;
+        double longitude;
 
         if ("cluster".equalsIgnoreCase(type)) {
             List<Panel> panels = panelService.getPanelsByClusterId(panelId);
@@ -226,72 +197,54 @@ public class ForecastController {
                 return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Some panels in the cluster do not belong to the user.\"}");
             }
 
-            allRequestedDates = getDatesInRange(from, to);
-            existingRecords = panels.stream()
-                    .flatMap(panel -> panelService.getDailyEnergyTotalsByDateRange(panel, from, to).stream())
-                    .collect(Collectors.toList());
-            for (DailyEnergyTotal record : existingRecords) {
-                aggregatedTotals.merge(record.getDate(), record.getTotalEnergy_kwh(), Double::sum);
-            }
-
-            Set<String> existingDates = existingRecords.stream().map(DailyEnergyTotal::getDate).collect(Collectors.toSet());
-            allRequestedDates.removeAll(existingDates);
-            if (allRequestedDates.isEmpty()) {
-                logger.info("Returning cached cluster daily energy totals for user: {}", username);
-                return ResponseEntity.ok(buildDailyTotalsJson(aggregatedTotals));
-            }
             capacity_kwp = panelService.calculateTotalCapacityKwp(panels);
-            Cluster cl = clusterService.getClusterById(panelId);
-            if (cl != null && cl.getInverter() != null) {
-                Inverter inverter = inverterService.getInverterById(cl.getInverter().getId());
-                logger.info("efficiency: {}", inverter.getEfficiency());
-
+            Cluster cluster = clusterService.getClusterById(panelId);
+            if (cluster != null && cluster.getInverter() != null) {
+                Inverter inverter = inverterService.getInverterById(cluster.getInverter().getId());
                 if (inverter != null && inverter.getEfficiency() != null) {
-                    double inverterEfficiency = inverter.getEfficiency() / 100.0; // Convert percentage to decimal
+                    double inverterEfficiency = inverter.getEfficiency() / 100.0;
                     capacity_kwp *= inverterEfficiency;
-                    logger.info("Capacity after applying inverter efficiency ({}%): {}", inverter.getEfficiency(), capacity_kwp);
                 }
             }
-    } else if ("panel".equalsIgnoreCase(type)) {
-            // Find the panel by ID and verify ownership
+
+            Panel representativePanel = panels.get(0);
+            latitude = representativePanel.getLocation().getLat();
+            longitude = representativePanel.getLocation().getLon();
+        } else if ("panel".equalsIgnoreCase(type)) {
             Panel panel = panelService.getPanelById(panelId);
             if (panel == null || !panel.getUserId().equals(user.getId())) {
                 return ResponseEntity.status(403).body("{\"statusText\": \"Forbidden: Panel does not belong to the user.\"}");
             }
 
-            // Calculate capacity for the single panel
             capacity_kwp = panel.getPowerRating() / 1000.0 * (panel.getEfficiency() / 100.0);
+            latitude = panel.getLocation().getLat();
+            longitude = panel.getLocation().getLon();
         } else {
             return ResponseEntity.badRequest().body("{\"statusText\": \"Invalid type. Must be 'cluster' or 'panel'.\"}");
         }
-        if( capacity_kwp <=0 ){
+
+        if (capacity_kwp <= 0) {
             return ResponseEntity.status(400)
                     .body("{\"statusText\": \"Panel or cluster power rating is zero or lower, please change values and try again.\"}");
         }
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("init_time_freq", 15);
-        requestBody.put("start_datetime", from);
-        requestBody.put("end_datetime", to);
-        requestBody.put("frequency", "15min");
-        if ("cluster".equalsIgnoreCase(type)) {
-            // Use first panel's location for the cluster forecast
-            Panel representativePanel = panelService.getPanelsByClusterId(panelId).get(0);
-            requestBody.put("latitude", representativePanel.getLocation().getLat());
-            requestBody.put("longitude", representativePanel.getLocation().getLon());
-        } else {
-            Panel panel = panelService.getPanelById(panelId);
-            requestBody.put("latitude", panel.getLocation().getLat());
-            requestBody.put("longitude", panel.getLocation().getLon());
-        }
 
-        requestBody.put("capacity_kwp", capacity_kwp);
+        String startDate = from.split(" ")[0];
+        String endDate = to.split(" ")[0];
+
+        String url = String.format(
+                "%s/daily_forecast?lat=%.6f&lon=%.6f&start=%s&end=%s&kwp=%.3f",
+                forecastUrl, latitude, longitude, startDate, endDate, capacity_kwp
+        );
+
+        logger.info("🌤️ Sending GET request to daily forecast: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
         ResponseEntity<String> response;
         try {
-            response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
+            response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         } catch (HttpStatusCodeException ex) {
             logger.error("Forecast service responded with status {} for user {}", ex.getStatusCode(), username, ex);
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
@@ -303,65 +256,27 @@ public class ForecastController {
         }
 
         if (response.getStatusCode().is2xxSuccessful()) {
-
             JSONArray forecastData = new JSONArray(response.getBody());
-            Map<String, Double> dailyEnergyMap = new HashMap<>();
+            List<JSONObject> totalsList = new ArrayList<>();
 
             for (int i = 0; i < forecastData.length(); i++) {
                 JSONObject entry = forecastData.getJSONObject(i);
-                String datetime = entry.getString("time").split("T")[0];
-                double powerKW = entry.optDouble("pred_kW", 0.0);
-
-                if (allRequestedDates != null && allRequestedDates.contains(datetime)) {  // Only add missing dates
-                    dailyEnergyMap.put(datetime, dailyEnergyMap.getOrDefault(datetime, 0.0) + (powerKW * 0.25));
-                }
+                JSONObject total = new JSONObject();
+                total.put("date", entry.optString("date"));
+                total.put("totalEnergy_kwh", entry.optDouble("pred_kWh", 0.0));
+                totalsList.add(total);
             }
 
-            for (Map.Entry<String, Double> entry : dailyEnergyMap.entrySet()) {
-                String date = entry.getKey();
-                double totalEnergy = entry.getValue();
-
-                if (panel2 != null){
-                    DailyEnergyTotal newDailyTotal = new DailyEnergyTotal();
-                    newDailyTotal.setPanel(panel2);
-                    newDailyTotal.setDate(date);
-                    newDailyTotal.setTotalEnergy_kwh(totalEnergy);
-                    panelService.saveDailyEnergyTotal(newDailyTotal);
-                }
-                aggregatedTotals.merge(date, totalEnergy, Double::sum);
-            }
+            totalsList.sort(Comparator.comparing(obj -> obj.optString("date")));
+            JSONArray totals = new JSONArray();
+            totalsList.forEach(totals::put);
 
             logger.info("Daily energy totals for user: {}", username);
-            String totalsJson = buildDailyTotalsJson(aggregatedTotals);
-            logger.info("Totals: {}", totalsJson);
-            return ResponseEntity.ok(totalsJson);
+            return ResponseEntity.ok(totals.toString());
         } else {
             logger.error("Failed to retrieve forecast for user: {}", username);
             return ResponseEntity.status(response.getStatusCode()).body("{\"statusText\": \"Failed to retrieve forecast.\"}");
         }
-    }
-
-
-    private Set<String> getDatesInRange(String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate.split(" ")[0]);
-        LocalDate end = LocalDate.parse(endDate.split(" ")[0]);
-        Set<String> dates = new HashSet<>();
-        while (!start.isAfter(end)) {
-            dates.add(start.toString());
-            start = start.plusDays(1);
-        }
-        return dates;
-    }
-
-    private String buildDailyTotalsJson(Map<String, Double> dailyTotals) {
-        JSONArray dailyTotalsArray = new JSONArray();
-        for (Map.Entry<String, Double> entry : dailyTotals.entrySet()) {
-            JSONObject dayTotal = new JSONObject();
-            dayTotal.put("date", entry.getKey());
-            dayTotal.put("totalEnergy_kwh", entry.getValue());
-            dailyTotalsArray.put(dayTotal);
-        }
-        return dailyTotalsArray.toString();
     }
 
 
