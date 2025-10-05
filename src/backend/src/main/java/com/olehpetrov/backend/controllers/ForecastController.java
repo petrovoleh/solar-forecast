@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -284,7 +287,18 @@ public class ForecastController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response;
+        try {
+            response = restTemplate.exchange(forecastUrl, HttpMethod.POST, entity, String.class);
+        } catch (HttpStatusCodeException ex) {
+            logger.error("Forecast service responded with status {} for user {}", ex.getStatusCode(), username, ex);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body("{\"statusText\": \"Forecast service error. Please try again later.\"}");
+        } catch (RestClientException ex) {
+            logger.error("Unable to reach forecast service for user {}", username, ex);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body("{\"statusText\": \"Forecast service is unavailable. Please try again later.\"}");
+        }
 
         if (response.getStatusCode().is2xxSuccessful()) {
 

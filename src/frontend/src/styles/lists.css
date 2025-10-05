@@ -31,7 +31,8 @@
 }
 
 .panel-list-headers {
-    grid-template-columns: repeat(7, minmax(100px, 1fr));
+    grid-template-columns: repeat(6, minmax(100px, 1fr))
+minmax(200px, 2fr);
 }
 
 .forecast-list-headers {
@@ -91,7 +92,9 @@
 }
 
 .panel-list.list .panel-cardd {
-    grid-template-columns: repeat(7, minmax(120px, 1fr));
+    grid-template-columns:
+            repeat(6, minmax(120px, 1fr))
+            minmax(240px, 2fr);
 }
 
 .panel-list.list .forecast-card {
@@ -213,8 +216,7 @@
 }
 
 .button-group,
-.cluster-actions,
-.panel-actions {
+.cluster-actions{
     flex-wrap: wrap;
 }
 

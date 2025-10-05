@@ -186,7 +186,11 @@ button,
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
-
+.view-button,
+.delete-button,
+.exit-button{
+    width: 100%;
+}
 .primary-button {
     background-color: var(--color-primary);
     color: #ffffff;
