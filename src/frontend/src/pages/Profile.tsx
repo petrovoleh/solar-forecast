@@ -87,15 +87,15 @@ const Profile: React.FC = () => {
                     <div className="profile-info">
                         <div className="info-item">
                             <label>{t('profile.name')}:</label> {/* Use translation for "Name" */}
-                            <p>Loading...</p>
+                            <p>.</p>
                         </div>
                         <div className="info-item">
                             <label>{t('profile.email')}:</label> {/* Use translation for "Email" */}
-                            <p>Loading...</p>
+                            <p>.</p>
                         </div>
                         <div className="info-item">
                             <label>{t('profile.address')}:</label> {/* Use translation for "Address" */}
-                            <p>Loading...</p>
+                            <p>.</p>
                         </div>
                         {/*<div className="loader"></div>*/}
                     </div>

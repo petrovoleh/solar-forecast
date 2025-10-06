@@ -188,7 +188,8 @@ button,
 }
 .view-button,
 .delete-button,
-.exit-button{
+.exit-button,
+.discard-button{
     width: 100%;
 }
 .primary-button {
@@ -246,6 +247,7 @@ button,
     border-radius: 8px;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
+    color: white;
 }
 
 .language-button:hover {

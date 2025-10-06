@@ -211,7 +211,24 @@
     padding: 20px;
     display: grid;
     place-items: center;
+    min-height: calc(100vh - 84px - 2rem);
     color: var(--color-text);
+}
+.row {
+    display: flex;
+    flex-direction: row; /* за замовчуванням — горизонтально */
+    gap: 16px; /* відстань між елементами */
+    align-items: center; /* вертикальне вирівнювання */
+}
+.grid2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    min-width: 60vw;
+}
+
+.grid2 > :first-child {
+    grid-column: 1 / -1; /* займе обидві колонки */
 }
 
 @media (max-width: 768px) {

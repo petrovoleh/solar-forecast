@@ -140,8 +140,9 @@ const EditProfile: React.FC = () => {
 
     return (
         <div className="profile-container">
-            <div className="profile-card">
+            <div className="profile-card grid2">
                 <h2>{t('editProfile.title')}</h2> {/* Translation for title */}
+                <div className="">
                 <form onSubmit={handleSubmit}>
                     <div className="profile-info">
                         <div className="info-item">
@@ -225,19 +226,21 @@ const EditProfile: React.FC = () => {
                         {t('editProfile.discard')} {/* Translation for "Discard Changes" */}
                     </button>
                 </form>
+                </div>
+                <MapComponent
+                    onLocationChange={handleLocationChange}
+                    address={user?.location || {
+                        country: t('editProfile.defaultCountry'),
+                        city: t('editProfile.defaultCity'),
+                        district: t('editProfile.defaultDistrict'),
+                    }}
+                    onAddressChange={handleAddressChange}
+                    lat={user?.location?.lat || 54.6872}
+                    lon={user?.location?.lon || 25.2797}
+                />
             </div>
 
-            <MapComponent
-                onLocationChange={handleLocationChange}
-                address={user?.location || {
-                    country: t('editProfile.defaultCountry'),
-                    city: t('editProfile.defaultCity'),
-                    district: t('editProfile.defaultDistrict'),
-                }}
-                onAddressChange={handleAddressChange}
-                lat={user?.location?.lat || 54.6872}
-                lon={user?.location?.lon || 25.2797}
-            />
+
         </div>
     );
 };

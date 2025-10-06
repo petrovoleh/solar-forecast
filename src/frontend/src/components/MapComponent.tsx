@@ -143,19 +143,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 {/* Automatically move map when the position changes */}
                 <MoveMapToLocation lat={position[0]} lng={position[1]}/>
             </MapContainer>
-            <button
-                onClick={handleCurrentLocation}
-                className="primary-button edit-button current-location-button"
-                disabled={disabled}
-            >
-                {t('addPanel.currentLocation')}
-            </button>
-            <button
-                onClick={handleProfileLocation}
-                className="primary-button edit-button current-location-button margin10"
-            >
-                {t('addPanel.profileLocation')}
-            </button>
+            <div className="row">
+                <button
+                    onClick={handleCurrentLocation}
+                    className="primary-button edit-button current-location-button"
+                    disabled={disabled}
+                >
+                    {t('addPanel.currentLocation')}
+                </button>
+                <button
+                    onClick={handleProfileLocation}
+                    className="primary-button edit-button current-location-button margin10"
+                >
+                    {t('addPanel.profileLocation')}
+                </button>
+            </div>
         </div>
     );
 };

@@ -116,8 +116,6 @@ code {
     margin-top: calc(60px + 1rem);
     min-height: calc(100vh - 84px - 2rem);
     width: 100%;
-    padding: 0 1rem;
-
 }
 
 .footer {
