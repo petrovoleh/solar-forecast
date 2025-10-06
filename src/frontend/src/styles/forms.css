@@ -192,6 +192,15 @@ button,
 .discard-button{
     width: 100%;
 }
+.loader-card{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 305px;
+    align-items: center;
+
+}
 .primary-button {
     background-color: var(--color-primary);
     color: #ffffff;

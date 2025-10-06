@@ -58,8 +58,18 @@ const ViewPanel: React.FC = () => {
             <div className="profile-container">
                 <div className="profile-card">
                     <h2>{t('viewPanel.panelName')}:</h2>
-                <div className="loader"></div>
+                    <div className="loader-card">
+                        <div className="loader"></div>
+                    </div>
+                    <button className="primary-button edit-button">
+                        {t('viewPanel.editButton')}
+                    </button>
+
+                    <button className="exit-button" onClick={() => navigate(`/panelslist`)}>
+                        {t('viewPanel.backButton')}
+                    </button>
             </div>
+
             </div>
         )
     }
