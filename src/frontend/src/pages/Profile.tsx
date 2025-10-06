@@ -82,7 +82,31 @@ const Profile: React.FC = () => {
     if (loading) {
         return  (
             <div className="profile-container">
-                <div className="loader"></div>
+                <div className="profile-card">
+                    <h2>{t('profile.title')}</h2> {/* Use translation for title */}
+                    <div className="profile-info">
+                        <div className="info-item">
+                            <label>{t('profile.name')}:</label> {/* Use translation for "Name" */}
+                            <p>Loading...</p>
+                        </div>
+                        <div className="info-item">
+                            <label>{t('profile.email')}:</label> {/* Use translation for "Email" */}
+                            <p>Loading...</p>
+                        </div>
+                        <div className="info-item">
+                            <label>{t('profile.address')}:</label> {/* Use translation for "Address" */}
+                            <p>Loading...</p>
+                        </div>
+                        {/*<div className="loader"></div>*/}
+                    </div>
+                    <button className="primary-button edit-button">
+                        {t('profile.edit')} {/* Use translation for "Edit Profile" */}
+                    </button>
+
+                    <button className="exit-button">
+                        {t('profile.exit')} {/* Use translation for "Exit" */}
+                    </button>
+                </div>
             </div>
         )
     }
