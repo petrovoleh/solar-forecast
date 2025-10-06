@@ -238,7 +238,7 @@ button,
 }
 
 .confirm-button:hover {
-    background-color: #3d8b40;
+    background-color: var(--color-success-dark);
 }
 
 .language-button {
@@ -267,7 +267,7 @@ button,
 .view-toggle-buttons button,
 .panel-sort-options button,
 .cluster-sort-options button {
-    background-color: #e0e0e0;
+    background-color: var(--color-neutral);
     color: var(--color-text);
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
@@ -283,7 +283,7 @@ button,
 .view-toggle-buttons button:hover,
 .panel-sort-options button:hover,
 .cluster-sort-options button:hover {
-    background-color: #bdbdbd;
+    background-color: var(--color-neutral-dark);
 }
 
 .cluster-actions,

@@ -50,6 +50,14 @@
     "signIn": "Prisijungti",
     "signUp": "Registruotis"
   },
+  "themeToggle": {
+    "label": "Tema",
+    "system": "Automatiškai",
+    "light": "Šviesi",
+    "dark": "Tamsi",
+    "ariaLabel": "Keisti temą (dabar: {{theme}})",
+    "nextLabel": "Kita tema: {{theme}}"
+  },
   "clusterList": {
     "title": "Klasterių sąrašas",
     "noPanelsMessage": "Klasterių ar skydelių dar nėra pridėta",

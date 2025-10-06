@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from './ThemeToggle';
 import {useTranslation} from "react-i18next";
 
 const Header: React.FC = () => {
@@ -29,7 +30,10 @@ const Header: React.FC = () => {
                         </>
                     )}
                 </ul>
-                <LanguageSwitcher/>
+                <div className="utility-controls">
+                    <ThemeToggle />
+                    <LanguageSwitcher/>
+                </div>
             </nav>
         </header>
     );

@@ -6,15 +6,58 @@
     --color-warning-dark: #e65100;
     --color-danger: #970000;
     --color-danger-dark: #4d0000;
+    --color-danger-strong: #b71c1c;
     --color-success: #4caf50;
+    --color-success-dark: #3d8b40;
     --color-error: #ff3b30;
     --color-surface: #ffffff;
     --color-surface-alt: #f9f9f9;
     --color-surface-muted: #f4f4f9;
+    --color-surface-contrast: #f1f1f1;
     --color-text: #1d1d1f;
     --color-text-muted: #6e6e73;
     --color-border: #d2d2d7;
+    --color-border-muted: #dddddd;
+    --color-border-strong: #cccccc;
+    --color-neutral: #e0e0e0;
+    --color-neutral-dark: #bdbdbd;
+    --color-loader-track: #f3f3f3;
+    --color-loader-indicator: #3498db;
+    --color-hero-background: #e0f7fa;
+    --color-hero-text: #00796b;
+    --color-stats-background: #fafafa;
     --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='dark'] {
+    --color-primary: #26a69a;
+    --color-primary-dark: #1f8c82;
+    --color-accent: #82b1ff;
+    --color-warning: #ffb74d;
+    --color-warning-dark: #f57c00;
+    --color-danger: #ff6f60;
+    --color-danger-dark: #d32f2f;
+    --color-danger-strong: #ef9a9a;
+    --color-success: #66bb6a;
+    --color-success-dark: #388e3c;
+    --color-error: #ff867c;
+    --color-surface: #1f1f28;
+    --color-surface-alt: #252533;
+    --color-surface-muted: #15151d;
+    --color-surface-contrast: #2b2b37;
+    --color-text: #f5f5f7;
+    --color-text-muted: #b0b0be;
+    --color-border: #3a3a48;
+    --color-border-muted: #2f2f3a;
+    --color-border-strong: #4a4a58;
+    --color-neutral: #353543;
+    --color-neutral-dark: #44445a;
+    --color-loader-track: #2b2b36;
+    --color-loader-indicator: #8ad2ff;
+    --color-hero-background: #102027;
+    --color-hero-text: #80cbc4;
+    --color-stats-background: #1b1b24;
+    --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 *, *::before, *::after {
@@ -32,6 +75,7 @@ body {
     width: 100%;
     /* min-height: 100vh; */
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 code {
@@ -54,14 +98,14 @@ code {
 }
 
 .App-header {
-    background-color: #282c34;
+    background-color: var(--color-surface-alt);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: calc(10px + 2vmin);
-    color: white;
+    color: var(--color-text);
 }
 
 .App-link {

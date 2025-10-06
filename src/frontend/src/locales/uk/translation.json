@@ -50,6 +50,14 @@
     "signIn": "Увійти",
     "signUp": "Зареєструватися"
   },
+  "themeToggle": {
+    "label": "Тема",
+    "system": "Авто",
+    "light": "Світла",
+    "dark": "Темна",
+    "ariaLabel": "Змінити тему (поточна: {{theme}})",
+    "nextLabel": "Наступна тема: {{theme}}"
+  },
   "clusterList": {
     "title": "Список кластерів",
     "noPanelsMessage": "Ще не додано кластерів або панелей",
