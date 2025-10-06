@@ -307,7 +307,7 @@ button,
     margin-top: 10px;
 }
 .profile-card{
-    margin: calc(50vh - 300px) auto auto;
+    margin: auto;
     button{
         margin-top: 5px;
     }

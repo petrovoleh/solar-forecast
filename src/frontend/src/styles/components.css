@@ -209,6 +209,8 @@
 
 .profile-container {
     padding: 20px;
+    display: grid;
+    place-items: center;
     color: var(--color-text);
 }
 

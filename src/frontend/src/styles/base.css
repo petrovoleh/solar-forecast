@@ -73,6 +73,7 @@ code {
     min-height: calc(100vh - 84px - 2rem);
     width: 100%;
     padding: 0 1rem;
+
 }
 
 .footer {
@@ -83,6 +84,7 @@ code {
 }
 
 .footer p {
+    height: 20px;
     margin: 0.25rem 0 0;
 }
 
