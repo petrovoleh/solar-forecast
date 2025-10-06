@@ -50,6 +50,14 @@
     "signIn": "Sign In",
     "signUp": "Sign Up"
   },
+  "themeToggle": {
+    "label": "Theme",
+    "system": "Auto",
+    "light": "Light",
+    "dark": "Dark",
+    "ariaLabel": "Change theme (current: {{theme}})",
+    "nextLabel": "Next theme: {{theme}}"
+  },
   "clusterList": {
     "title": "Cluster List",
     "noPanelsMessage": "No clusters or panels added yet",

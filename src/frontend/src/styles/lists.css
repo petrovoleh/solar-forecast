@@ -20,9 +20,9 @@
 .grid-headers {
     display: grid;
     gap: 0.5rem;
-    background-color: #f1f1f1;
+    background-color: var(--color-surface-contrast);
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--color-border-muted);
     font-weight: 600;
 }
 
@@ -81,7 +81,7 @@ minmax(200px, 2fr);
     align-items: center;
     padding: 10px;
     background-color: var(--color-surface);
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--color-border-muted);
     font-size: 0.875rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -112,7 +112,7 @@ minmax(200px, 2fr);
 .cluster-card,
 .panel-cardd {
     background-color: var(--color-surface);
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-muted);
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -156,7 +156,7 @@ minmax(200px, 2fr);
     gap: 1rem;
     padding: 1rem;
     background-color: var(--color-surface-alt);
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--color-border-strong);
     margin-top: 1.5rem;
 }
 
@@ -169,7 +169,7 @@ minmax(200px, 2fr);
 .page-size-dropdown {
     padding: 0.4rem;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border-strong);
     border-radius: 4px;
 }
 
@@ -180,7 +180,7 @@ minmax(200px, 2fr);
     background-color: var(--color-surface-alt);
     padding: 10px;
     margin-bottom: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-muted);
     border-radius: 4px;
 }
 
@@ -194,7 +194,7 @@ minmax(200px, 2fr);
     flex: 1;
     min-width: 220px;
     background-color: var(--color-surface-alt);
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-muted);
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

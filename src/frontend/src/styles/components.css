@@ -61,8 +61,8 @@
 }
 
 .loader {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
+    border: 8px solid var(--color-loader-track);
+    border-top: 8px solid var(--color-loader-indicator);
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -81,7 +81,7 @@
 .loader-container p {
     margin-top: 16px;
     font-size: 1.125rem;
-    color: #555555;
+    color: var(--color-text-muted);
 }
 
 .home-container {
@@ -93,7 +93,7 @@
 }
 
 .hero-section {
-    background-color: #e0f7fa;
+    background-color: var(--color-hero-background);
     text-align: center;
     padding: 3rem 2rem;
 }
@@ -106,7 +106,7 @@
 .hero-section p,
 .home-container p {
     font-size: 1.2rem;
-    color: #00796b;
+    color: var(--color-hero-text);
     margin: 1rem auto;
     max-width: 60ch;
 }
@@ -121,7 +121,7 @@
 .stats-section {
     display: flex;
     justify-content: space-around;
-    background-color: #fafafa;
+    background-color: var(--color-stats-background);
     padding: 2rem;
     flex-wrap: wrap;
     gap: 1.5rem;
@@ -134,7 +134,7 @@
 
 .stat-item p {
     font-size: 1.1rem;
-    color: #555555;
+    color: var(--color-text-muted);
 }
 
 .features-section,
@@ -167,7 +167,7 @@
 
 .testimonial {
     font-style: italic;
-    color: #555555;
+    color: var(--color-text-muted);
 }
 
 .not-found-container {
@@ -188,7 +188,7 @@
 
 .not-found-container p {
     font-size: 1.5rem;
-    color: #555555;
+    color: var(--color-text-muted);
     margin-bottom: 2rem;
 }
 

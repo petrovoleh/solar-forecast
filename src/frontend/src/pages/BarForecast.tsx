@@ -340,25 +340,30 @@ const BarForecast: React.FC = () => {
                 )}
                 {!loading && !error && <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <BarChart data={dailyTotals}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-muted)" />
                         <XAxis
                             dataKey="date"
                             tickFormatter={(tick) => format(parseISO(tick), 'MM-dd')}
-                            stroke="#333"
+                            stroke="var(--color-text)"
+                            tick={{ fill: 'var(--color-text)' }}
                         />
                         <YAxis
                             label={{
                                 value: t('barForecast.yAxisLabel'),
                                 angle: -90,
                                 position: 'insideLeft',
-                                fill: '#333',
+                                fill: 'var(--color-text)',
                             }}
+                            tick={{ fill: 'var(--color-text)' }}
+                            stroke="var(--color-text)"
                         />
                         <Tooltip
                             labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd')}
-                            contentStyle={{ backgroundColor: '#e0f7fa', borderColor: '#00796b' }}
+                            contentStyle={{ backgroundColor: 'var(--color-hero-background)', borderColor: 'var(--color-primary)', color: 'var(--color-text)' }}
+                            labelStyle={{ color: 'var(--color-text)' }}
+                            itemStyle={{ color: 'var(--color-text)' }}
                         />
-                        <Bar dataKey="totalEnergy_kwh" fill="#004d40" />
+                        <Bar dataKey="totalEnergy_kwh" fill="var(--color-primary-dark)" />
                     </BarChart>
                 </ResponsiveContainer>}
             </main>

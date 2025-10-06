@@ -20,6 +20,7 @@ import './styles/forecast.css';
 import EditPanel from "./pages/EditPanel";
 import ViewPanel from "./pages/ViewPanel";
 import {AuthProvider} from './context/AuthContext';
+import {ThemeProvider} from './context/ThemeContext';
 import Forecast from "./pages/Forecast";
 import ClusterList from "./pages/ClusterList";
 import EditCluster from "./pages/EditCluster";
@@ -36,14 +37,15 @@ const App: React.FC = () => {
     const {t} = useTranslation();
     // const wsClient = new WebSocketClient(ws_url);
     return (
-        <AuthProvider>
-            <Helmet>
-                <title>Solar forecast</title>
-            </Helmet>
-            <Router>
-                <Header/>
-                <div className="page-content">
-                    <Routes>
+        <ThemeProvider>
+            <AuthProvider>
+                <Helmet>
+                    <title>Solar forecast</title>
+                </Helmet>
+                <Router>
+                    <Header/>
+                    <div className="page-content">
+                        <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/forecast" element={<Forecast/>}/>
 
@@ -78,13 +80,14 @@ const App: React.FC = () => {
                         <Route path="/panel_forecast/:id" element={<GraphForecast/>}/>
                         <Route path="/bar_forecast/:id" element={<BarForecast/>}/>
                         <Route path="*" element={<NotFound/>}/>
-                    </Routes>
-                </div>
-                <footer className="footer">
-                    <p>{t('footer.copyright')}</p>
-                </footer>
-            </Router>
-        </AuthProvider>
+                        </Routes>
+                    </div>
+                    <footer className="footer">
+                        <p>{t('footer.copyright')}</p>
+                    </footer>
+                </Router>
+            </AuthProvider>
+        </ThemeProvider>
     );
 };
 
