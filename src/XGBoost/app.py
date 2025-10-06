@@ -231,8 +231,7 @@ def daily_forecast(
             .rename(columns={"pred_kW": "pred_kWh"})
         )
 
-        # ✅ Округлення та конвертація дати у string
-        daily["pred_kWh"] = daily["pred_kWh"].round(2)
+        daily["pred_kWh"] = (daily["pred_kWh"] * 2.0 ).round(2)
         daily["date"] = daily["date"].astype(str)
 
         return JSONResponse(daily.to_dict(orient="records"))

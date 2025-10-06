@@ -11,7 +11,8 @@ import joblib
 # 1️⃣ Завантаження PVGIS
 # ============================================================
 
-
+while True:
+    pass
 
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     """

@@ -106,3 +106,26 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 }
+
+.forecast-error {
+    width: 100%;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+    border: 1px solid rgba(244, 67, 54, 0.4);
+    background-color: rgba(244, 67, 54, 0.08);
+    color: #b71c1c;
+    box-shadow: 0 10px 20px rgba(183, 28, 28, 0.08);
+}
+
+.forecast-error__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.forecast-error__message {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}

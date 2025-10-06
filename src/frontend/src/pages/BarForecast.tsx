@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { backend_url } from "../config";
+import ForecastError from "../components/ForecastError";
 
 interface DailyTotalData {
     date: string;
@@ -22,7 +23,6 @@ type SummaryLoadingState = Record<keyof SummaryTotals, boolean>;
 const BarForecast: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(true);
 
@@ -57,7 +57,18 @@ const BarForecast: React.FC = () => {
         `${date} ${options?.endOfDay ? '23:59:59' : '00:00:00'}`;
 
     const fetchDailyTotals = useCallback(async () => {
-        if (!token || !id || !type) {
+        if (!token) {
+            setError(t('barForecast.tokenNotFound'));
+            setDailyTotals([]);
+            setTotalEnergySum(0);
+            setLoading(false);
+            return;
+        }
+        if (!id || !type) {
+            setError(t('barForecast.errorRetrievingData'));
+            setDailyTotals([]);
+            setTotalEnergySum(0);
+            setLoading(false);
             return;
         }
         try {
@@ -73,36 +84,53 @@ const BarForecast: React.FC = () => {
                 }
             );
 
+            const responseText = await response.text();
+
             if (!response.ok) {
-                const responseBody = await response.json(); // Wait for the JSON body
-                if (responseBody.statusText) {
-                    navigate(`/error?error_text=${encodeURIComponent(responseBody.statusText)}&error_code=${response.status}`);
-                    return;
-                } else {
-                    navigate(`/error?error_text=Unknown%20error%20occurred&error_code=${response.status}`);
-                    return;
+                let message = t('barForecast.errorRetrievingData');
+                try {
+                    const parsed = JSON.parse(responseText);
+                    if (parsed?.statusText) {
+                        message = parsed.statusText;
+                    }
+                } catch (parseError) {
+                    console.error('Failed to parse error response', parseError);
                 }
+
+                setError(message);
+                setDailyTotals([]);
+                setTotalEnergySum(0);
+                return;
             }
 
-            const data = await response.json();
+            try {
+                const data: DailyTotalData[] = JSON.parse(responseText);
 
-            const sortedData = data.sort((a: DailyTotalData, b: DailyTotalData) =>
-                new Date(a.date).getTime() - new Date(b.date).getTime()
-            );
+                const sortedData = data.sort((a: DailyTotalData, b: DailyTotalData) =>
+                    new Date(a.date).getTime() - new Date(b.date).getTime()
+                );
 
-            const totalSum = sortedData.reduce((sum: number, item: DailyTotalData) => sum + item.totalEnergy_kwh, 0);
+                const totalSum = sortedData.reduce((sum: number, item: DailyTotalData) => sum + item.totalEnergy_kwh, 0);
 
-            setDailyTotals(sortedData);
-            setTotalEnergySum(totalSum);
-            setError(null);
+                setDailyTotals(sortedData);
+                setTotalEnergySum(totalSum);
+                setError(null);
+            } catch (parseError) {
+                console.error('Failed to parse totals response', parseError);
+                setError(t('barForecast.errorRetrievingData'));
+                setDailyTotals([]);
+                setTotalEnergySum(0);
+            }
         } catch (error) {
-            navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
             console.error(error);
+            setError(t('barForecast.errorRetrievingData'));
+            setDailyTotals([]);
+            setTotalEnergySum(0);
         } finally {
             setLoading(false);
         }
 
-    }, [fromDate, id, navigate, toDate, token, type]);
+    }, [fromDate, id, toDate, token, type, t]);
 
     const fetchTotalSumForRange = useCallback(async (from: string, to: string): Promise<number | null> => {
         if (!token || !id || !type) {
@@ -226,7 +254,6 @@ const BarForecast: React.FC = () => {
     return (
         <div className="panel-forecast">
             <main className="forecast-main">
-                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <div className="date-selection-wrapper">
                     <div className="date-selection">
                         <label>
@@ -308,7 +335,10 @@ const BarForecast: React.FC = () => {
                         <p>{t('clusterList.loadingMessage')}</p>
                     </div>
                 }
-                {!loading && <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
+                {!loading && error && (
+                    <ForecastError message={error} />
+                )}
+                {!loading && !error && <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
                     <BarChart data={dailyTotals}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
                         <XAxis

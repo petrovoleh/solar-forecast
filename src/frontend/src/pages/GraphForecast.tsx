@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {format, parseISO} from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import {backend_url} from "../config";
+import ForecastError from "../components/ForecastError";
 
 interface ForecastData {
     timr: string;
@@ -13,7 +14,6 @@ interface ForecastData {
 const GraphForecast: React.FC = () => {
     const { t } = useTranslation();
     const {id} = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const location = useLocation(); // Access query parameters
     const [loading, setLoading] = useState(true);
@@ -28,8 +28,22 @@ const GraphForecast: React.FC = () => {
     const maxToDate = new Date(Date.now() + 13 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     const fetchForecast = async () => {
+        if (!token) {
+            setError(t('barForecast.tokenNotFound'));
+            setForecastData([]);
+            setLoading(false);
+            return;
+        }
+
+        if (!id || !type) {
+            setError(t('barForecast.errorRetrievingData'));
+            setForecastData([]);
+            setLoading(false);
+            return;
+        }
+
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await fetch(
                 `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
                 {
@@ -41,27 +55,40 @@ const GraphForecast: React.FC = () => {
                 }
             );
 
+            const responseText = await response.text();
+
             if (!response.ok) {
-                const responseBody = await response.json(); // Wait for the JSON body
-                // throw new Error(`Error: ${response.status} - ${responseBody.statusText}`);
-                if(responseBody.statusText) {
-                    navigate(`/error?error_text=${encodeURIComponent(responseBody.statusText)}&error_code=${response.status}`);
-                    return;
-                }else{
-                    navigate(`/error?error_text=Unknown%20error%20occurred&error_code=${response.status}`);
-                    return;
+                let message = t('barForecast.errorRetrievingData');
+                try {
+                    const parsed = JSON.parse(responseText);
+                    if (parsed?.statusText) {
+                        message = parsed.statusText;
+                    }
+                } catch (parseError) {
+                    console.error('Failed to parse error response', parseError);
                 }
+
+                setError(message);
+                setForecastData([]);
+                return;
             }
 
-            const data = await response.json();
-            setForecastData(data);
-            setError(null);
+            try {
+                const data: ForecastData[] = JSON.parse(responseText);
+                setForecastData(data);
+                setError(null);
+            } catch (parseError) {
+                console.error('Failed to parse forecast response', parseError);
+                setError(t('barForecast.errorRetrievingData'));
+                setForecastData([]);
+            }
         } catch (error) {
-            navigate(`/error?error_text=Unknown%20error%20occurred&error_code=400`);
             console.error(error);
+            setError(t('barForecast.errorRetrievingData'));
+            setForecastData([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false)
-
     };
 
     useEffect(() => {
@@ -70,9 +97,10 @@ const GraphForecast: React.FC = () => {
         }
         if (!token) {
             setError(t('barForecast.tokenNotFound'));
+            setLoading(false);
             return;
         }
-    }, [fromDate, toDate, token]);
+    }, [fromDate, toDate, token, type]);
 
     const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFromDate = e.target.value;
@@ -103,7 +131,6 @@ const GraphForecast: React.FC = () => {
     return (
         <div className="panel-forecast">
             <main className="forecast-main">
-                {error && <p style={{color: 'red'}}>{error}</p>}
                 <div className="date-selection-wrapper">
                     <div className="date-selection">
                         <label>
@@ -137,24 +164,27 @@ const GraphForecast: React.FC = () => {
                         <p>{t('clusterList.loadingMessage')}</p>
                     </div>
                 }
-                {!loading &&
-                <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
-                    <LineChart data={forecastData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
-                        <XAxis
-                            dataKey="time"
-                            tickFormatter={(tick) => format(parseISO(tick), 'MM-dd HH:mm')}
-                            stroke="#333"
-                        />
-                        <YAxis label={{value: t('barForecast.yAxisLabel'), angle: -90, position: 'insideLeft', fill: '#333'}}/>
-                        <Tooltip
-                            labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
-                            contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}
-                        />
-                        <Line type="monotone" dataKey="pred_kW" stroke="#004d40" strokeWidth={2} dot={false}/>
-                    </LineChart>
-                </ResponsiveContainer>
-                }
+                {!loading && error && (
+                    <ForecastError message={error} />
+                )}
+                {!loading && !error && (
+                    <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
+                        <LineChart data={forecastData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#ccc"/>
+                            <XAxis
+                                dataKey="time"
+                                tickFormatter={(tick) => format(parseISO(tick), 'MM-dd HH:mm')}
+                                stroke="#333"
+                            />
+                            <YAxis label={{value: t('barForecast.yAxisLabel'), angle: -90, position: 'insideLeft', fill: '#333'}}/>
+                            <Tooltip
+                                labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd HH:mm')}
+                                contentStyle={{backgroundColor: '#e0f7fa', borderColor: '#00796b'}}
+                            />
+                            <Line type="monotone" dataKey="pred_kW" stroke="#004d40" strokeWidth={2} dot={false}/>
+                        </LineChart>
+                    </ResponsiveContainer>
+                )}
             </main>
         </div>
     );
