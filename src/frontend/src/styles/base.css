@@ -113,8 +113,8 @@ code {
 }
 
 .page-content {
-    margin-top: calc(60px + 1rem);
-    min-height: calc(100vh - 84px - 2rem);
+    margin-top: 60px;
+    min-height: calc(100vh - 84px - 1rem);
     width: 100%;
 }
 
