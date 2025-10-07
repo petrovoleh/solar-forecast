@@ -48,7 +48,7 @@ const EditCluster: React.FC = () => {
     const [isGroupCluster, setIsGroupCluster] = useState<boolean>(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
     const [panels, setPanels] = useState<Panel[]>([]);
-    const [panelsLoading, setPanelsLoading] = useState<boolean>(false);
+    const [panelsLoading, setPanelsLoading] = useState<boolean>(isEditMode);
     const [selectedPanelIds, setSelectedPanelIds] = useState<string[]>([]);
     const [initialPanelIds, setInitialPanelIds] = useState<string[]>([]);
     const [panelSelectionReady, setPanelSelectionReady] = useState<boolean>(!isEditMode);
@@ -92,10 +92,14 @@ const EditCluster: React.FC = () => {
             }
         };
 
-        if (localStorage.getItem('token')) {
+        const hasToken = Boolean(localStorage.getItem('token'));
+
+        if (isEditMode && hasToken) {
             fetchPanels();
+        } else if (!isEditMode || !hasToken) {
+            setPanelsLoading(false);
         }
-    }, []);
+    }, [isEditMode]);
 
     // Fetch existing cluster data if in edit mode
     useEffect(() => {
