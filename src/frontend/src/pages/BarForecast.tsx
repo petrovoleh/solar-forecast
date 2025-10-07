@@ -279,9 +279,7 @@ const BarForecast: React.FC = () => {
                         <button className="primary-button cta-button" onClick={fetchDailyTotals}>
                             {t('barForecast.okButton')}
                         </button>
-                        <p className="total-energy-text">
-                            {t('barForecast.totalEnergyGenerated', { total: totalEnergySum.toFixed(2) })}
-                        </p>
+
                         <div className="summary-section">
                             <h2>{t('barForecast.summaryTitle')}</h2>
                             <div className="summary-totals">
@@ -323,6 +321,12 @@ const BarForecast: React.FC = () => {
                                             : summaryTotals.lastYear !== null
                                                 ? summaryTotals.lastYear.toFixed(2)
                                                 : t('barForecast.noSummaryData')}
+                                    </span>
+                                </div>
+                                <div className="summary-card">
+                                    <span className="summary-label">Selected period</span>
+                                    <span className="summary-value">
+                                        {totalEnergySum.toFixed(2)}
                                     </span>
                                 </div>
                             </div>

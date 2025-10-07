@@ -94,7 +94,7 @@
     "fromDate": "From Date",
     "toDate": "To Date",
     "okButton": "OK",
-    "totalEnergyGenerated": "Total energy generated over this period: {{total}} kWh",
+    "totalEnergyGenerated": "For selected period: {{total}} kWh",
     "yAxisLabel": "Total Energy (kWh)",
     "errorRetrievingData": "Failed to retrieve daily totals.",
     "tokenNotFound": "Token not found. Please log in.",

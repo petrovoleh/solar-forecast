@@ -28,6 +28,7 @@
     flex-wrap: wrap;
     gap: 0.75rem;
     align-items: center;
+
 }
 
 .date-selection label {
@@ -44,7 +45,7 @@
 
 .summary-section {
     margin-top: 1.5rem;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 .summary-section h2 {
