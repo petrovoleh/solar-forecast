@@ -19,6 +19,20 @@ interface Inverter {
     name: string;
 }
 
+interface Panel {
+    id: string;
+    name: string;
+    powerRating: number;
+    temperatureCoefficient: number;
+    efficiency: number;
+    quantity: number;
+    location?: Partial<LocationData>;
+    cluster?: {
+        id: string;
+        name: string;
+    };
+}
+
 const EditCluster: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const isEditMode = Boolean(id);
@@ -33,6 +47,12 @@ const EditCluster: React.FC = () => {
     });
     const [isGroupCluster, setIsGroupCluster] = useState<boolean>(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
+    const [panels, setPanels] = useState<Panel[]>([]);
+    const [panelsLoading, setPanelsLoading] = useState<boolean>(false);
+    const [selectedPanelIds, setSelectedPanelIds] = useState<string[]>([]);
+    const [initialPanelIds, setInitialPanelIds] = useState<string[]>([]);
+    const [panelSelectionReady, setPanelSelectionReady] = useState<boolean>(!isEditMode);
+    const [isSyncingPanels, setIsSyncingPanels] = useState<boolean>(false);
 
     // Fetch the list of inverters on component mount
     useEffect(() => {
@@ -48,6 +68,33 @@ const EditCluster: React.FC = () => {
         };
 
         fetchInverters();
+    }, []);
+
+    useEffect(() => {
+        const fetchPanels = async () => {
+            setPanelsLoading(true);
+            try {
+                const {response, data} = await apiRequest<Panel[]>(
+                    `${backend_url}/api/panel/user`,
+                    {auth: true},
+                );
+
+                if (response.ok && Array.isArray(data)) {
+                    setPanels(data);
+                } else {
+                    setPanels([]);
+                }
+            } catch (error) {
+                console.error('Error fetching panels:', error);
+                setPanels([]);
+            } finally {
+                setPanelsLoading(false);
+            }
+        };
+
+        if (localStorage.getItem('token')) {
+            fetchPanels();
+        }
     }, []);
 
     // Fetch existing cluster data if in edit mode
@@ -75,6 +122,20 @@ const EditCluster: React.FC = () => {
 
         fetchClusterData();
     }, [id, isEditMode]);
+
+    useEffect(() => {
+        if (!isEditMode || !id || panelSelectionReady || panelsLoading) {
+            return;
+        }
+
+        const assignedPanelIds = panels
+            .filter((panel) => panel.cluster?.id === id)
+            .map((panel) => panel.id);
+
+        setSelectedPanelIds(assignedPanelIds);
+        setInitialPanelIds(assignedPanelIds);
+        setPanelSelectionReady(true);
+    }, [isEditMode, id, panels, panelSelectionReady, panelsLoading]);
 
     // Update form state on input change for non-location data
     const handleInputChange = (
@@ -114,6 +175,121 @@ const EditCluster: React.FC = () => {
         setFormData((prevState) => updateLocationState(prevState, {[name]: value} as Partial<LocationData>));
     };
 
+    const togglePanelSelection = (panelId: string) => {
+        setSelectedPanelIds((prevSelected) => (
+            prevSelected.includes(panelId)
+                ? prevSelected.filter((id) => id !== panelId)
+                : [...prevSelected, panelId]
+        ));
+    };
+
+    const updatePanelCluster = async (panel: Panel, clusterIdValue: string | null) => {
+        const payload: {
+            name: string;
+            powerRating: number;
+            temperatureCoefficient: number;
+            efficiency: number;
+            quantity: number;
+            clusterId: string | null;
+            location?: LocationData;
+        } = {
+            name: panel.name,
+            powerRating: panel.powerRating,
+            temperatureCoefficient: panel.temperatureCoefficient,
+            efficiency: panel.efficiency,
+            quantity: panel.quantity,
+            clusterId: clusterIdValue,
+        };
+
+        if (
+            panel.location &&
+            typeof panel.location.lat === 'number' &&
+            typeof panel.location.lon === 'number' &&
+            typeof panel.location.city === 'string' &&
+            typeof panel.location.district === 'string' &&
+            typeof panel.location.country === 'string'
+        ) {
+            payload.location = {
+                lat: panel.location.lat,
+                lon: panel.location.lon,
+                city: panel.location.city,
+                district: panel.location.district,
+                country: panel.location.country,
+            };
+        }
+
+        const {response, data} = await apiRequest(
+            `${backend_url}/api/panel/${panel.id}`,
+            {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload),
+                auth: true,
+            },
+        );
+
+        if (!response.ok) {
+            const errorMessage = typeof data === 'string' && data
+                ? data
+                : 'Failed to update panel cluster';
+            throw new Error(errorMessage);
+        }
+    };
+
+    const syncPanelAssignments = async (): Promise<{added: number; removed: number}> => {
+        if (!isEditMode || !id) {
+            return {added: 0, removed: 0};
+        }
+
+        const selectedSet = new Set(selectedPanelIds);
+        const initialSet = new Set(initialPanelIds);
+
+        const toAssign = panels.filter((panel) => selectedSet.has(panel.id) && !initialSet.has(panel.id));
+        const toRemove = panels.filter((panel) => initialSet.has(panel.id) && !selectedSet.has(panel.id));
+
+        if (toAssign.length === 0 && toRemove.length === 0) {
+            return {added: 0, removed: 0};
+        }
+
+        setIsSyncingPanels(true);
+
+        try {
+            await Promise.all([
+                ...toAssign.map((panel) => updatePanelCluster(panel, id)),
+                ...toRemove.map((panel) => updatePanelCluster(panel, null)),
+            ]);
+
+            const assignIds = new Set(toAssign.map((panel) => panel.id));
+            const removeIds = new Set(toRemove.map((panel) => panel.id));
+
+            setInitialPanelIds([...selectedPanelIds]);
+            setPanels((prevPanels) => prevPanels.map((panel) => {
+                if (assignIds.has(panel.id)) {
+                    return {
+                        ...panel,
+                        cluster: {
+                            id,
+                            name: formData.name,
+                        },
+                    };
+                }
+
+                if (removeIds.has(panel.id)) {
+                    return {
+                        ...panel,
+                        cluster: undefined,
+                    };
+                }
+
+                return panel;
+            }));
+
+            return {added: toAssign.length, removed: toRemove.length};
+        } finally {
+            setIsSyncingPanels(false);
+        }
+    };
+
     const handleGroupToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
         const enabled = event.target.checked;
         setIsGroupCluster(enabled);
@@ -150,7 +326,23 @@ const EditCluster: React.FC = () => {
             );
 
             if (response.ok) {
-                setResponseMessage(isEditMode ? 'Cluster updated successfully!' : 'Cluster added successfully!');
+                let message = isEditMode
+                    ? t('editCluster.responseMessages.updateSuccess')
+                    : t('editCluster.responseMessages.createSuccess');
+
+                if (isEditMode && panelSelectionReady) {
+                    try {
+                        const panelResult = await syncPanelAssignments();
+                        if (panelResult.added > 0 || panelResult.removed > 0) {
+                            message = `${message} ${t('editCluster.responseMessages.panelSyncSuccess', panelResult)}`;
+                        }
+                    } catch (panelError) {
+                        console.error('Error updating panel assignments:', panelError);
+                        message = `${message} ${t('editCluster.responseMessages.panelSyncFailure')}`;
+                    }
+                }
+
+                setResponseMessage(message);
             } else {
                 setResponseMessage(`Error: ${data || 'Unknown error'}`);
             }
@@ -251,6 +443,53 @@ const EditCluster: React.FC = () => {
                                 placeholder={t('editCluster.form.districtPlaceholder')}
                             />
                         </div>
+                    </div>
+
+                    <div className="panel-assignment-section">
+                        <h3>{t('editCluster.panelsSection.title')}</h3>
+                        <p className="panel-assignment-description">
+                            {isEditMode
+                                ? t('editCluster.panelsSection.description')
+                                : t('editCluster.panelsSection.unavailable')}
+                        </p>
+                        {isEditMode ? (
+                            panelsLoading ? (
+                                <p className="panel-assignment-status">{t('editCluster.panelsSection.loading')}</p>
+                            ) : panels.length === 0 ? (
+                                <p className="panel-assignment-status">{t('editCluster.panelsSection.noPanels')}</p>
+                            ) : (
+                                <ul className="panel-selection-list">
+                                    {panels.map((panel) => {
+                                        const isAssignedToCurrent = selectedPanelIds.includes(panel.id);
+                                        const isAssignedElsewhere = panel.cluster && panel.cluster.id !== id;
+
+                                        return (
+                                            <li key={panel.id} className="panel-selection-item">
+                                                <label className="panel-checkbox-label">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isAssignedToCurrent}
+                                                        onChange={() => togglePanelSelection(panel.id)}
+                                                        disabled={!panelSelectionReady || isSyncingPanels}
+                                                    />
+                                                    <span className="panel-name">{panel.name}</span>
+                                                </label>
+                                                {isAssignedElsewhere && (
+                                                    <span className="panel-assigned-note">
+                                                        {t('editCluster.panelsSection.assignedToOther', {name: panel.cluster?.name})}
+                                                    </span>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            )
+                        ) : (
+                            <p className="panel-assignment-status">{t('editCluster.panelsSection.unavailable')}</p>
+                        )}
+                        {isEditMode && !panelsLoading && panels.some((panel) => panel.cluster && panel.cluster.id !== id) && (
+                            <p className="panel-assignment-hint">{t('editCluster.panelsSection.moveHint')}</p>
+                        )}
                     </div>
 
                     <button type="submit" className="primary-button btn-submit">

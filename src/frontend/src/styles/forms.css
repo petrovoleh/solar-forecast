@@ -201,6 +201,67 @@ button,
     align-items: center;
 
 }
+.panel-assignment-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.panel-assignment-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary-dark);
+}
+
+.panel-assignment-description,
+.panel-assignment-status,
+.panel-assignment-hint {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+}
+
+.panel-selection-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.panel-selection-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background-color: var(--color-surface-alt);
+}
+
+.panel-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.panel-checkbox-label input[type="checkbox"] {
+    width: auto;
+    height: auto;
+}
+
+.panel-assigned-note {
+    font-size: 0.85rem;
+    color: var(--color-accent);
+}
+
+.panel-assignment-hint {
+    margin-top: 1rem;
+}
 .primary-button {
     background-color: var(--color-primary);
     color: #ffffff;

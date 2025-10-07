@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class SolarPanelController {
         panel.setEfficiency(panelRequest.getEfficiency());
         panel.setName(panelRequest.getName());
         panel.setQuantity(panelRequest.getQuantity());
-        if (panelRequest.getClusterId() != null) {
+        if (StringUtils.hasText(panelRequest.getClusterId())) {
             Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
             if (cluster == null) {
                 return ResponseEntity.badRequest().body("Invalid cluster ID.");
@@ -199,11 +200,15 @@ public class SolarPanelController {
             }
         }
         if (panelRequest.getClusterId() != null) {
-            Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
-            if (cluster == null) {
-                return ResponseEntity.badRequest().body("Invalid cluster ID.");
+            if (StringUtils.hasText(panelRequest.getClusterId())) {
+                Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
+                if (cluster == null) {
+                    return ResponseEntity.badRequest().body("Invalid cluster ID.");
+                }
+                existingPanel.setCluster(cluster); // Update the panel's cluster
+            } else {
+                existingPanel.setCluster(null); // Remove the panel from its cluster
             }
-            existingPanel.setCluster(cluster); // Update the panel's cluster
         }
         // Update the panel in the service
         panelService.addPanel(existingPanel);

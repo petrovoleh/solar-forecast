@@ -45,7 +45,7 @@
     "profile": "Profilis",
     "dashboard": "Skydelis",
     "myPanels": "Mano skydeliai",
-    "myClusters": "Mano klasteriai",
+    "myClusters": "Klasteriai ir grupės",
     "forecast": "Prognozė",
     "signIn": "Prisijungti",
     "signUp": "Registruotis"
@@ -221,6 +221,21 @@
       "defaultCountry": "Lietuva",
       "defaultCity": "Vilnius",
       "defaultDistrict": "Vilniaus apskritis"
+    },
+    "panelsSection": {
+      "title": "Valdyti skydelius",
+      "description": "Pasirinkite, kurie skydeliai turi priklausyti šiam klasteriui ar grupei.",
+      "noPanels": "Dar neįkėlėte jokių skydelių.",
+      "unavailable": "Pirmiausia išsaugokite klasterį, kad galėtumėte valdyti skydelius.",
+      "assignedToOther": "Šiuo metu priskirta {{name}}",
+      "moveHint": "Pažymėtas skydelis bus perkeltas iš dabartinio klasterio.",
+      "loading": "Įkeliami skydeliai..."
+    },
+    "responseMessages": {
+      "updateSuccess": "Klasteris sėkmingai atnaujintas!",
+      "createSuccess": "Klasteris sėkmingai pridėtas!",
+      "panelSyncSuccess": "Skydelių priskyrimai atnaujinti ({{added}} pridėta, {{removed}} pašalinta).",
+      "panelSyncFailure": "Klasteris atnaujintas, tačiau skydelių priskyrimų atnaujinti nepavyko."
     }
   },
   "addCluster": {

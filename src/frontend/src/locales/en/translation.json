@@ -45,7 +45,7 @@
     "profile": "Profile",
     "dashboard": "Dashboard",
     "myPanels": "My Panels",
-    "myClusters": "My Clusters",
+    "myClusters": "Clusters and Groups",
     "forecast": "Forecast",
     "signIn": "Sign In",
     "signUp": "Sign Up"
@@ -222,6 +222,21 @@
       "defaultCountry": "Lithuania",
       "defaultCity": "Vilnius",
       "defaultDistrict": "Vilnius County"
+    },
+    "panelsSection": {
+      "title": "Manage panels",
+      "description": "Select which panels should belong to this cluster or group.",
+      "noPanels": "You haven't added any panels yet.",
+      "unavailable": "Save the cluster first to manage panels.",
+      "assignedToOther": "Currently in {{name}}",
+      "moveHint": "Selecting a panel will move it from its current cluster.",
+      "loading": "Loading panels..."
+    },
+    "responseMessages": {
+      "updateSuccess": "Cluster updated successfully!",
+      "createSuccess": "Cluster added successfully!",
+      "panelSyncSuccess": "Panel assignments updated ({{added}} added, {{removed}} removed).",
+      "panelSyncFailure": "Cluster updated, but updating panel assignments failed."
     }
   },
   "addCluster": {
