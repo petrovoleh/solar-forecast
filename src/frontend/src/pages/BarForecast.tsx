@@ -324,7 +324,7 @@ const BarForecast: React.FC = () => {
                                     </span>
                                 </div>
                                 <div className="summary-card">
-                                    <span className="summary-label">Selected period</span>
+                                    <span className="summary-label">{t('barForecast.selectedPeriodLabel')}</span>
                                     <span className="summary-value">
                                         {totalEnergySum.toFixed(2)}
                                     </span>
@@ -342,34 +342,38 @@ const BarForecast: React.FC = () => {
                 {!loading && error && (
                     <ForecastError message={error} />
                 )}
-                {!loading && !error && <ResponsiveContainer width="100%" height={window.innerHeight * 0.8 - 100}>
-                    <BarChart data={dailyTotals}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-muted)" />
-                        <XAxis
-                            dataKey="date"
-                            tickFormatter={(tick) => format(parseISO(tick), 'MM-dd')}
-                            stroke="var(--color-text)"
-                            tick={{ fill: 'var(--color-text)' }}
-                        />
-                        <YAxis
-                            label={{
-                                value: t('barForecast.yAxisLabel'),
-                                angle: -90,
-                                position: 'insideLeft',
-                                fill: 'var(--color-text)',
-                            }}
-                            tick={{ fill: 'var(--color-text)' }}
-                            stroke="var(--color-text)"
-                        />
-                        <Tooltip
-                            labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd')}
-                            contentStyle={{ backgroundColor: 'var(--color-hero-background)', borderColor: 'var(--color-primary)', color: 'var(--color-text)' }}
-                            labelStyle={{ color: 'var(--color-text)' }}
-                            itemStyle={{ color: 'var(--color-text)' }}
-                        />
-                        <Bar dataKey="totalEnergy_kwh" fill="var(--color-primary-dark)" />
-                    </BarChart>
-                </ResponsiveContainer>}
+                {!loading && !error && (
+                    <div className="chart-responsive-container">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={dailyTotals}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-muted)" />
+                                <XAxis
+                                    dataKey="date"
+                                    tickFormatter={(tick) => format(parseISO(tick), 'MM-dd')}
+                                    stroke="var(--color-text)"
+                                    tick={{ fill: 'var(--color-text)' }}
+                                />
+                                <YAxis
+                                    label={{
+                                        value: t('barForecast.yAxisLabel'),
+                                        angle: -90,
+                                        position: 'insideLeft',
+                                        fill: 'var(--color-text)',
+                                    }}
+                                    tick={{ fill: 'var(--color-text)' }}
+                                    stroke="var(--color-text)"
+                                />
+                                <Tooltip
+                                    labelFormatter={(label) => format(parseISO(label), 'yyyy-MM-dd')}
+                                    contentStyle={{ backgroundColor: 'var(--color-hero-background)', borderColor: 'var(--color-primary)', color: 'var(--color-text)' }}
+                                    labelStyle={{ color: 'var(--color-text)' }}
+                                    itemStyle={{ color: 'var(--color-text)' }}
+                                />
+                                <Bar dataKey="totalEnergy_kwh" fill="var(--color-primary-dark)" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
             </main>
         </div>
     );

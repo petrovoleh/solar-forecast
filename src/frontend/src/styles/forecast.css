@@ -1,6 +1,6 @@
 .panel-forecast {
     color: var(--color-text);
-    min-height: calc(100vh - 160px);
+    min-height: calc(100vh - 360px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -129,4 +129,9 @@
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
+}
+
+.chart-responsive-container {
+    width: 100%;
+    height: calc(100vh - 340px);
 }

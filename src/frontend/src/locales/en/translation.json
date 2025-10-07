@@ -103,6 +103,7 @@
     "lastWeekLabel": "Last 1 week",
     "lastMonthLabel": "Last 1 month",
     "lastYearLabel": "Last 1 year",
+    "selectedPeriodLabel": "Selected period",
     "noSummaryData": "No data",
     "summaryLoading": "Loading..."
   },

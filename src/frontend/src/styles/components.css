@@ -53,7 +53,7 @@
 }
 
 .loader-container {
-    min-height: calc(90vh - 200px);
+    min-height: calc(90vh - 250px);
 }
 
 .mini-loader-container {

@@ -102,6 +102,7 @@
     "lastDayLabel": "Paskutinė 1 diena",
     "lastWeekLabel": "Paskutinė 1 savaitė",
     "lastMonthLabel": "Paskutinis 1 mėnuo",
+    "selectedPeriodLabel": "Pasirinktas laikotarpis",
     "noSummaryData": "Nėra duomenų",
     "summaryLoading": "Įkeliama..."
   },

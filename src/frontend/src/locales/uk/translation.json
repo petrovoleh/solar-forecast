@@ -102,6 +102,7 @@
     "lastDayLabel": "Остання 1 доба",
     "lastWeekLabel": "Останній 1 тиждень",
     "lastMonthLabel": "Останній 1 місяць",
+    "selectedPeriodLabel": "Вибраний період",
     "noSummaryData": "Немає даних",
     "summaryLoading": "Завантаження..."
   },
