@@ -77,6 +77,7 @@
     "edit": "Redaguoti",
     "delete": "Ištrinti",
     "notAvailable": "Nėra duomenų",
+    "groupLabel": "Grupė (be vienos vietos)",
     "type": "Tipas",
     "barForecast": "Juostinė prognozė",
     "graphForecast": "Grafiko prognozė",
@@ -104,7 +105,10 @@
     "lastMonthLabel": "Paskutinis 1 mėnuo",
     "selectedPeriodLabel": "Pasirinktas laikotarpis",
     "noSummaryData": "Nėra duomenų",
-    "summaryLoading": "Įkeliama..."
+    "summaryLoading": "Įkeliama...",
+    "noGroupPanels": "Šiai grupei dar nepriskirti jokie įrenginiai.",
+    "groupDevicesTitle": "Įrenginiai šioje grupėje ({{count}})",
+    "unnamedDevice": "Be pavadinimo"
   },
   "notFound": {
     "title": "404 - Puslapis nerastas",
@@ -200,6 +204,8 @@
       "descriptionPlaceholder": "Įveskite aprašymą",
       "inverter": "Keitiklis",
       "inverterPlaceholder": "Pasirinkite keitiklį",
+      "groupLabel": "Traktuoti klasterį kaip grupę be vietos",
+      "groupDescription": "Grupės klasteriai gali turėti įrenginius iš kelių vietų. Vietos nustatymai bus išjungti.",
       "locationInfo": "Vieta turi būti pasirinkta žemėlapyje. Šie laukai skirti tik rodymui.",
       "country": "Šalis",
       "countryPlaceholder": "Įveskite šalį",
@@ -259,6 +265,9 @@
       "errorSubmit": "Įvyko klaida siunčiant klasterį.",
       "notLoggedIn": "Jūs turite būti prisijungęs, kad galėtumėte pridėti ar redaguoti klasterį."
     }
+  },
+  "viewCluster": {
+    "groupCluster": "Šis klasteris nustatytas kaip grupė ir neturi vienos bendros vietos."
   },
   "editProfile": {
     "title": "Redaguoti profilį",

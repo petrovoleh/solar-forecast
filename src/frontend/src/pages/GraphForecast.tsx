@@ -1,14 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useLocation, useParams} from 'react-router-dom';
-import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {format, parseISO} from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import {backend_url} from "../config";
 import ForecastError from "../components/ForecastError";
 
 interface ForecastData {
-    timr: string;
+    time: string;
     pred_kW: number;
+}
+
+interface GroupPanel {
+    id: string;
+    name: string;
+}
+
+interface CombinedForecastPoint {
+    time: string;
+    [seriesKey: string]: string | number;
 }
 
 const GraphForecast: React.FC = () => {
@@ -18,7 +28,9 @@ const GraphForecast: React.FC = () => {
     const location = useLocation(); // Access query parameters
     const [loading, setLoading] = useState(true);
 
-    const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+    const [forecastData, setForecastData] = useState<CombinedForecastPoint[]>([]);
+    const [seriesKeys, setSeriesKeys] = useState<string[]>([]);
+    const [groupPanels, setGroupPanels] = useState<GroupPanel[]>([]);
     const [fromDate, setFromDate] = useState<string>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     const [toDate, setToDate] = useState<string>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +39,131 @@ const GraphForecast: React.FC = () => {
     console.log(type)
     const maxToDate = new Date(Date.now() + 13 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    const fetchForecast = async () => {
+    useEffect(() => {
+        if (type !== 'group') {
+            setGroupPanels([]);
+            setSeriesKeys(['pred_kW']);
+        }
+    }, [id, type]);
+
+    const lineColors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
+
+    const ensureGroupPanels = useCallback(async (): Promise<GroupPanel[]> => {
+        if (type !== 'group') {
+            return [];
+        }
+
+        if (!token || !id) {
+            return [];
+        }
+
+        if (groupPanels.length > 0) {
+            return groupPanels;
+        }
+
+        try {
+            const response = await fetch(`${backend_url}/api/panel/user`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const responseText = await response.text();
+
+            if (!response.ok) {
+                let message = t('barForecast.errorRetrievingData');
+                try {
+                    const parsed = JSON.parse(responseText);
+                    if (parsed?.statusText) {
+                        message = parsed.statusText;
+                    }
+                } catch (parseError) {
+                    console.error('Failed to parse group panels error response', parseError);
+                }
+                throw new Error(message);
+            }
+
+            if (!responseText || responseText === 'null') {
+                setGroupPanels([]);
+                return [];
+            }
+
+            let parsedPanels: Array<{ id: string; name?: string; cluster?: { id?: string } }> = [];
+            try {
+                parsedPanels = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('Failed to parse group panels response', parseError);
+                throw new Error(t('barForecast.errorRetrievingData'));
+            }
+
+            const filteredPanels = parsedPanels.filter((panel) => panel.cluster?.id === id);
+            const mappedPanels = filteredPanels.map((panel) => ({
+                id: panel.id,
+                name: panel.name || t('barForecast.unnamedDevice'),
+            }));
+
+            setGroupPanels(mappedPanels);
+            return mappedPanels;
+        } catch (fetchError) {
+            console.error('Failed to load group panels', fetchError);
+            throw fetchError instanceof Error ? fetchError : new Error(t('barForecast.errorRetrievingData'));
+        }
+    }, [groupPanels, id, token, type, t]);
+
+    const createSeriesLabels = useCallback((panels: GroupPanel[]): string[] => {
+        const counts = new Map<string, number>();
+        return panels.map((panel) => {
+            const base = panel.name.trim() || t('barForecast.unnamedDevice');
+            const current = counts.get(base) ?? 0;
+            counts.set(base, current + 1);
+            return current === 0 ? base : `${base} (${current + 1})`;
+        });
+    }, [t]);
+
+    const fetchPanelForecast = useCallback(async (panelId: string, start: string, end: string) => {
+        if (!token) {
+            throw new Error(t('barForecast.tokenNotFound'));
+        }
+
+        const response = await fetch(
+            `${backend_url}/api/forecast/getForecast?panelId=${panelId}&from=${start} 00:00:00&to=${end} 00:00:00&type=panel`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
+
+        const responseText = await response.text();
+
+        if (!response.ok) {
+            let message = t('barForecast.errorRetrievingData');
+            try {
+                const parsed = JSON.parse(responseText);
+                if (parsed?.statusText) {
+                    message = parsed.statusText;
+                }
+            } catch (parseError) {
+                console.error('Failed to parse forecast error response', parseError);
+            }
+            throw new Error(message);
+        }
+
+        if (!responseText || responseText === 'null') {
+            return [];
+        }
+
+        try {
+            return JSON.parse(responseText) as ForecastData[];
+        } catch (parseError) {
+            console.error('Failed to parse forecast response', parseError);
+            throw new Error(t('barForecast.errorRetrievingData'));
+        }
+    }, [token, t]);
+
+    const fetchForecast = useCallback(async () => {
         if (!token) {
             setError(t('barForecast.tokenNotFound'));
             setForecastData([]);
@@ -44,63 +180,119 @@ const GraphForecast: React.FC = () => {
 
         try {
             setLoading(true);
-            const response = await fetch(
-                `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            const responseText = await response.text();
-
-            if (!response.ok) {
-                let message = t('barForecast.errorRetrievingData');
+            if (type === 'group') {
+                let panels: GroupPanel[] = [];
                 try {
-                    const parsed = JSON.parse(responseText);
-                    if (parsed?.statusText) {
-                        message = parsed.statusText;
-                    }
-                } catch (parseError) {
-                    console.error('Failed to parse error response', parseError);
+                    panels = await ensureGroupPanels();
+                } catch (groupError) {
+                    const message = groupError instanceof Error ? groupError.message : t('barForecast.errorRetrievingData');
+                    setError(message);
+                    setForecastData([]);
+                    setSeriesKeys([]);
+                    return;
                 }
 
-                setError(message);
-                setForecastData([]);
-                return;
-            }
+                if (panels.length === 0) {
+                    setError(t('barForecast.noGroupPanels'));
+                    setForecastData([]);
+                    setSeriesKeys([]);
+                    return;
+                }
 
-            try {
-                const data: ForecastData[] = JSON.parse(responseText);
-                setForecastData(data);
+                const labels = createSeriesLabels(panels);
+                const forecasts = await Promise.all(
+                    panels.map((panel) => fetchPanelForecast(panel.id, fromDate, toDate)),
+                );
+
+                const combinedMap = new Map<string, CombinedForecastPoint>();
+
+                forecasts.forEach((panelForecast, index) => {
+                    const label = labels[index];
+                    panelForecast.forEach((entry) => {
+                        const existing = combinedMap.get(entry.time) || { time: entry.time };
+                        existing[label] = entry.pred_kW;
+                        combinedMap.set(entry.time, existing);
+                    });
+                });
+
+                const combinedData = Array.from(combinedMap.values()).sort(
+                    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
+                );
+
+                setForecastData(combinedData);
+                setSeriesKeys(labels);
                 setError(null);
-            } catch (parseError) {
-                console.error('Failed to parse forecast response', parseError);
-                setError(t('barForecast.errorRetrievingData'));
-                setForecastData([]);
+            } else {
+                const response = await fetch(
+                    `${backend_url}/api/forecast/getForecast?panelId=${id}&from=${fromDate} 00:00:00&to=${toDate} 00:00:00&type=${type}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                );
+
+                const responseText = await response.text();
+
+                if (!response.ok) {
+                    let message = t('barForecast.errorRetrievingData');
+                    try {
+                        const parsed = JSON.parse(responseText);
+                        if (parsed?.statusText) {
+                            message = parsed.statusText;
+                        }
+                    } catch (parseError) {
+                        console.error('Failed to parse error response', parseError);
+                    }
+
+                    setSeriesKeys(['pred_kW']);
+                    setError(message);
+                    setForecastData([]);
+                    return;
+                }
+
+                try {
+                    const data: ForecastData[] = JSON.parse(responseText);
+                    const singleSeries: CombinedForecastPoint[] = data.map((entry) => ({
+                        time: entry.time,
+                        pred_kW: entry.pred_kW,
+                    }));
+                    setForecastData(singleSeries);
+                    setSeriesKeys(['pred_kW']);
+                    setError(null);
+                } catch (parseError) {
+                    console.error('Failed to parse forecast response', parseError);
+                    setError(t('barForecast.errorRetrievingData'));
+                    setForecastData([]);
+                }
             }
         } catch (error) {
             console.error(error);
             setError(t('barForecast.errorRetrievingData'));
             setForecastData([]);
+            if (type === 'group') {
+                setSeriesKeys([]);
+            } else {
+                setSeriesKeys(['pred_kW']);
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [token, id, type, ensureGroupPanels, createSeriesLabels, fetchPanelForecast, fromDate, toDate, t]);
 
     useEffect(() => {
-        if (fromDate && toDate) {
-            fetchForecast();
-        }
         if (!token) {
             setError(t('barForecast.tokenNotFound'));
             setLoading(false);
             return;
         }
-    }, [fromDate, toDate, token, type]);
+
+        if (fromDate && toDate) {
+            fetchForecast();
+        }
+    }, [fetchForecast, fromDate, toDate, token, t]);
 
     const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFromDate = e.target.value;
@@ -158,6 +350,16 @@ const GraphForecast: React.FC = () => {
                         </button>
                     </div>
                 </div>
+                {type === 'group' && seriesKeys.length > 0 && (
+                    <div className="group-panels-section">
+                        <h3>{t('barForecast.groupDevicesTitle', { count: seriesKeys.length })}</h3>
+                        <ul>
+                            {seriesKeys.map((label) => (
+                                <li key={label}>{label}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
                 {loading &&
                     <div className="loader-container">
                         <div className="loader"></div>
@@ -188,7 +390,17 @@ const GraphForecast: React.FC = () => {
                                 labelStyle={{color: 'var(--color-text)'}}
                                 itemStyle={{color: 'var(--color-text)'}}
                             />
-                            <Line type="monotone" dataKey="pred_kW" stroke="var(--color-primary-dark)" strokeWidth={2} dot={false}/>
+                            {seriesKeys.length > 1 && <Legend />}
+                            {seriesKeys.map((key, index) => (
+                                <Line
+                                    key={key}
+                                    type="monotone"
+                                    dataKey={key}
+                                    stroke={lineColors[index % lineColors.length]}
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                            ))}
                         </LineChart>
                     </ResponsiveContainer>
                 )}

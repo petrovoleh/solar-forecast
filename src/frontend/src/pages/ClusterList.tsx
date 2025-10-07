@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { backend_url } from "../config";
 
 interface Location {
-    id: string;
-    country: string;
-    city: string;
-    district: string;
+    id?: string;
+    country?: string;
+    city?: string;
+    district?: string;
     lat?: number;
     lon?: number;
 }
@@ -24,8 +24,8 @@ interface Cluster {
     id: string;
     name: string;
     description: string;
-    location: Location;
-    inverter: Inverter;
+    location?: Location | null;
+    inverter?: Inverter | null;
 }
 
 const ClusterList: React.FC = () => {
@@ -66,20 +66,28 @@ const ClusterList: React.FC = () => {
     }, []);
 
     // Sorting logic
+    const getLocationLabel = (location?: Location | null) => {
+        const city = location?.city?.trim();
+        const country = location?.country?.trim();
+        const district = location?.district?.trim();
+
+        if (!city && !country && !district) {
+            return t('clusterList.groupLabel');
+        }
+
+        return [city, country, district].filter(Boolean).join(', ');
+    };
+
     const handleSort = (key: keyof Cluster | 'location' | 'inverter' | 'efficiency') => {
         const sortedClusters = [...clusters].sort((a, b) => {
             if (key === 'name' || key === 'description') {
-                return (a[key] as string).localeCompare(b[key] as string);
+                return (a[key] || '').localeCompare(b[key] || '');
             } else if (key === 'location') {
-                return (
-                    a.location.city.localeCompare(b.location.city) ||
-                    a.location.country.localeCompare(b.location.country) ||
-                    a.location.district.localeCompare(b.location.district)
-                );
+                return getLocationLabel(a.location).localeCompare(getLocationLabel(b.location));
             } else if (key === 'inverter') {
-                return a.inverter.name.localeCompare(b.inverter.name);
+                return (a.inverter?.name || '').localeCompare(b.inverter?.name || '');
             } else if (key === 'efficiency') {
-                return a.inverter.efficiency - b.inverter.efficiency;
+                return (a.inverter?.efficiency || 0) - (b.inverter?.efficiency || 0);
             }
             return 0;
         });
@@ -114,12 +122,15 @@ const ClusterList: React.FC = () => {
         setFilter(event.target.value);
     };
 
-    const filteredClusters = clusters.filter((cluster) =>
-        cluster.name.toLowerCase().includes(filter.toLowerCase()) ||
-        cluster.location.city.toLowerCase().includes(filter.toLowerCase()) ||
-        cluster.location.country.toLowerCase().includes(filter.toLowerCase()) ||
-        cluster.location.district.toLowerCase().includes(filter.toLowerCase())
-    );
+    const filteredClusters = clusters.filter((cluster) => {
+        const search = filter.toLowerCase();
+        const locationLabel = getLocationLabel(cluster.location).toLowerCase();
+
+        return (
+            cluster.name.toLowerCase().includes(search) ||
+            locationLabel.includes(search)
+        );
+    });
 
     return (
         <div className="list-container">
@@ -195,7 +206,7 @@ const ClusterList: React.FC = () => {
                             </div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
-                                {cluster.location.city}, {cluster.location.country}
+                                {cluster.location ? getLocationLabel(cluster.location) : t('clusterList.groupLabel')}
                             </div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.inverter')}: </strong>}

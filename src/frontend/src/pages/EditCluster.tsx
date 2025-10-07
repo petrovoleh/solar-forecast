@@ -31,6 +31,7 @@ const EditCluster: React.FC = () => {
         location: {...DEFAULT_LOCATION},
         inverterId: '' // Initialize selected inverter ID
     });
+    const [isGroupCluster, setIsGroupCluster] = useState<boolean>(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
     // Fetch the list of inverters on component mount
@@ -63,8 +64,9 @@ const EditCluster: React.FC = () => {
                 setFormData({
                     ...clusterData,
                     inverterId: clusterData.inverter?.id || '',
-                    location: clusterData.location ? {...clusterData.location} : {...DEFAULT_LOCATION},
+                    location: clusterData.location ? {...clusterData.location} : undefined,
                 });
+                setIsGroupCluster(!clusterData.location);
             } catch (error) {
                 console.error('Error fetching cluster data:', error);
                 setResponseMessage('An error occurred while fetching cluster data.');
@@ -87,11 +89,17 @@ const EditCluster: React.FC = () => {
 
     // Function to handle map location changes (lat, lon)
     const handleLocationChange = (lat: number, lon: number) => {
+        if (isGroupCluster) {
+            return;
+        }
         setFormData((prevState) => updateLocationState(prevState, {lat, lon}));
     };
 
     // Function to handle address changes from map component
     const handleAddressChange = (address: LocationDetails) => {
+        if (isGroupCluster) {
+            return;
+        }
         setFormData((prevState) => updateLocationState(prevState, address));
     };
 
@@ -100,7 +108,19 @@ const EditCluster: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const {name, value} = e.target;
+        if (isGroupCluster) {
+            return;
+        }
         setFormData((prevState) => updateLocationState(prevState, {[name]: value} as Partial<LocationData>));
+    };
+
+    const handleGroupToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const enabled = event.target.checked;
+        setIsGroupCluster(enabled);
+        setFormData((prevState) => ({
+            ...prevState,
+            location: enabled ? undefined : {...DEFAULT_LOCATION, ...prevState.location},
+        }));
     };
 
     // Submit form for add or edit
@@ -113,12 +133,18 @@ const EditCluster: React.FC = () => {
         }
 
         try {
+            const payload: ClusterFormData & { group: boolean } = {
+                ...formData,
+                location: isGroupCluster ? undefined : formData.location,
+                group: isGroupCluster,
+            };
+
             const {response, data} = await apiRequest(
                 isEditMode ? `${backend_url}/api/cluster/${id}` : `${backend_url}/api/cluster/add`,
                 {
                     method: isEditMode ? 'PUT' : 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(payload),
                     auth: true,
                 },
             );
@@ -175,9 +201,20 @@ const EditCluster: React.FC = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="info-item checkbox-item">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={isGroupCluster}
+                                    onChange={handleGroupToggle}
+                                />
+                                {t('editCluster.form.groupLabel')}
+                            </label>
+                            <p className="helper-text">{t('editCluster.form.groupDescription')}</p>
+                        </div>
                     </div>
 
-                    <p>{t('editCluster.form.locationInfo')}</p>
+                    {!isGroupCluster && <p>{t('editCluster.form.locationInfo')}</p>}
 
                     {/* Manual Address Input */}
                     <div className="location-manual-input">
@@ -188,6 +225,7 @@ const EditCluster: React.FC = () => {
                                 name="country"
                                 value={formData.location?.country || ''}
                                 onChange={handleAddressManualChange}
+                                disabled={isGroupCluster}
                                 placeholder={t('editCluster.form.countryPlaceholder')}
                             />
                         </div>
@@ -198,6 +236,7 @@ const EditCluster: React.FC = () => {
                                 name="city"
                                 value={formData.location?.city || ''}
                                 onChange={handleAddressManualChange}
+                                disabled={isGroupCluster}
                                 placeholder={t('editCluster.form.cityPlaceholder')}
                             />
                         </div>
@@ -208,6 +247,7 @@ const EditCluster: React.FC = () => {
                                 name="district"
                                 value={formData.location?.district || ''}
                                 onChange={handleAddressManualChange}
+                                disabled={isGroupCluster}
                                 placeholder={t('editCluster.form.districtPlaceholder')}
                             />
                         </div>
@@ -231,6 +271,7 @@ const EditCluster: React.FC = () => {
                     onAddressChange={handleAddressChange}
                     lat={formData.location?.lat || DEFAULT_LOCATION.lat}
                     lon={formData.location?.lon || DEFAULT_LOCATION.lon}
+                    disabled={isGroupCluster}
                 />
             </div>
         </div>

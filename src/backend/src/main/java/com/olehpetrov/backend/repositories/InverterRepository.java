@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface InverterRepository extends MongoRepository<Inverter, String> {
     Page<Inverter> findAll(Pageable pageable);
 
+    boolean existsByNameIgnoreCase(String name);
 }

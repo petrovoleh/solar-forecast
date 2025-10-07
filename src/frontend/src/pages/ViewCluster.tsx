@@ -4,9 +4,9 @@ import {backend_url} from '../config';
 import { useTranslation } from 'react-i18next';
 
 interface Location {
-    country: string;
-    city: string;
-    district: string;
+    country?: string;
+    city?: string;
+    district?: string;
     lat?: number;
     lon?: number;
 }
@@ -23,7 +23,7 @@ interface Cluster {
     id: string;
     name: string;
     description: string;
-    location: Location;
+    location?: Location | null;
     inverter?: Inverter;
 }
 
@@ -129,12 +129,19 @@ const ViewCluster: React.FC = () => {
                 <div className="cluster-details">
                     <h1>{t("clusterList.cluster")}: {cluster.name}</h1>
                     <p><strong>{t("clusterList.description")}:</strong> {cluster.description}</p>
-                    <div className="location-info">
-                        <h2>{t("viewPanel.location")}</h2>
-                        <p><strong>{t("viewPanel.country")}:</strong> {cluster.location.country}</p>
-                        <p><strong>{t("viewPanel.city")}:</strong> {cluster.location.city}</p>
-                        <p><strong>{t("viewPanel.district")}:</strong> {cluster.location.district}</p>
-                    </div>
+                    {cluster.location ? (
+                        <div className="location-info">
+                            <h2>{t("viewPanel.location")}</h2>
+                            <p><strong>{t("viewPanel.country")}:</strong> {cluster.location.country}</p>
+                            <p><strong>{t("viewPanel.city")}:</strong> {cluster.location.city}</p>
+                            <p><strong>{t("viewPanel.district")}:</strong> {cluster.location.district}</p>
+                        </div>
+                    ) : (
+                        <div className="location-info">
+                            <h2>{t("viewPanel.location")}</h2>
+                            <p>{t('viewCluster.groupCluster')}</p>
+                        </div>
+                    )}
                     {cluster.inverter && (
                         <div className="inverter-info">
                             <h2>{t("clusterList.inverterInformation")}</h2>

@@ -77,6 +77,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "notAvailable": "Not available",
+    "groupLabel": "Group (no single location)",
     "type": "Type",
     "barForecast": "Bar forecast",
     "graphForecast": "Graph Forecast",
@@ -105,7 +106,10 @@
     "lastYearLabel": "Last 1 year",
     "selectedPeriodLabel": "Selected period",
     "noSummaryData": "No data",
-    "summaryLoading": "Loading..."
+    "summaryLoading": "Loading...",
+    "noGroupPanels": "No devices are assigned to this group yet.",
+    "groupDevicesTitle": "Devices in this group ({{count}})",
+    "unnamedDevice": "Unnamed device"
   },
   "notFound": {
     "title": "404 - Page Not Found",
@@ -201,6 +205,8 @@
       "descriptionPlaceholder": "Enter description",
       "inverter": "Inverter",
       "inverterPlaceholder": "Select an inverter",
+      "groupLabel": "Treat cluster as a group without location",
+      "groupDescription": "Group clusters can contain devices from multiple locations. Location settings will be disabled.",
       "locationInfo": "The location must be selected on the map. These fields are for display only.",
       "country": "Country",
       "countryPlaceholder": "Enter country",
@@ -260,6 +266,9 @@
       "errorSubmit": "An error occurred while submitting the panel.",
       "notLoggedIn": "You must be logged in to add or edit a panel."
     }
+  },
+  "viewCluster": {
+    "groupCluster": "This cluster is configured as a group and does not have a single location."
   },
   "editProfile": {
     "title": "Edit Profile",

@@ -55,10 +55,14 @@ public class ClusterController {
         cluster.setName(clusterRequest.getName());
         cluster.setDescription(clusterRequest.getDescription());
 
-        // Handle location
-        if (clusterRequest.getLocation() != null) {
-            Location location = handleLocation(clusterRequest.getLocation(), user);
-            cluster.setLocation(location);
+        // Handle location unless cluster should behave as a group without location
+        if (!Boolean.TRUE.equals(clusterRequest.getGroup())) {
+            if (clusterRequest.getLocation() != null) {
+                Location location = handleLocation(clusterRequest.getLocation(), user);
+                cluster.setLocation(location);
+            }
+        } else {
+            cluster.setLocation(null);
         }
 
         // Handle inverter
@@ -199,7 +203,9 @@ public class ClusterController {
             }
 
             // Handle location update
-            if (clusterRequest.getLocation() != null) {
+            if (Boolean.TRUE.equals(clusterRequest.getGroup())) {
+                existingCluster.setLocation(null);
+            } else if (clusterRequest.getLocation() != null) {
                 Location updatedLocation = handleLocation(clusterRequest.getLocation(), user);
                 existingCluster.setLocation(updatedLocation);
             }
@@ -264,6 +270,7 @@ public class ClusterController {
         private String description;
         private String inverterId;
         private LocationRequest location;
+        private Boolean group;
 
         // Getters and setters
 
@@ -297,6 +304,14 @@ public class ClusterController {
 
         public void setLocation(LocationRequest location) {
             this.location = location;
+        }
+
+        public Boolean getGroup() {
+            return group;
+        }
+
+        public void setGroup(Boolean group) {
+            this.group = group;
         }
     }
 

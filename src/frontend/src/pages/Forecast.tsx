@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { backend_url } from "../config";
 
 interface Location {
-    country: string;
-    city: string;
-    district: string;
+    country?: string;
+    city?: string;
+    district?: string;
     lat?: number;
     lon?: number;
 }
@@ -14,8 +14,8 @@ interface Location {
 interface SolarPanel {
     id: string;
     name: string;
-    type: 'panel' | 'cluster';
-    location: Location;
+    type: 'panel' | 'cluster' | 'group';
+    location?: Location | null;
 }
 
 const Forecast: React.FC = () => {
@@ -76,16 +76,26 @@ const Forecast: React.FC = () => {
         fetchClusters();
     }, []);
 
+    const getLocationLabel = (location?: Location | null) => {
+        const city = location?.city?.trim();
+        const country = location?.country?.trim();
+        const district = location?.district?.trim();
+
+        if (!city && !country && !district) {
+            return t('clusterList.groupLabel');
+        }
+
+        return [city, country, district].filter(Boolean).join(', ');
+    };
+
     const handleSort = (key: keyof SolarPanel | 'type') => {
         const sortedPanels = [...combinedData].sort((a, b) => {
             if (key === 'location') {
-                const aLocation = `${a.location.city || ''}, ${a.location.country || ''}, ${a.location.district || ''}`;
-                const bLocation = `${b.location.city || ''}, ${b.location.country || ''}, ${b.location.district || ''}`;
-                return aLocation.localeCompare(bLocation);
+                return getLocationLabel(a.location).localeCompare(getLocationLabel(b.location));
             } else if (key === 'type') {
                 return a.type.localeCompare(b.type);
             } else if (typeof a[key] === 'string' && typeof b[key] === 'string') {
-                return (a[key] as string).localeCompare(b[key] as string);
+                return ((a[key] as string) || '').localeCompare((b[key] as string) || '');
             }
             return 0;
         });
@@ -102,17 +112,23 @@ const Forecast: React.FC = () => {
 
     useEffect(() => {
         setCombinedData([
-            ...panels.map(panel => ({ ...panel, type: 'panel' as 'panel' })),
-            ...clusters.map(cluster => ({ ...cluster, type: 'cluster' as 'cluster' })),
+            ...panels.map(panel => ({ ...panel, type: 'panel' as const })),
+            ...clusters.map(cluster => ({
+                ...cluster,
+                type: (cluster.location ? 'cluster' : 'group') as 'cluster' | 'group',
+            })),
         ]);
     }, [panels, clusters]);
 
-    const filteredPanels = combinedData.filter((item) =>
-        (item.name && item.name.toLowerCase().includes(filter.toLowerCase())) ||
-        (item.location?.city && item.location.city.toLowerCase().includes(filter.toLowerCase())) ||
-        (item.location?.country && item.location.country.toLowerCase().includes(filter.toLowerCase())) ||
-        (item.location?.district && item.location.district.toLowerCase().includes(filter.toLowerCase()))
-    );
+    const filteredPanels = combinedData.filter((item) => {
+        const search = filter.toLowerCase();
+        const locationLabel = getLocationLabel(item.location).toLowerCase();
+
+        return (
+            (item.name && item.name.toLowerCase().includes(search)) ||
+            locationLabel.includes(search)
+        );
+    });
 
     return (
         <div className="list-container">
@@ -180,7 +196,7 @@ const Forecast: React.FC = () => {
                             <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{panel.name}</div>
                             <div>
                                 {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
-                                {panel.location.city}, {panel.location.country}
+                                {panel.location ? getLocationLabel(panel.location) : t('clusterList.groupLabel')}
                             </div>
                             <div>{viewMode === 'grid' && <strong>{t('clusterList.type')}: </strong>}{panel.type}</div>
                             <div className="panel-actions">
