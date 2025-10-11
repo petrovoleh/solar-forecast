@@ -11,8 +11,11 @@ import {apiRequest, requireOk} from '../utils/apiClient';
 interface Cluster {
     id: string;
     name: string;
-    location: LocationData; // Address is of the same type as in panel
+    location?: LocationData | null; // Address is optional when the cluster behaves as a group
 }
+
+const hasCoordinates = (location?: LocationData | null): location is LocationData =>
+    Boolean(location && typeof location.lat === 'number' && typeof location.lon === 'number');
 
 // Define the type for the panel form data
 interface PanelFormData {
@@ -97,7 +100,11 @@ const EditPanel: React.FC = () => {
         fetchClusters();
         fetchPanelData();
     }, [id, isEditMode]);
-    const isClusterSelected = Boolean(formData.clusterId);
+    const selectedCluster = formData.clusterId
+        ? clusters.find((cluster) => cluster.id === formData.clusterId)
+        : undefined;
+
+    const isClusterLocationLocked = hasCoordinates(selectedCluster?.location);
 
     // Update form state on input change for non-location data
     const handleInputChange = (
@@ -121,7 +128,7 @@ const EditPanel: React.FC = () => {
     const handleClusterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const {value} = e.target;
 
-        const selectedCluster = clusters.find((cluster) => cluster.id === value);
+        const clusterWithLocation = clusters.find((cluster) => cluster.id === value);
 
         setFormData((prevState) => {
             if (!value) {
@@ -136,11 +143,11 @@ const EditPanel: React.FC = () => {
                 clusterId: value,
             };
 
-            if (!selectedCluster || !selectedCluster.location) {
+            if (!clusterWithLocation || !hasCoordinates(clusterWithLocation.location)) {
                 return stateWithCluster;
             }
 
-            return updateLocationState(stateWithCluster, selectedCluster.location);
+            return updateLocationState(stateWithCluster, clusterWithLocation.location);
         });
     };
 
@@ -290,7 +297,7 @@ const EditPanel: React.FC = () => {
                             </div>
 
                         </div>
-                        <p>{t('addPanel.form.clusterInfo')}</p>
+                        {isClusterLocationLocked && <p>{t('addPanel.form.clusterInfo')}</p>}
 
                         {/* Manual Address Input */}
                         <div className="location-manual-input">
@@ -302,7 +309,7 @@ const EditPanel: React.FC = () => {
                                     value={formData.location?.country || ''}
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.countryPlaceholder')}
-                                    disabled={isClusterSelected} // Disable if cluster is selected
+                                    disabled={isClusterLocationLocked} // Disable if selected cluster defines the location
                                 />
                             </div>
                             <div className="info-item">
@@ -313,7 +320,7 @@ const EditPanel: React.FC = () => {
                                     value={formData.location?.city || ''}
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.cityPlaceholder')}
-                                    disabled={isClusterSelected}
+                                    disabled={isClusterLocationLocked}
                                 />
                             </div>
                             <div className="info-item">
@@ -324,7 +331,7 @@ const EditPanel: React.FC = () => {
                                     value={formData.location?.district || ''}
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.districtPlaceholder')}
-                                    disabled={isClusterSelected}
+                                    disabled={isClusterLocationLocked}
                                 />
                             </div>
 
@@ -344,7 +351,7 @@ const EditPanel: React.FC = () => {
                 <div className="panel-map-container">
                     <h2 className="location_header">{t('addPanel.mapSection.header')}</h2>
                     <MapComponent
-                        disabled={isClusterSelected}
+                        disabled={isClusterLocationLocked}
                         onLocationChange={handleLocationChange}
                         address={{
                             country: formData.location?.country || t('addPanel.mapSection.defaultCountry'),
