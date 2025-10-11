@@ -10,13 +10,17 @@
     padding: 80px 1.5rem 40px;
     background-color: var(--color-surface-muted);
 }
+.panel-card{
+    display: grid;
+    width: min(1400px, 80vw) !important;
+    grid-template-columns: 1fr 2fr;
+}
 
 .cluster-card2,
 .panel-card,
 .inverter-card,
 .profile-card,
 .cluster-map-container,
-.panel-map-container,
 .cluster-view-container,
 .panel-view-container,
 .auth-form {
@@ -26,7 +30,17 @@
     padding: 2rem;
     width: min(600px, 100%);
 }
+.panel-map-container{
+    margin-left: 50px;
+    height: 100%;
+    .map-card  {
+        height: 100%;
 
+        .map-container {
+            min-height: calc(100% - 140px) !important;
+        }
+    }
+}
 .cluster-card2,
 .panel-card,
 .inverter-card,

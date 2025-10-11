@@ -221,6 +221,7 @@ const EditPanel: React.FC = () => {
         <>
             <div className="panel-container">
                 <div className="panel-card">
+                    <div>
                     <h2>{isEditMode ? t('addPanel.titleEdit') : t('addPanel.titleAdd')}</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="panel-info">
@@ -347,22 +348,24 @@ const EditPanel: React.FC = () => {
                         </button>
                     </form>
                     {responseMessage && <div className="response-message">{responseMessage}</div>}
+                    </div>
+                    <div className="panel-map-container">
+                        <h2 className="location_header">{t('addPanel.mapSection.header')}</h2>
+                        <MapComponent
+                            disabled={isClusterLocationLocked}
+                            onLocationChange={handleLocationChange}
+                            address={{
+                                country: formData.location?.country || t('addPanel.mapSection.defaultCountry'),
+                                city: formData.location?.city || t('addPanel.mapSection.defaultCity'),
+                                district: formData.location?.district || t('addPanel.mapSection.defaultDistrict'),
+                            }}
+                            onAddressChange={handleAddressChange}
+                            lat={formData.location?.lat || DEFAULT_LOCATION.lat}
+                            lon={formData.location?.lon || DEFAULT_LOCATION.lon}
+                        />
+                    </div>
                 </div>
-                <div className="panel-map-container">
-                    <h2 className="location_header">{t('addPanel.mapSection.header')}</h2>
-                    <MapComponent
-                        disabled={isClusterLocationLocked}
-                        onLocationChange={handleLocationChange}
-                        address={{
-                            country: formData.location?.country || t('addPanel.mapSection.defaultCountry'),
-                            city: formData.location?.city || t('addPanel.mapSection.defaultCity'),
-                            district: formData.location?.district || t('addPanel.mapSection.defaultDistrict'),
-                        }}
-                        onAddressChange={handleAddressChange}
-                        lat={formData.location?.lat || DEFAULT_LOCATION.lat}
-                        lon={formData.location?.lon || DEFAULT_LOCATION.lon}
-                    />
-                </div>
+
             </div>
 
         </>

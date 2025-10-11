@@ -153,7 +153,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 </button>
                 <button
                     onClick={handleProfileLocation}
-                    className="primary-button edit-button current-location-button margin10"
+                    className="primary-button edit-button current-location-button"
                 >
                     {t('addPanel.profileLocation')}
                 </button>
