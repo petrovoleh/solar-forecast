@@ -241,9 +241,7 @@ button,
 
 }
 .panel-assignment-section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    margin-left: 1.5rem;
 }
 
 .panel-assignment-section h3 {

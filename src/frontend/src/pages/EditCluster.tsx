@@ -372,7 +372,8 @@ const EditCluster: React.FC = () => {
 
     return (
         <div className="panel-container">
-            <div className="panel-card">
+            <div className="panel-card" style={{ gridTemplateColumns: "1fr 1fr 2fr",    minWidth: "60vw"}}>
+                <div>
                 <h2>{isEditMode ? t('editCluster.titleEdit') : t('editCluster.titleAdd')}</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="panel-info">
@@ -463,74 +464,77 @@ const EditCluster: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="panel-assignment-section">
-                        <h3>{t('editCluster.panelsSection.title')}</h3>
-                        <p className="panel-assignment-description">
-                            {isEditMode
-                                ? t('editCluster.panelsSection.description')
-                                : t('editCluster.panelsSection.unavailable')}
-                        </p>
-                        {isEditMode ? (
-                            panelsLoading ? (
-                                <p className="panel-assignment-status">{t('editCluster.panelsSection.loading')}</p>
-                            ) : panels.length === 0 ? (
-                                <p className="panel-assignment-status">{t('editCluster.panelsSection.noPanels')}</p>
-                            ) : (
-                                <ul className="panel-selection-list">
-                                    {panels.map((panel) => {
-                                        const isAssignedToCurrent = selectedPanelIds.includes(panel.id);
-                                        const isAssignedElsewhere = panel.cluster && panel.cluster.id !== id;
 
-                                        return (
-                                            <li key={panel.id} className="panel-selection-item">
-                                                <label className="panel-checkbox-label">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isAssignedToCurrent}
-                                                        onChange={() => togglePanelSelection(panel.id)}
-                                                        disabled={!panelSelectionReady || isSyncingPanels}
-                                                    />
-                                                    <span className="panel-name">{panel.name}</span>
-                                                </label>
-                                                {isAssignedElsewhere && (
-                                                    <span className="panel-assigned-note">
-                                                        {t('editCluster.panelsSection.assignedToOther', {name: panel.cluster?.name})}
-                                                    </span>
-                                                )}
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            )
-                        ) : (
-                            <p className="panel-assignment-status">{t('editCluster.panelsSection.unavailable')}</p>
-                        )}
-                        {isEditMode && !panelsLoading && panels.some((panel) => panel.cluster && panel.cluster.id !== id) && (
-                            <p className="panel-assignment-hint">{t('editCluster.panelsSection.moveHint')}</p>
-                        )}
-                    </div>
 
                     <button type="submit" className="primary-button btn-submit">
                         {isEditMode ? t('editCluster.form.submitButtonEdit') : t('editCluster.form.submitButtonAdd')}
                     </button>
                 </form>
                 {responseMessage && <div className="response-message">{responseMessage}</div>}
+                </div>
+                <div className="panel-assignment-section">
+                    <h2>{t('editCluster.panelsSection.title')}</h2>
+                    <p className="panel-assignment-description">
+                        {isEditMode
+                            ? t('editCluster.panelsSection.description')
+                            : t('editCluster.panelsSection.unavailable')}
+                    </p>
+                    {isEditMode ? (
+                        panelsLoading ? (
+                            <p className="panel-assignment-status">{t('editCluster.panelsSection.loading')}</p>
+                        ) : panels.length === 0 ? (
+                            <p className="panel-assignment-status">{t('editCluster.panelsSection.noPanels')}</p>
+                        ) : (
+                            <ul className="panel-selection-list">
+                                {panels.map((panel) => {
+                                    const isAssignedToCurrent = selectedPanelIds.includes(panel.id);
+                                    const isAssignedElsewhere = panel.cluster && panel.cluster.id !== id;
+
+                                    return (
+                                        <li key={panel.id} className="panel-selection-item">
+                                            <label className="panel-checkbox-label">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isAssignedToCurrent}
+                                                    onChange={() => togglePanelSelection(panel.id)}
+                                                    disabled={!panelSelectionReady || isSyncingPanels}
+                                                />
+                                                <span className="panel-name">{panel.name}</span>
+                                            </label>
+                                            {isAssignedElsewhere && (
+                                                <span className="panel-assigned-note">
+                                                        {t('editCluster.panelsSection.assignedToOther', {name: panel.cluster?.name})}
+                                                    </span>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    ) : (
+                        <p className="panel-assignment-status">{t('editCluster.panelsSection.unavailable')}</p>
+                    )}
+                    {isEditMode && !panelsLoading && panels.some((panel) => panel.cluster && panel.cluster.id !== id) && (
+                        <p className="panel-assignment-hint">{t('editCluster.panelsSection.moveHint')}</p>
+                    )}
+                </div>
+                <div className="panel-map-container">
+                    <h2 className="location_header">{t('editCluster.mapSection.header')}</h2>
+                    <MapComponent
+                        onLocationChange={handleLocationChange}
+                        address={{
+                            country: formData.location?.country || t('editCluster.mapSection.defaultCountry'),
+                            city: formData.location?.city || t('editCluster.mapSection.defaultCity'),
+                            district: formData.location?.district || t('editCluster.mapSection.defaultDistrict'),
+                        }}
+                        onAddressChange={handleAddressChange}
+                        lat={formData.location?.lat || DEFAULT_LOCATION.lat}
+                        lon={formData.location?.lon || DEFAULT_LOCATION.lon}
+                        disabled={isGroupCluster}
+                    />
+                </div>
             </div>
-            <div className="panel-map-container">
-                <h2 className="location_header">{t('editCluster.mapSection.header')}</h2>
-                <MapComponent
-                    onLocationChange={handleLocationChange}
-                    address={{
-                        country: formData.location?.country || t('editCluster.mapSection.defaultCountry'),
-                        city: formData.location?.city || t('editCluster.mapSection.defaultCity'),
-                        district: formData.location?.district || t('editCluster.mapSection.defaultDistrict'),
-                    }}
-                    onAddressChange={handleAddressChange}
-                    lat={formData.location?.lat || DEFAULT_LOCATION.lat}
-                    lon={formData.location?.lon || DEFAULT_LOCATION.lon}
-                    disabled={isGroupCluster}
-                />
-            </div>
+
         </div>
     );
 };
