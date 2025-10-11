@@ -74,6 +74,12 @@ const Dashboard: React.FC = () => {
         fetchData("user", setUsers);
     }, [page, size]);
     const handleDelete = async (id: string, type: 'cluster' | 'panel' | 'inverter' | 'user') => {
+        const label = type.charAt(0).toUpperCase() + type.slice(1);
+
+        if (!window.confirm(`Are you sure you want to delete this ${label}?`)) {
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) return;
 

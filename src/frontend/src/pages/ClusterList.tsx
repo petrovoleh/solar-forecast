@@ -97,6 +97,10 @@ const ClusterList: React.FC = () => {
 
     // Deleting a cluster
     const handleDelete = async (id: string) => {
+        if (!window.confirm(t('clusterList.confirmDeleteCluster'))) {
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) return;
 

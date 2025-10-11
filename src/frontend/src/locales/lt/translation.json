@@ -76,6 +76,8 @@
     "view": "Peržiūrėti",
     "edit": "Redaguoti",
     "delete": "Ištrinti",
+    "confirmDeleteCluster": "Ar tikrai norite ištrinti šį klasterį?",
+    "confirmDeletePanel": "Ar tikrai norite ištrinti šį skydelį?",
     "notAvailable": "Nėra duomenų",
     "groupLabel": "Grupė (be vienos vietos)",
     "type": "Tipas",

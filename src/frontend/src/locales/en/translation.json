@@ -76,6 +76,8 @@
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
+    "confirmDeleteCluster": "Are you sure you want to delete this cluster?",
+    "confirmDeletePanel": "Are you sure you want to delete this panel?",
     "notAvailable": "Not available",
     "groupLabel": "Group (no single location)",
     "type": "Type",

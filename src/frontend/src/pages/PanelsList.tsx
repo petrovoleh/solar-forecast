@@ -80,6 +80,10 @@ const PanelList: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
+        if (!window.confirm(t('clusterList.confirmDeletePanel'))) {
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) return;
 
