@@ -59,6 +59,31 @@
     margin-bottom: 1.5rem;
 }
 
+.panel-card,
+.panel-card h2,
+.panel-card label,
+.panel-card p,
+.panel-card .panel-name,
+.panel-card .panel-assigned-note,
+.panel-card .response-message,
+.panel-card .helper-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.cluster-view-container h1,
+.cluster-view-container h2,
+.cluster-view-container p,
+.cluster-view-container button,
+.cluster-view-container strong,
+.cluster-view-container .panel-actions,
+.cluster-view-container .panel-cardd,
+.cluster-view-container .panel-cardd h3,
+.cluster-view-container .panel-cardd p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
 .cluster-info,
 .panel-info,
 .inverter-info,
@@ -247,6 +272,7 @@ button,
     gap: 0.75rem;
     font-weight: 500;
     color: var(--color-text);
+    flex-wrap: wrap;
 }
 
 .panel-checkbox-label input[type="checkbox"] {
