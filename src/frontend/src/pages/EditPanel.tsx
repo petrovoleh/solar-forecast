@@ -12,6 +12,7 @@ interface Cluster {
     id: string;
     name: string;
     location?: LocationData | null; // Address is optional when the cluster behaves as a group
+    group?: boolean; // Indicates whether the cluster behaves as a group without a shared location
 }
 
 const hasCoordinates = (location?: LocationData | null): location is LocationData =>
@@ -104,7 +105,8 @@ const EditPanel: React.FC = () => {
         ? clusters.find((cluster) => cluster.id === formData.clusterId)
         : undefined;
 
-    const isClusterLocationLocked = hasCoordinates(selectedCluster?.location);
+    const isGroupCluster = Boolean(selectedCluster?.group);
+    const isClusterLocationLocked = !isGroupCluster && hasCoordinates(selectedCluster?.location);
 
     // Update form state on input change for non-location data
     const handleInputChange = (
@@ -129,6 +131,11 @@ const EditPanel: React.FC = () => {
         const {value} = e.target;
 
         const clusterWithLocation = clusters.find((cluster) => cluster.id === value);
+        const shouldLockLocation = Boolean(
+            clusterWithLocation &&
+            !clusterWithLocation.group &&
+            hasCoordinates(clusterWithLocation.location),
+        );
 
         setFormData((prevState) => {
             if (!value) {
@@ -143,11 +150,21 @@ const EditPanel: React.FC = () => {
                 clusterId: value,
             };
 
-            if (!clusterWithLocation || !hasCoordinates(clusterWithLocation.location)) {
+            if (!clusterWithLocation || !shouldLockLocation) {
+                if (clusterWithLocation?.group) {
+                    return {
+                        ...stateWithCluster,
+                        location: {
+                            ...DEFAULT_LOCATION,
+                            ...prevState.location,
+                        },
+                    };
+                }
+
                 return stateWithCluster;
             }
 
-            return updateLocationState(stateWithCluster, clusterWithLocation.location);
+            return updateLocationState(stateWithCluster, clusterWithLocation.location as LocationData);
         });
     };
 

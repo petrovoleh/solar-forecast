@@ -9,12 +9,42 @@ from fastapi import FastAPI, Query, HTTPException, Response
 from fastapi.responses import JSONResponse, StreamingResponse
 from datetime import datetime
 from typing import Optional
+import time
 
 app = FastAPI(title="PV Forecast API", version="1.1")
 
 MODEL_PATH = "model.joblib"
 FEATURES_PATH = "model_features.joblib"
 
+import logging
+import sys
+
+# ============================================================
+# 🧩 Configure Logger
+# ============================================================
+def configure_logger():
+    logger = logging.getLogger("pv_forecast")
+    logger.setLevel(logging.INFO)
+
+    handler = logging.StreamHandler(sys.stdout)
+    formatter = logging.Formatter(
+        "%(levelname)s %(asctime)s [%(name)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    handler.setFormatter(formatter)
+
+    # avoid duplicate handlers
+    if not logger.handlers:
+        logger.addHandler(handler)
+
+    # silence overly chatty loggers
+    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    logging.getLogger("matplotlib").setLevel(logging.WARNING)
+
+    return logger
+
+
+logger = configure_logger()
 
 # ============================================================
 # 1️⃣ Завантаження моделі
@@ -30,14 +60,31 @@ def load_model():
 
 # ============================================================
 # 2️⃣ Отримання погоди
-# ============================================================
+
 def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> pd.DataFrame:
     start_date = start_date.split(" ")[0]
     end_date = end_date.split(" ")[0]
 
     today = datetime.utcnow().date()
-
     df_parts = []
+
+    def _safe_request(url: str, label: str):
+        """Helper with retry for Too Many Requests"""
+        for attempt in range(1, 11):  # up to 10 tries
+            try:
+                r = requests.get(url, timeout=30)
+                if r.status_code == 200:
+                    return r
+                elif r.status_code in (429, 503) or "Too many" in r.text:
+                    logger.warning(f"⚠️ {label} API rate-limited (attempt {attempt}/10). Waiting 2s...")
+                    time.sleep(2)
+                else:
+                    logger.error(f"❌ {label} API error ({r.status_code}): {r.text[:120]}")
+                    break
+            except requests.exceptions.RequestException as e:
+                logger.warning(f"⚠️ Network error on {label} attempt {attempt}/10: {e}")
+                time.sleep(2)
+        raise HTTPException(status_code=500, detail=f"{label} API failed after 10 attempts")
 
     # ---------------------- ARCHIVE (past data) ----------------------
     if datetime.strptime(start_date, "%Y-%m-%d").date() <= today:
@@ -49,9 +96,7 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
             f"&hourly=temperature_2m,cloudcover,shortwave_radiation,wind_speed_10m"
             "&timezone=UTC"
         )
-        r = requests.get(url_archive, timeout=30)
-        if r.status_code != 200:
-            raise HTTPException(status_code=500, detail=f"Open-Meteo (archive) error: {r.text[:200]}")
+        r = _safe_request(url_archive, "Open-Meteo (archive)")
         data = r.json()
         if "hourly" in data:
             df_archive = pd.DataFrame({
@@ -73,9 +118,7 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
             f"&hourly=temperature_2m,cloudcover,shortwave_radiation,wind_speed_10m"
             "&timezone=UTC"
         )
-        r2 = requests.get(url_forecast, timeout=30)
-        if r2.status_code != 200:
-            raise HTTPException(status_code=500, detail=f"Open-Meteo (forecast) error: {r2.text[:200]}")
+        r2 = _safe_request(url_forecast, "Open-Meteo (forecast)")
         data2 = r2.json()
         if "hourly" in data2:
             df_forecast = pd.DataFrame({
@@ -92,6 +135,7 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
         raise HTTPException(status_code=500, detail="❌ No weather data available for requested range")
 
     df = pd.concat(df_parts).drop_duplicates(subset=["time"]).sort_values("time").reset_index(drop=True)
+    logger.info(f"✅ Weather data fetched successfully: {len(df)} records")
     return df
 
 
@@ -207,34 +251,33 @@ def forecast(
 # ============================================================
 @app.get("/daily_forecast")
 def daily_forecast(
-        lat: float = Query(..., description="Latitude"),
-        lon: float = Query(..., description="Longitude"),
-        start: str = Query(..., description="Start date (YYYY-MM-DD)"),
-        end: str = Query(..., description="End date (YYYY-MM-DD)"),
-        kwp: float = Query(..., description="Installed capacity (kWp)"),
+        lat: float = Query(...),
+        lon: float = Query(...),
+        start: str = Query(...),
+        end: str = Query(...),
+        kwp: float = Query(...),
 ):
-    """
-    Повертає сумарну прогнозовану виробку по днях у кВт·год (kWh).
-    """
+    logger.info(f"🔹 daily_forecast called with lat={lat}, lon={lon}, kwp={kwp}, {start}→{end}")
     try:
         model, features = load_model()
+        logger.info(f"✅ Model and features loaded: {len(features)} features")
+
         df = predict_for_range(lat, lon, start, end, kwp, model, features)
+        logger.info(f"✅ Predictions generated: {len(df)} rows")
 
-        # Додаємо дату без часу
         df["date"] = df["time"].dt.date
-
-        # Сума потужності (kWh = сума kW * 1 год)
         daily = (
             df.groupby("date")["pred_kW"]
             .sum()
             .reset_index()
             .rename(columns={"pred_kW": "pred_kWh"})
         )
-
-        daily["pred_kWh"] = (daily["pred_kWh"] * 2.0 ).round(2)
+        daily["pred_kWh"] = (daily["pred_kWh"] * 2.0).round(2)
         daily["date"] = daily["date"].astype(str)
 
+        logger.info("✅ Daily forecast ready")
         return JSONResponse(daily.to_dict(orient="records"))
 
     except Exception as e:
+        logger.exception("❌ Error in /daily_forecast")
         raise HTTPException(status_code=500, detail=str(e))

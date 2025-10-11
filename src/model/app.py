@@ -12,7 +12,7 @@ app = FastAPI()
 
 
 def _configure_logger() -> logging.Logger:
-    logger = logging.getLogger("model_app")
+    logger = logging.getLogger("model")
     logger.setLevel(logging.INFO)
 
     uvicorn_logger = logging.getLogger("uvicorn.error")
@@ -107,15 +107,6 @@ class ForecastRequest(BaseModel):
 
 @app.post("/forecast")
 async def get_forecast(data: ForecastRequest):
-    """
-    Generate solar forecasts at specified intervals and return as JSON response.
-
-    Args:
-        data (ForecastRequest): Input data containing forecast parameters.
-
-    Returns:
-        JSON: Forecast data for the specified site and parameters.
-    """
     logger.info(
         "Received forecast request | start=%s end=%s lat=%.6f lon=%.6f capacity_kwp=%.3f",
         data.start_datetime,
@@ -135,6 +126,12 @@ async def get_forecast(data: ForecastRequest):
         response = forecasts_df.to_dict(orient="records")
         logger.info("Returning forecast response | rows=%d", len(response))
         return response
-    except Exception:
-        logger.exception("Failed to generate forecast")
-        raise
+    except Exception as e:
+        # 👇 тут ключ — logger.exception + повертаємо текст помилки
+        logger.exception("❌ Failed to generate forecast: %s", str(e))
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "type": type(e).__name__},
+        )
+
