@@ -304,6 +304,14 @@ button,
     background-color: var(--color-primary-dark);
 }
 
+.primary-button:disabled,
+.primary-button:disabled:hover {
+    background-color: var(--color-border-muted);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .edit-button,
 .current-location-button {
     width: 100%;

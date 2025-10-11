@@ -81,6 +81,8 @@
     "type": "Type",
     "barForecast": "Bar forecast",
     "graphForecast": "Graph Forecast",
+    "noForecastWithoutPanels": "Assign at least one panel to view forecasts.",
+    "assignedDevicesCount": "Assigned devices: {{count}}",
     "noClustersMessage": "No clusters added yet.",
     "addButton": "Add New Panel",
     "powerRating": "Power Rating",

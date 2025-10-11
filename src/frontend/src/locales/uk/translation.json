@@ -81,6 +81,8 @@
     "type": "Тип",
     "barForecast": "Стовпчастий прогноз",
     "graphForecast": "Графічний прогноз",
+    "noForecastWithoutPanels": "Щоб переглянути прогноз, призначте принаймні одну панель.",
+    "assignedDevicesCount": "Призначені пристрої: {{count}}",
     "noClustersMessage": "Ще не додано кластерів.",
     "addButton": "Додати нову панель",
     "powerRating": "Потужність",

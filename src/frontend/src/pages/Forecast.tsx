@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { backend_url } from "../config";
@@ -11,19 +11,35 @@ interface Location {
     lon?: number;
 }
 
-interface SolarPanel {
+interface PanelResponse {
     id: string;
-    name: string;
+    name?: string;
+    location?: Location | null;
+    cluster?: {
+        id?: string | null;
+    } | null;
+}
+
+interface ClusterResponse {
+    id: string;
+    name?: string;
+    location?: Location | null;
+}
+
+interface ForecastItem {
+    id: string;
+    name?: string;
     type: 'panel' | 'cluster' | 'group';
     location?: Location | null;
+    panelCount?: number;
 }
 
 const Forecast: React.FC = () => {
     const { t } = useTranslation();
     const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-    const [panels, setPanels] = useState<SolarPanel[]>([]);
-    const [clusters, setClusters] = useState<SolarPanel[]>([]);
-    const [sortKey, setSortKey] = useState<keyof SolarPanel>('name');
+    const [panels, setPanels] = useState<PanelResponse[]>([]);
+    const [clusters, setClusters] = useState<ClusterResponse[]>([]);
+    const [sortKey, setSortKey] = useState<'name' | 'location' | 'type'>('name');
     const [filter, setFilter] = useState<string>('');
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -39,7 +55,8 @@ const Forecast: React.FC = () => {
 
                 if (response.ok) {
                     const text = await response.text();
-                    setPanels(text ? JSON.parse(text) : []);
+                    const parsed: PanelResponse[] = text ? JSON.parse(text) : [];
+                    setPanels(Array.isArray(parsed) ? parsed : []);
                 } else {
                     console.error("Failed to fetch panels:", response.statusText);
                 }
@@ -63,7 +80,8 @@ const Forecast: React.FC = () => {
 
                 if (response.ok) {
                     const text = await response.text();
-                    setClusters(text ? JSON.parse(text) : []);
+                    const parsed: ClusterResponse[] = text ? JSON.parse(text) : [];
+                    setClusters(Array.isArray(parsed) ? parsed : []);
                 } else {
                     console.error("Failed to fetch clusters:", response.statusText);
                 }
@@ -88,44 +106,64 @@ const Forecast: React.FC = () => {
         return [city, country, district].filter(Boolean).join(', ');
     };
 
-    const handleSort = (key: keyof SolarPanel | 'type') => {
-        const sortedPanels = [...combinedData].sort((a, b) => {
-            if (key === 'location') {
-                return getLocationLabel(a.location).localeCompare(getLocationLabel(b.location));
-            } else if (key === 'type') {
-                return a.type.localeCompare(b.type);
-            } else if (typeof a[key] === 'string' && typeof b[key] === 'string') {
-                return ((a[key] as string) || '').localeCompare((b[key] as string) || '');
-            }
-            return 0;
-        });
-
-        setCombinedData(sortedPanels);
-        setSortKey(key as keyof SolarPanel);
+    const handleSort = (key: 'name' | 'location' | 'type') => {
+        setSortKey(key);
     };
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value);
     };
 
-    const [combinedData, setCombinedData] = useState<SolarPanel[]>([]);
+    const baseItems = useMemo<ForecastItem[]>(() => {
+        const clusterPanelCounts = panels.reduce<Record<string, number>>((acc, panel) => {
+            const clusterId = panel.cluster?.id ?? undefined;
+            if (clusterId) {
+                acc[clusterId] = (acc[clusterId] ?? 0) + 1;
+            }
+            return acc;
+        }, {});
 
-    useEffect(() => {
-        setCombinedData([
-            ...panels.map(panel => ({ ...panel, type: 'panel' as const })),
-            ...clusters.map(cluster => ({
-                ...cluster,
-                type: (cluster.location ? 'cluster' : 'group') as 'cluster' | 'group',
-            })),
-        ]);
+        const panelItems = panels.map<ForecastItem>((panel) => ({
+            id: panel.id,
+            name: panel.name,
+            type: 'panel',
+            location: panel.location ?? null,
+        }));
+
+        const clusterItems = clusters.map<ForecastItem>((cluster) => ({
+            id: cluster.id,
+            name: cluster.name,
+            type: (cluster.location ? 'cluster' : 'group'),
+            location: cluster.location ?? null,
+            panelCount: clusterPanelCounts[cluster.id] ?? 0,
+        }));
+
+        return [...panelItems, ...clusterItems];
     }, [panels, clusters]);
 
-    const filteredPanels = combinedData.filter((item) => {
+    const sortedPanels = useMemo(() => {
+        const items = [...baseItems];
+        items.sort((a, b) => {
+            if (sortKey === 'location') {
+                return getLocationLabel(a.location).localeCompare(getLocationLabel(b.location));
+            }
+
+            if (sortKey === 'type') {
+                return a.type.localeCompare(b.type);
+            }
+
+            return (a.name ?? '').localeCompare(b.name ?? '');
+        });
+
+        return items;
+    }, [baseItems, sortKey, t]);
+
+    const filteredPanels = sortedPanels.filter((item) => {
         const search = filter.toLowerCase();
         const locationLabel = getLocationLabel(item.location).toLowerCase();
 
         return (
-            (item.name && item.name.toLowerCase().includes(search)) ||
+            ((item.name ?? '').toLowerCase().includes(search)) ||
             locationLabel.includes(search)
         );
     });
@@ -188,33 +226,48 @@ const Forecast: React.FC = () => {
                 <div className="no-panels-message">{t('clusterList.noPanelsMessage')}</div>
             ) : (
                 <div className={`panel-list ${viewMode}`}>
-                    {filteredPanels.map((panel) => (
-                        <div
-                            key={panel.id}
-                            className={`panel-cardd forecast-card ${viewMode === 'list' ? 'list-layout-card' : ''}`}
-                        >
-                            <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{panel.name}</div>
-                            <div>
-                                {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
-                                {panel.location ? getLocationLabel(panel.location) : t('clusterList.groupLabel')}
+                    {filteredPanels.map((panel) => {
+                        const isAggregate = panel.type !== 'panel';
+                        const assignedCount = panel.panelCount ?? 0;
+                        const disableForecast = isAggregate && assignedCount === 0;
+
+                        return (
+                            <div
+                                key={panel.id}
+                                className={`panel-cardd forecast-card ${viewMode === 'list' ? 'list-layout-card' : ''}`}
+                            >
+                                <div>{viewMode === 'grid' && <strong>{t('clusterList.name')}: </strong>}{panel.name}</div>
+                                <div>
+                                    {viewMode === 'grid' && <strong>{t('clusterList.location')}: </strong>}
+                                    {panel.location ? getLocationLabel(panel.location) : t('clusterList.groupLabel')}
+                                </div>
+                                <div>{viewMode === 'grid' && <strong>{t('clusterList.type')}: </strong>}{panel.type}</div>
+                                <div className="panel-actions">
+                                    {isAggregate && disableForecast && (
+                                        <div className="forecast-disabled-hint">
+                                            {t('clusterList.noForecastWithoutPanels')}
+                                        </div>
+                                    )}
+                                    <button
+                                        onClick={() => navigate(`/bar_forecast/${panel.id}?type=${panel.type}`)}
+                                        className="primary-button view-button"
+                                        disabled={disableForecast}
+                                        title={disableForecast ? t('clusterList.noForecastWithoutPanels') : undefined}
+                                    >
+                                        {t('clusterList.barForecast')}
+                                    </button>
+                                    <button
+                                        onClick={() => navigate(`/panel_forecast/${panel.id}?type=${panel.type}`)}
+                                        className="primary-button view-button"
+                                        disabled={disableForecast}
+                                        title={disableForecast ? t('clusterList.noForecastWithoutPanels') : undefined}
+                                    >
+                                        {t('clusterList.graphForecast')}
+                                    </button>
+                                </div>
                             </div>
-                            <div>{viewMode === 'grid' && <strong>{t('clusterList.type')}: </strong>}{panel.type}</div>
-                            <div className="panel-actions">
-                                <button
-                                    onClick={() => navigate(`/bar_forecast/${panel.id}?type=${panel.type}`)}
-                                    className="primary-button view-button"
-                                >
-                                    {t('clusterList.barForecast')}
-                                </button>
-                                <button
-                                    onClick={() => navigate(`/panel_forecast/${panel.id}?type=${panel.type}`)}
-                                    className="primary-button view-button"
-                                >
-                                    {t('clusterList.graphForecast')}
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

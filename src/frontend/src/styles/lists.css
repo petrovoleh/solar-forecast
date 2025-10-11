@@ -151,6 +151,12 @@ minmax(200px, 2fr);
     margin-top: 0.5rem;
 }
 
+.forecast-disabled-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+}
+
 .no-clusters-message {
     text-align: center;
     padding: 2rem;

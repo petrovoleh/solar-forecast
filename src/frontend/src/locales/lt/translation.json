@@ -81,6 +81,8 @@
     "type": "Tipas",
     "barForecast": "Juostinė prognozė",
     "graphForecast": "Grafiko prognozė",
+    "noForecastWithoutPanels": "Norėdami peržiūrėti prognozes, priskirkite bent vieną skydelį.",
+    "assignedDevicesCount": "Priskirti įrenginiai: {{count}}",
     "noClustersMessage": "Klasterių dar nėra pridėta.",
     "addButton": "Pridėti naują skydelį",
     "powerRating": "Galia",
