@@ -84,7 +84,12 @@ const GraphForecast: React.FC = () => {
             }
 
             if (!responseText || responseText === 'null') {
-                setGroupPanels([]);
+                setGroupPanels((previous) => {
+                    if (previous.length === 0) {
+                        return previous;
+                    }
+                    return [];
+                });
                 return [];
             }
 
@@ -102,7 +107,17 @@ const GraphForecast: React.FC = () => {
                 name: panel.name || t('barForecast.unnamedDevice'),
             }));
 
-            setGroupPanels(mappedPanels);
+            setGroupPanels((previous) => {
+                if (
+                    previous.length === mappedPanels.length &&
+                    previous.every((panel, index) =>
+                        panel.id === mappedPanels[index]?.id && panel.name === mappedPanels[index]?.name,
+                    )
+                ) {
+                    return previous;
+                }
+                return mappedPanels;
+            });
             return mappedPanels;
         } catch (fetchError) {
             console.error('Failed to load group panels', fetchError);
