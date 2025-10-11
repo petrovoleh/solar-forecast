@@ -171,6 +171,7 @@
       "cluster": "Cluster",
       "clusterInfo": "If a cluster is selected, you cannot change the location here. You need to update the cluster's location. The location must be selected on the map, and these fields are for display only.",
       "clusterPlaceholder": "Select a cluster",
+      "clusterNone": "No cluster",
       "country": "Country",
       "countryPlaceholder": "Enter country",
       "city": "City",

@@ -170,6 +170,7 @@
       "cluster": "Klasteris",
       "clusterInfo": "Jei pasirinktas klasteris, vietos čia pakeisti negalima. Reikia atnaujinti klasterio vietą. Vieta turi būti pasirinkta žemėlapyje, o šie laukai skirti tik rodymui.",
       "clusterPlaceholder": "Pasirinkite klasterį",
+      "clusterNone": "Be klasterio",
       "country": "Šalis",
       "countryPlaceholder": "Įveskite šalį",
       "city": "Miestas",

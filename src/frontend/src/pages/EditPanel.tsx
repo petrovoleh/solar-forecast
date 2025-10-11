@@ -22,8 +22,24 @@ interface PanelFormData {
     efficiency: number;
     quantity: number;
     location?: Partial<LocationData>;
-    clusterId?: string; // Add clusterId to the form data
+    clusterId?: string | null; // Add clusterId to the form data
 }
+
+type PanelPayload = Omit<PanelFormData, 'clusterId'> & {clusterId?: string};
+
+const normalizeClusterId = (value: PanelFormData['clusterId']): string | null => {
+    if (value == null) {
+        return null;
+    }
+
+    const trimmed = value.trim();
+
+    if (!trimmed || trimmed === 'null' || trimmed === 'undefined') {
+        return null;
+    }
+
+    return trimmed;
+};
 
 const EditPanel: React.FC = () => {
     const {id} = useParams<{ id: string }>(); // Extract the ID from the route
@@ -38,6 +54,7 @@ const EditPanel: React.FC = () => {
         efficiency: 100,
         quantity: 1,
         location: {...DEFAULT_LOCATION},
+        clusterId: null,
     });
     const [clusters, setClusters] = useState<Cluster[]>([]); // State to store clusters
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -68,7 +85,7 @@ const EditPanel: React.FC = () => {
                 const {cluster, ...panelDetails} = panelData;
                 setFormData({
                     ...panelDetails,
-                    clusterId: cluster?.id || '', // Pre-select the cluster if it exists
+                    clusterId: cluster?.id ?? null, // Pre-select the cluster if it exists
                     location: panelData.location ? {...panelData.location} : {...DEFAULT_LOCATION},
                 });
             } catch (error) {
@@ -104,16 +121,27 @@ const EditPanel: React.FC = () => {
     const handleClusterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const {value} = e.target;
 
-        // Find the selected cluster
         const selectedCluster = clusters.find((cluster) => cluster.id === value);
-        const fallbackLocation: LocationData = selectedCluster
-            ? selectedCluster.location
-            : {...DEFAULT_LOCATION, lat: 0, lon: 0};
 
-        setFormData((prevState) => ({
-            ...updateLocationState(prevState, fallbackLocation),
-            clusterId: value,
-        }));
+        setFormData((prevState) => {
+            if (!value) {
+                return {
+                    ...prevState,
+                    clusterId: null,
+                };
+            }
+
+            const stateWithCluster = {
+                ...prevState,
+                clusterId: value,
+            };
+
+            if (!selectedCluster || !selectedCluster.location) {
+                return stateWithCluster;
+            }
+
+            return updateLocationState(stateWithCluster, selectedCluster.location);
+        });
     };
 
 
@@ -147,13 +175,24 @@ const EditPanel: React.FC = () => {
             setResponseMessage('Power rating, efficiency, latitude, and longitude must be valid and greater than 1.');
             return;
         }
+
+        const {clusterId: rawClusterId, ...panelBody} = formData;
+        const normalizedClusterId = normalizeClusterId(rawClusterId);
+        const payload: PanelPayload = {...panelBody};
+
+        if (isEditMode) {
+            payload.clusterId = normalizedClusterId ?? '';
+        } else if (normalizedClusterId) {
+            payload.clusterId = normalizedClusterId;
+        }
+
         try {
             const {response, data} = await apiRequest(
                 isEditMode ? `${backend_url}/api/panel/${id}` : `${backend_url}/api/panel/add`,
                 {
                     method: isEditMode ? 'PUT' : 'POST', // PUT if editing, POST if adding
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(payload),
                     auth: true,
                 },
             );
@@ -238,12 +277,10 @@ const EditPanel: React.FC = () => {
 
                                 <select
                                     name="clusterId"
-                                    value={formData.clusterId || ''}
+                                    value={formData.clusterId ?? ''}
                                     onChange={handleClusterChange}
                                 >
-                                    <option value=""
-                                            disabled={!isEditMode}>{t('addPanel.form.clusterPlaceholder')}</option>
-                                    {/* Option to select None */}
+                                    <option value="">{t('addPanel.form.clusterNone')}</option>
                                     {clusters.map((cluster) => (
                                         <option key={cluster.id} value={cluster.id}>
                                             {cluster.name}

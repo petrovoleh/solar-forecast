@@ -194,7 +194,7 @@ const EditCluster: React.FC = () => {
             temperatureCoefficient: number;
             efficiency: number;
             quantity: number;
-            clusterId: string | null;
+            clusterId: string;
             location?: LocationData;
         } = {
             name: panel.name,
@@ -202,7 +202,7 @@ const EditCluster: React.FC = () => {
             temperatureCoefficient: panel.temperatureCoefficient,
             efficiency: panel.efficiency,
             quantity: panel.quantity,
-            clusterId: clusterIdValue,
+            clusterId: clusterIdValue ?? '',
         };
 
         if (

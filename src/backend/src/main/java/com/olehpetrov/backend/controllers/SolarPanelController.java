@@ -41,6 +41,20 @@ public class SolarPanelController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    private boolean shouldRemoveCluster(String clusterId) {
+        if (clusterId == null) {
+            return true;
+        }
+
+        String trimmed = clusterId.trim();
+
+        if (!StringUtils.hasText(trimmed)) {
+            return true;
+        }
+
+        return "null".equalsIgnoreCase(trimmed) || "undefined".equalsIgnoreCase(trimmed);
+    }
+
     // Add a new panel
     @PostMapping("/add")
     public ResponseEntity<String> addPanel(@RequestHeader("Authorization") String token, @RequestBody UpdatePanelRequest panelRequest) {
@@ -60,11 +74,11 @@ public class SolarPanelController {
         panel.setEfficiency(panelRequest.getEfficiency());
         panel.setName(panelRequest.getName());
         panel.setQuantity(panelRequest.getQuantity());
-        if (StringUtils.hasText(panelRequest.getClusterId())) {
+        if (!shouldRemoveCluster(panelRequest.getClusterId())) {
             Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
-            if (cluster == null) {
-                return ResponseEntity.badRequest().body("Invalid cluster ID.");
-            }
+//            if (cluster == null) {
+//                return ResponseEntity.badRequest().body("Invalid cluster ID.");
+//            }
             panel.setCluster(cluster);
         }
         // Handle location
@@ -200,14 +214,14 @@ public class SolarPanelController {
             }
         }
         if (panelRequest.getClusterId() != null) {
-            if (StringUtils.hasText(panelRequest.getClusterId())) {
+            if (shouldRemoveCluster(panelRequest.getClusterId())) {
+                existingPanel.setCluster(null); // Remove the panel from its cluster
+            } else {
                 Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
                 if (cluster == null) {
                     return ResponseEntity.badRequest().body("Invalid cluster ID.");
                 }
                 existingPanel.setCluster(cluster); // Update the panel's cluster
-            } else {
-                existingPanel.setCluster(null); // Remove the panel from its cluster
             }
         }
         // Update the panel in the service
