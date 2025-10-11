@@ -11,7 +11,7 @@ interface ClusterFormData {
     name: string;
     description: string;
     location?: Partial<LocationData>;
-    inverterId?: string; // Add inverterId to ClusterFormData
+    inverterId?: string | null;
 }
 
 interface Inverter {
@@ -43,7 +43,7 @@ const EditCluster: React.FC = () => {
         name: '',
         description: '',
         location: {...DEFAULT_LOCATION},
-        inverterId: '' // Initialize selected inverter ID
+        inverterId: null,
     });
     const [isGroupCluster, setIsGroupCluster] = useState<boolean>(false);
     const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -113,8 +113,9 @@ const EditCluster: React.FC = () => {
                     apiRequest(`${backend_url}/api/cluster/${id}`, {auth: true}),
                 );
                 setFormData({
-                    ...clusterData,
-                    inverterId: clusterData.inverter?.id || '',
+                    name: clusterData.name,
+                    description: clusterData.description,
+                    inverterId: clusterData.inverter?.id ?? null,
                     location: clusterData.location ? {...clusterData.location} : undefined,
                 });
                 setIsGroupCluster(!clusterData.location);
@@ -146,9 +147,17 @@ const EditCluster: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const {name, value} = e.target;
+        if (name === 'inverterId') {
+            setFormData((prevState) => ({
+                ...prevState,
+                inverterId: value ? value : null,
+            }));
+            return;
+        }
+
         setFormData((prevState) => ({
             ...prevState,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -313,8 +322,13 @@ const EditCluster: React.FC = () => {
         }
 
         try {
+            const sanitizedInverterId = typeof formData.inverterId === 'string' && formData.inverterId.trim() !== ''
+                ? formData.inverterId.trim()
+                : null;
+
             const payload: ClusterFormData & { group: boolean } = {
                 ...formData,
+                inverterId: sanitizedInverterId,
                 location: isGroupCluster ? undefined : formData.location,
                 group: isGroupCluster,
             };
@@ -386,7 +400,7 @@ const EditCluster: React.FC = () => {
                             <label>{t('editCluster.form.inverter')}:</label>
                             <select
                                 name="inverterId"
-                                value={formData.inverterId || ''}
+                                value={formData.inverterId ?? ''}
                                 onChange={handleInputChange}
                             >
                                 <option value="">{t('editCluster.form.inverterPlaceholder')}</option>

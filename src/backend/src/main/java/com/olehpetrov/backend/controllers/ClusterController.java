@@ -1,5 +1,7 @@
 package com.olehpetrov.backend.controllers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.olehpetrov.backend.models.*;
 import com.olehpetrov.backend.requests.LocationRequest;
 import com.olehpetrov.backend.responses.ClusterResponse;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import com.olehpetrov.backend.services.LocationService;
 
@@ -66,7 +69,7 @@ public class ClusterController {
         }
 
         // Handle inverter
-        if (clusterRequest.getInverterId() != null) {
+        if (StringUtils.hasText(clusterRequest.getInverterId())) {
             Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
             if (inverter == null) {
                 return ResponseEntity.badRequest().body("Invalid inverter ID.");
@@ -211,12 +214,16 @@ public class ClusterController {
             }
 
             // Handle inverter update
-            if (clusterRequest.getInverterId() != null) {
-                Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
-                if (inverter == null) {
-                    return ResponseEntity.badRequest().body("Invalid inverter ID.");
+            if (clusterRequest.isInverterIdProvided()) {
+                if (StringUtils.hasText(clusterRequest.getInverterId())) {
+                    Inverter inverter = inverterService.getInverterById(clusterRequest.getInverterId());
+                    if (inverter == null) {
+                        return ResponseEntity.badRequest().body("Invalid inverter ID.");
+                    }
+                    existingCluster.setInverter(inverter);
+                } else {
+                    existingCluster.setInverter(null);
                 }
-                existingCluster.setInverter(inverter);
             }
 
             // Save the updated cluster
@@ -269,6 +276,8 @@ public class ClusterController {
         private String name;
         private String description;
         private String inverterId;
+        @JsonIgnore
+        private boolean inverterIdProvided = false;
         private LocationRequest location;
         private Boolean group;
 
@@ -294,8 +303,15 @@ public class ClusterController {
             return inverterId;
         }
 
+        @JsonSetter("inverterId")
         public void setInverterId(String inverterId) {
-            this.inverterId = inverterId;
+            this.inverterId = (inverterId != null && inverterId.trim().isEmpty()) ? null : inverterId;
+            this.inverterIdProvided = true;
+        }
+
+        @JsonIgnore
+        public boolean isInverterIdProvided() {
+            return inverterIdProvided;
         }
 
         public LocationRequest getLocation() {

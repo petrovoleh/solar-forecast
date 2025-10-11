@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -90,6 +93,32 @@ class ClusterControllerTest {
                         .header("Authorization", "Bearer token")
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void addClusterAllowsEmptyInverterId() throws Exception {
+        User user = buildUser();
+        when(jwtUtils.extractUsername("token")).thenReturn("user");
+        when(userService.findByUsername("user")).thenReturn(user);
+        when(clusterService.addCluster(any(Cluster.class))).thenAnswer(invocation -> {
+            Cluster cluster = invocation.getArgument(0);
+            cluster.setId("cluster-id");
+            return cluster;
+        });
+
+        Map<String, Object> request = Map.of(
+                "name", "Cluster Without Inverter",
+                "description", "Description",
+                "inverterId", ""
+        );
+
+        mockMvc.perform(post("/api/cluster/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer token")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+
+        verify(inverterService, never()).getInverterById(anyString());
     }
 
     @Test
