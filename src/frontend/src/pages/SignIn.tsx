@@ -101,7 +101,7 @@ const SignIn: React.FC = () => {
     };
 
     return (
-        <div className="auth-container">
+        <div className="profile-container">
             <form className="auth-form" onSubmit={handleSubmit}>
                 <h2>{t('signIn.title')}</h2>
 
@@ -129,7 +129,7 @@ const SignIn: React.FC = () => {
                     {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
-                <button type="submit" className="btn">{t('signIn.submitButton')}</button>
+                <button type="submit" className="primary-button btn">{t('signIn.submitButton')}</button>
 
                 {message && <p className="result-message">{message}</p>}
             </form>

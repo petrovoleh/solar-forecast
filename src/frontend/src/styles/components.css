@@ -33,7 +33,7 @@
 }
 
 .map-container {
-    height: 565px;
+    min-height: 490px;
     width: 100%;
     border-radius: 12px;
     margin-bottom: 1.5rem;
