@@ -375,14 +375,15 @@ button,
     height: 40px;
 }
 
-.margin10 {
-    margin-top: 10px;
-}
+
 .profile-card{
     margin: auto;
     button{
         margin-top: 10px;
     }
+}
+.exit-button, .margin10{
+    margin-top: 10px;
 }
 .sortby{
     margin-top: 5px;

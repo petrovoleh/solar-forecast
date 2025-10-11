@@ -167,15 +167,15 @@ const ViewCluster: React.FC = () => {
                                     <p><strong>{t("viewPanel.quantity")}:</strong> {panel.quantity}</p>
 
                                     <div className="panel-actions">
-                                        <button onClick={() => navigate(`/view/${panel.id}`)}>{t("clusterList.view")}</button>
-                                        <button onClick={() => navigate(`/edit/${panel.id}`)}>{t("clusterList.edit")}</button>
+                                        <button className="primary-button" onClick={() => navigate(`/view/${panel.id}`)}>{t("clusterList.view")}</button>
+                                        <button className="primary-button" onClick={() => navigate(`/edit/${panel.id}`)}>{t("clusterList.edit")}</button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
-                <button onClick={() => navigate(`/edit-cluster/${cluster?.id}`)} className="primary-button edit-button">
+                <button onClick={() => navigate(`/edit-cluster/${cluster?.id}`)} className="primary-button margin10 edit-button">
                     {t("clusterList.edit")}
                 </button>
                 <button className="exit-button" onClick={() => navigate('/clusterlist')}>                    {t('viewPanel.backButton')}
