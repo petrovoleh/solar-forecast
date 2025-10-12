@@ -8,7 +8,7 @@ import joblib
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # ============================================================
-# 1️⃣ Завантаження PVGIS
+# 1️⃣ PVGIS data ingestion
 # ============================================================
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     url = (
@@ -98,10 +98,10 @@ def prepare_features(df):
 
 
 # ============================================================
-# 4️⃣ Метрики
+# 4️⃣ Metrics
 # ============================================================
 def compute_metrics(y_true, y_pred):
-    # приведи до numpy і прибери NaN/Inf
+    # Convert to NumPy and drop NaN/Inf values
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
     mask = np.isfinite(y_true) & np.isfinite(y_pred)
@@ -110,17 +110,17 @@ def compute_metrics(y_true, y_pred):
 
     mae = mean_absolute_error(y_true, y_pred)
 
-    # Підтримка старих і нових версій sklearn:
+    # Support both older and newer sklearn versions:
     try:
-        # нові версії (>=0.22)
+        # Newer versions (>=0.22)
         rmse = mean_squared_error(y_true, y_pred, squared=False)
     except TypeError:
-        # старі версії — обчислюємо MSE і беремо sqrt
+        # Older versions — compute MSE and take the square root
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
 
     r2 = r2_score(y_true, y_pred)
 
-    # стабільний MAPE / sMAPE
+    # Stable MAPE / sMAPE
     denom = np.maximum(np.abs(y_true), 1e-6)
     mape = np.mean(np.abs((y_pred - y_true) / denom)) * 100.0
     smape = np.mean(200.0 * np.abs(y_pred - y_true) / (np.abs(y_true) + np.abs(y_pred) + 1e-6))
@@ -137,7 +137,7 @@ def compute_metrics(y_true, y_pred):
 
 
 # ============================================================
-# 5️⃣ Завантаження моделей і тест
+# 5️⃣ Loading models and testing
 # ============================================================
 def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     os.makedirs("data", exist_ok=True)
@@ -152,7 +152,7 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
 
     df_test = prepare_features(df_test)
 
-    # завантажуємо обидві моделі
+    # Load both models
     model_xgb = joblib.load("model.joblib")
     features_xgb = joblib.load("model_features.joblib")
 
@@ -186,7 +186,7 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
 
 
 # ============================================================
-# 6️⃣ Запуск
+# 6️⃣ Entry point
 # ============================================================
 if __name__ == "__main__":
     evaluate_saved_models()

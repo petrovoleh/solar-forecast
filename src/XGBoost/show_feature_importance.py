@@ -1,5 +1,5 @@
 # ============================================================
-# 7️⃣ Автоматичний аналіз важливості фіч (RF + XGB)
+# 7️⃣ Automated feature importance analysis (RF + XGB)
 # ============================================================
 import os
 import joblib
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 def analyze_feature_importance_from_files():
     models = {}
 
-    # === Завантажуємо RandomForest ===
+    # === Load RandomForest model ===
     if os.path.exists("model_rf.joblib") and os.path.exists("model_rf_features.joblib"):
         try:
             model_rf = joblib.load("model_rf.joblib")
@@ -22,7 +22,7 @@ def analyze_feature_importance_from_files():
     else:
         print("⚠️ Файли RandomForest не знайдено.")
 
-    # === Завантажуємо XGBoost ===
+    # === Load XGBoost model ===
     if os.path.exists("model.joblib") and os.path.exists("model_features.joblib"):
         try:
             model_xgb = joblib.load("model.joblib")
@@ -38,7 +38,7 @@ def analyze_feature_importance_from_files():
         print("❌ Жодну модель не вдалося знайти.")
         return
 
-    # === Вивід важливостей фіч ===
+    # === Display feature importances ===
     all_importances = {}
 
     for name, (model, features) in models.items():
@@ -60,7 +60,7 @@ def analyze_feature_importance_from_files():
         for i, row in df_imp.head(10).iterrows():
             print(f"   {row['feature']:<25} {row['importance']:.4f}")
 
-    # === Побудова порівняльного графіка ===
+    # === Build a comparative chart ===
     if not all_importances:
         print("❌ Жодна модель не має importances.")
         return
@@ -74,7 +74,7 @@ def analyze_feature_importance_from_files():
     top_features = merged.mean(axis=1).sort_values(ascending=False).head(10)
     merged = merged.loc[top_features.index]
 
-    # === Порівняльний графік ===
+    # === Comparative chart ===
     plt.figure(figsize=(8, 5))
     bar_width = 0.4
     y_pos = np.arange(len(merged))
@@ -92,6 +92,6 @@ def analyze_feature_importance_from_files():
     plt.show()
 
 
-# 🔹 Викликаєш лише один раз:
+# 🔹 Call this only once:
 if __name__ == "__main__":
     analyze_feature_importance_from_files()

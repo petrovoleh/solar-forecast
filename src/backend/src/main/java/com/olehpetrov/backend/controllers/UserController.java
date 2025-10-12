@@ -41,7 +41,7 @@ public class UserController {
     // Endpoint to update user information (email, password, etc.)
     @PutMapping("/update")
     public ResponseEntity<String> updateUser(@RequestHeader("Authorization") String token, @RequestBody UpdateUserRequest updateUserRequest) {
-        String username = jwtUtil.extractUsername(token.substring(7)); // Отримання username з токена
+        String username = jwtUtil.extractUsername(token.substring(7)); // Extract username from the token
         User user = userService.findByUsername(username);
         return handleUserUpdate(user, updateUserRequest, false);
     }

@@ -10,11 +10,11 @@ from sklearn.metrics import mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # ============================================================
-# 1️⃣ Завантаження PVGIS
+# 1️⃣ PVGIS data ingestion
 # ============================================================
 
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
-    """Завантажує річні дані вироблення сонячної енергії з PVGIS (ERA5)"""
+    """Download yearly solar production data from PVGIS (ERA5)."""
     os.makedirs("data", exist_ok=True)
     url = (
         "https://re.jrc.ec.europa.eu/api/seriescalc?"
@@ -91,7 +91,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
 
 
 # ============================================================
-# 2️⃣ Завантаження погоди з Open-Meteo
+# 2️⃣ Weather ingestion from Open-Meteo
 # ============================================================
 
 def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
@@ -116,7 +116,7 @@ def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
 
 
 # ============================================================
-# 3️⃣ Підготовка фіч
+# 3️⃣ Feature preparation
 # ============================================================
 
 def prepare_features(df):
@@ -131,7 +131,7 @@ def prepare_features(df):
 
 
 # ============================================================
-# 4️⃣ Тренування та тест
+# 4️⃣ Training and testing
 # ============================================================
 
 def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
@@ -212,7 +212,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
 
 
 # ============================================================
-# 5️⃣ Запуск
+# 5️⃣ Entry point
 # ============================================================
 
 if __name__ == "__main__":

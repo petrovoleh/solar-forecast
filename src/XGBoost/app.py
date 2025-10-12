@@ -47,7 +47,7 @@ def configure_logger():
 logger = configure_logger()
 
 # ============================================================
-# 1️⃣ Завантаження моделі
+# 1️⃣ Model loading
 # ============================================================
 def load_model():
     try:
@@ -59,8 +59,8 @@ def load_model():
 
 
 # ============================================================
-# 2️⃣ Отримання погоди
-
+# 2️⃣ Weather retrieval
+# ============================================================
 def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> pd.DataFrame:
     start_date = start_date.split(" ")[0]
     end_date = end_date.split(" ")[0]
@@ -141,7 +141,7 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
 
 
 # ============================================================
-# 3️⃣ Генерація фіч
+# 3️⃣ Feature generation
 # ============================================================
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
@@ -155,7 +155,7 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ============================================================
-# 4️⃣ Прогноз
+# 4️⃣ Forecasting
 # ============================================================
 def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
     df_weather = fetch_open_meteo(lat, lon, start_date, end_date)
@@ -164,7 +164,7 @@ def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
     preds_w_per_kwp = model.predict(X)
     preds_w = preds_w_per_kwp * float(kWp)
 
-    # 🩵 Фільтруємо всі від’ємні значення (нічний шум або похибку)
+    # 🩵 Clamp all negative values (night noise or measurement error)
     preds_w = np.maximum(preds_w, 0)
     preds_w_per_kwp = np.maximum(preds_w_per_kwp, 0)
 
@@ -178,7 +178,7 @@ def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
 
 
 # ============================================================
-# 5️⃣ Побудова графіка
+# 5️⃣ Plot creation
 # ============================================================
 def make_plot(df, start_date, end_date, lat, lon, kwp):
     buf = io.BytesIO()
@@ -247,7 +247,7 @@ def forecast(
 
 
 # ============================================================
-# 7️⃣ Новий ендпойнт: добова сума виробки
+# 7️⃣ New endpoint: daily production total
 # ============================================================
 @app.get("/daily_forecast")
 def daily_forecast(

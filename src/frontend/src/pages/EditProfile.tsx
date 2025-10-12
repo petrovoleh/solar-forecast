@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
-import {backend_url} from "../config"; // Імпорт компонента з мапою
+import {backend_url} from "../config"; // Import backend URL configuration
 import {useTranslation} from 'react-i18next'; // Import useTranslation hook
 
 interface Address {
@@ -24,12 +24,12 @@ const EditProfile: React.FC = () => {
     const navigate = useNavigate();
     const {t} = useTranslation(); // Initialize translation
 
-    const [user, setUser] = useState<User | null>(null); // Стейт для зберігання даних користувача
-    const [loading, setLoading] = useState<boolean>(true); // Стейт для статусу завантаження
-    const [error, setError] = useState<string | null>(null); // Стейт для зберігання помилок
+    const [user, setUser] = useState<User | null>(null); // State for storing user data
+    const [loading, setLoading] = useState<boolean>(true); // State for tracking the loading status
+    const [error, setError] = useState<string | null>(null); // State for storing potential errors
     const {id} = useParams<{ id: string }>();
 
-    // Функція для завантаження профілю
+    // Function to load the user profile
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -111,11 +111,11 @@ const EditProfile: React.FC = () => {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(user), // Відправка нових даних користувача
+            body: JSON.stringify(user), // Send the updated user data
         }).then((response) => {
             if (response.ok) {
                 if(!id) {
-                    navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
+                    navigate('/profile'); // Navigate to the profile page after a successful update
                 }
                 else{
                     navigate('/dashboard');
@@ -135,7 +135,7 @@ const EditProfile: React.FC = () => {
     }
 
     if (error) {
-        return <div>{error}</div>; // Показуємо повідомлення про помилку
+        return <div>{error}</div>; // Display an error message
     }
 
     return (
@@ -217,7 +217,7 @@ const EditProfile: React.FC = () => {
                         className="discard-button"
                         onClick={() => {
                             if (!id) {
-                                navigate('/profile'); // Перехід на сторінку профілю після успішного оновлення
+                                navigate('/profile'); // Navigate to the profile page after a successful update
                             } else {
                                 navigate('/dashboard');
                             }

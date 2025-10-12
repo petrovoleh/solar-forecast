@@ -18,7 +18,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./XGBoost:/app  # мапимо FastAPI код у контейнер
+      - ./XGBoost:/app  # map the FastAPI code into the container
 
 #  model:
 #    build:
@@ -27,7 +27,7 @@ services:
 #    ports:
 #      - "8000:8000"
 #    volumes:
-#      - ./model:/app  # мапимо FastAPI код у контейнер
+#      - ./model:/app  # map the FastAPI code into the container
 #    depends_on:
 #      - mongo
 
@@ -38,7 +38,7 @@ services:
     ports:
       - "8082:8082"
     # volumes:
-    #   - ./backend:/app  # мапимо бекенд-код
+    #   - ./backend:/app  # map the backend code
     depends_on:
       - model
     environment:

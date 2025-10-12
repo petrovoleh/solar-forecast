@@ -38,11 +38,11 @@ dependencies {
     // Jackson integration for JJWT, required for JSON parsing
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web'  // Залежність для Spring Web
-    implementation 'javax.servlet:javax.servlet-api:4.0.1'  // Залежність для javax.servlet API
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Dependency for Spring Web
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'  // Dependency for the javax.servlet API
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security Starter
-    implementation 'org.springframework.boot:spring-boot-starter'  // Загальний Spring Boot Starter
-    testImplementation 'org.springframework.boot:spring-boot-starter-test' // Залежність для тестування
+    implementation 'org.springframework.boot:spring-boot-starter'  // General Spring Boot starter
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // Dependency for testing
 
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'

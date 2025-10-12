@@ -52,7 +52,7 @@ public class SolarPanelService {
         return dailyEnergyTotalRepository.findByPanelAndDateBetween(panel, startDate, endDate);
     }
     public List<Panel> getPanelsByClusterId(String clusterId) {
-        ObjectId clusterObjectId = new ObjectId(clusterId); // Перетворення рядка в ObjectId
+        ObjectId clusterObjectId = new ObjectId(clusterId); // Convert the string into an ObjectId
         return solarPanelRepository.findByCluster(clusterObjectId);
     }
 

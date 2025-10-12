@@ -8,14 +8,14 @@ import matplotlib.pyplot as plt
 import os
 import joblib
 # ============================================================
-# 1️⃣ Завантаження PVGIS
+# 1️⃣ PVGIS data ingestion
 # ============================================================
 
 
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     """
-    Завантажує річні дані вироблення сонячної енергії з PVGIS (ERA5)
-    з pvcalculation=1. Підтримує формат часу типу 20230101:0030.
+    Download yearly solar production data from PVGIS (ERA5)
+    with pvcalculation=1. Supports timestamps like 20230101:0030.
     """
 
     os.makedirs("data", exist_ok=True)
@@ -49,7 +49,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     with open("data/pvgis_last_response.txt", "w", encoding="utf-8") as f:
         f.write(text)
 
-    # знайти де починається таблиця
+    # Find where the table begins
     lines = text.splitlines()
     start_idx = next((i for i, l in enumerate(lines) if l.lower().startswith("time")), None)
     if start_idx is None:
@@ -61,12 +61,12 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
 
     print(f"🔹 Колонки CSV: {df.columns.tolist()}")
 
-    # === Обробка часу ===
+    # === Time processing ===
     time_col = next((c for c in df.columns if "time" in c.lower()), None)
     if not time_col:
         raise ValueError("❌ У CSV немає колонки часу (time/time(UTC))")
 
-    # новий формат: 20230101:0030 → 2023-01-01 00:30
+    # Reformat timestamps: 20230101:0030 → 2023-01-01 00:30
     df["time_str"] = (
         df[time_col]
         .astype(str)
@@ -75,7 +75,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     )
     df["time"] = pd.to_datetime(df["time_str"], format="%Y-%m-%d %H%M", utc=True, errors="coerce")
 
-    # === Потужність P ===
+    # === Power output P ===
     if "P" not in df.columns:
         raise ValueError("❌ У CSV немає колонки 'P' (потужності).")
 
@@ -88,13 +88,13 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     )
     df["P"] = pd.to_numeric(df["P"], errors="coerce")
 
-    # === Температура ===
+    # === Temperature ===
     if "T2m" in df.columns:
         df = df.rename(columns={"T2m": "temp_air"})
     elif "Temp" in df.columns:
         df = df.rename(columns={"Temp": "temp_air"})
 
-    # === Очищення ===
+    # === Cleaning ===
     df = df.dropna(subset=["time", "P"]).reset_index(drop=True)
     df = df.rename(columns={"P": "power_PVGIS_W_per_kWp"})
 
@@ -108,7 +108,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     return df
 
 # ============================================================
-# 2️⃣ Завантаження погоди з Open-Meteo
+# 2️⃣ Weather ingestion from Open-Meteo
 # ============================================================
 def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
     url = (
@@ -132,7 +132,7 @@ def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
 
 
 # ============================================================
-# 3️⃣ Підготовка фіч
+# 3️⃣ Feature preparation
 # ============================================================
 def prepare_features(df):
     df = df.copy()
@@ -146,12 +146,12 @@ def prepare_features(df):
 
 
 # ============================================================
-# 4️⃣ Тренування та тест
+# 4️⃣ Training and testing
 # ============================================================
 def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     os.makedirs("data", exist_ok=True)
 
-    # --- тренування ---
+    # --- Training ---
     print("🔹 Завантажую дані для Вільнюса...")
     vilnius_pv = get_pvgis_data(train_lat, train_lon, year)
     vilnius_weather = get_openmeteo(train_lat, train_lon)
@@ -194,10 +194,10 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     model.fit(X_train, y_train)
     print("✅ Модель навчена!")
     joblib.dump(model, "model.joblib")
-    # збережи також список фіч, щоб при infer знати порядок
+    # Save the feature list to preserve ordering during inference
     features = ["temperature_2m","cloudcover","shortwave_radiation","wind_speed_10m","hour_sin","hour_cos","day_sin","day_cos"]
     joblib.dump(features, "model_features.joblib")
-    # --- тест ---
+    # --- Testing ---
     print("\n🔹 Завантажую дані для Каунса...")
     kaunas_pv = get_pvgis_data(test_lat, test_lon, year)
     kaunas_weather = get_openmeteo(test_lat, test_lon)
@@ -247,7 +247,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
 
 
 # ============================================================
-# 5️⃣ Запуск
+# 5️⃣ Entry point
 # ============================================================
 if __name__ == "__main__":
     train_and_test(54.6872, 25.2797, 54.8979, 23.8869, 2023)

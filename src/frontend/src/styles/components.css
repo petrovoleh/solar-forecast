@@ -216,9 +216,9 @@
 }
 .row {
     display: flex;
-    flex-direction: row; /* за замовчуванням — горизонтально */
-    gap: 16px; /* відстань між елементами */
-    align-items: center; /* вертикальне вирівнювання */
+    flex-direction: row; /* default layout — horizontal */
+    gap: 16px; /* spacing between elements */
+    align-items: center; /* vertical alignment */
 }
 .grid2 {
     display: grid;
@@ -228,7 +228,7 @@
 }
 
 .grid2 > :first-child {
-    grid-column: 1 / -1; /* займе обидві колонки */
+    grid-column: 1 / -1; /* span across both columns */
 }
 
 @media (max-width: 768px) {
