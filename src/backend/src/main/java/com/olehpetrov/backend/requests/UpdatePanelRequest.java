@@ -14,7 +14,6 @@ public class UpdatePanelRequest {
     @DBRef
     private User user;
     private int powerRating;
-    private int temperatureCoefficient;
     private int efficiency;
     private String name;
     private int quantity;

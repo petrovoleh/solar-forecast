@@ -22,7 +22,6 @@ const hasCoordinates = (location?: LocationData | null): location is LocationDat
 interface PanelFormData {
     name: string;
     powerRating: number;
-    temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
     location?: Partial<LocationData>;
@@ -54,7 +53,6 @@ const EditPanel: React.FC = () => {
     const [formData, setFormData] = useState<PanelFormData>({
         name: '',
         powerRating: 1000,
-        temperatureCoefficient: 0,
         efficiency: 100,
         quantity: 1,
         location: {...DEFAULT_LOCATION},
@@ -264,17 +262,6 @@ const EditPanel: React.FC = () => {
                                     placeholder={t('addPanel.form.powerRatingPlaceholder')}
                                 />
                             </div>
-                            {/*<div className="info-item">*/}
-                            {/*    <label>{t('addPanel.form.temperatureCoefficient')}:</label>*/}
-                            {/*    <input*/}
-                            {/*        type="number"*/}
-                            {/*        name="temperatureCoefficient"*/}
-                            {/*        value={formData.temperatureCoefficient}*/}
-                            {/*        onChange={handleInputChange}*/}
-                            {/*        required*/}
-                            {/*        placeholder={t('addPanel.form.temperatureCoefficientPlaceholder')}*/}
-                            {/*    />*/}
-                            {/*</div>*/}
                             <div className="info-item">
                                 <label>{t('addPanel.form.efficiency')}:</label>
                                 <input

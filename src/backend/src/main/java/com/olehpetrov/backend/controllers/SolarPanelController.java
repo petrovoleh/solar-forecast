@@ -70,15 +70,12 @@ public class SolarPanelController {
         Panel panel = new Panel();
         panel.setUserId(user.getId());
         panel.setPowerRating(panelRequest.getPowerRating());
-        panel.setTemperatureCoefficient(panelRequest.getTemperatureCoefficient());
         panel.setEfficiency(panelRequest.getEfficiency());
         panel.setName(panelRequest.getName());
         panel.setQuantity(panelRequest.getQuantity());
         if (!shouldRemoveCluster(panelRequest.getClusterId())) {
             Cluster cluster = clusterService.getClusterById(panelRequest.getClusterId());
-//            if (cluster == null) {
-//                return ResponseEntity.badRequest().body("Invalid cluster ID.");
-//            }
+
             panel.setCluster(cluster);
         }
         // Handle location
@@ -184,7 +181,6 @@ public class SolarPanelController {
         // Update the fields of the existing panel with the data from the request
         existingPanel.setName(panelRequest.getName());
         existingPanel.setPowerRating(panelRequest.getPowerRating());
-        existingPanel.setTemperatureCoefficient(panelRequest.getTemperatureCoefficient());
         existingPanel.setEfficiency(panelRequest.getEfficiency());
         existingPanel.setQuantity(panelRequest.getQuantity());
 

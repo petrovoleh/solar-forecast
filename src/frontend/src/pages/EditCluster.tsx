@@ -23,7 +23,6 @@ interface Panel {
     id: string;
     name: string;
     powerRating: number;
-    temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
     location?: Partial<LocationData>;
@@ -200,7 +199,6 @@ const EditCluster: React.FC = () => {
         const payload: {
             name: string;
             powerRating: number;
-            temperatureCoefficient: number;
             efficiency: number;
             quantity: number;
             clusterId: string;
@@ -208,7 +206,6 @@ const EditCluster: React.FC = () => {
         } = {
             name: panel.name,
             powerRating: panel.powerRating,
-            temperatureCoefficient: panel.temperatureCoefficient,
             efficiency: panel.efficiency,
             quantity: panel.quantity,
             clusterId: clusterIdValue ?? '',

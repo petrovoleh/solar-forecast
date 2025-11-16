@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 interface PanelData {
     name: string;
     powerRating: number;
-    temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
     location?: {
@@ -87,10 +86,6 @@ const ViewPanel: React.FC = () => {
                         <label>{t('viewPanel.powerRating')}:</label>
                         <p>{panelData.powerRating}</p>
                     </div>
-                    {/*<div className="info-item">*/}
-                    {/*    <label>{t('viewPanel.temperatureCoefficient')}:</label>*/}
-                    {/*    <p>{panelData.temperatureCoefficient}</p>*/}
-                    {/*</div>*/}
                     <div className="info-item">
                         <label>{t('viewPanel.efficiency')}:</label>
                         <p>{panelData.efficiency}</p>

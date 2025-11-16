@@ -79,7 +79,6 @@ class SolarPanelControllerTest {
         Map<String, Object> request = Map.of(
                 "name", "Panel",
                 "powerRating", 400,
-                "temperatureCoefficient", 1,
                 "efficiency", 20,
                 "quantity", 2
         );
@@ -154,7 +153,6 @@ class SolarPanelControllerTest {
         Map<String, Object> request = Map.of(
                 "name", "Updated",
                 "powerRating", 420,
-                "temperatureCoefficient", 1,
                 "efficiency", 21,
                 "quantity", 3
         );

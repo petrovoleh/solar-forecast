@@ -15,7 +15,6 @@ interface SolarPanel {
     id: string;
     name: string;
     powerRating: number;
-    temperatureCoefficient: number;
     efficiency: number;
     quantity: number;
     location: Location;

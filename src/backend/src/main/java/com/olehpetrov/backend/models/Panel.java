@@ -14,7 +14,6 @@ public class Panel {
     private String id;
     private String userId;
     private int powerRating;
-    private int temperatureCoefficient;
     private int efficiency;
     private String name;
     private int quantity;
