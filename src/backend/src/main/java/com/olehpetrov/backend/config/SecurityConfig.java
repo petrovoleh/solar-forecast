@@ -70,8 +70,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://frontend:3000",
-                "http://193.219.91.103/",
-                "http://193.219.91.103:13415"
+                "http://193.219.91.103",
+                "http://193.219.91.103:*"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
