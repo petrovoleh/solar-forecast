@@ -114,7 +114,7 @@ const EditPanel: React.FC = () => {
         setFormData((prevState) => ({
             ...prevState,
             [name]: name === 'powerRating'
-                ? Math.min(Math.max(parseInt(value, 10), 100), 10000) // Ensure value is between 100 and 10000
+                ? Math.min(parseInt(value, 10), 10000) // Cap power rating at 10000 but allow lower values
                 : name === 'efficiency'
                     ? Math.min(Math.max(parseInt(value, 10), 20), 100) // Ensure value is between 20 and 100
                     : name === 'quantity'
@@ -193,8 +193,8 @@ const EditPanel: React.FC = () => {
             setResponseMessage('You must be logged in to add or edit a panel.');
             return;
         }
-        if (formData.powerRating < 1 || formData.efficiency < 1 || !formData.location?.lat || !formData.location?.lon) {
-            setResponseMessage('Power rating, efficiency, latitude, and longitude must be valid and greater than 1.');
+        if (formData.efficiency < 1 || !formData.location?.lat || !formData.location?.lon) {
+            setResponseMessage('Efficiency, latitude, and longitude must be valid and greater than 1.');
             return;
         }
 
