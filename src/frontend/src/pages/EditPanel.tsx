@@ -193,8 +193,22 @@ const EditPanel: React.FC = () => {
             setResponseMessage('You must be logged in to add or edit a panel.');
             return;
         }
-        if (formData.efficiency < 1 || !formData.location?.lat || !formData.location?.lon) {
-            setResponseMessage('Efficiency, latitude, and longitude must be valid and greater than 1.');
+        if (!formData.powerRating || formData.powerRating < 1) {
+            setResponseMessage('Power rating is required.');
+            return;
+        }
+
+        const hasValidLocation = Boolean(
+            formData.location &&
+            typeof formData.location.lat === 'number' &&
+            typeof formData.location.lon === 'number' &&
+            formData.location.city?.trim() &&
+            formData.location.country?.trim() &&
+            formData.location.district?.trim()
+        );
+
+        if (formData.efficiency < 1 || !hasValidLocation) {
+            setResponseMessage('Efficiency must be greater than 1 and address details are required.');
             return;
         }
 
@@ -259,6 +273,7 @@ const EditPanel: React.FC = () => {
                                     value={formData.powerRating}
                                     onChange={handleInputChange}
                                     required
+                                    min={1}
                                     placeholder={t('addPanel.form.powerRatingPlaceholder')}
                                 />
                             </div>
@@ -315,6 +330,7 @@ const EditPanel: React.FC = () => {
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.countryPlaceholder')}
                                     disabled={isClusterLocationLocked} // Disable if selected cluster defines the location
+                                    required={!isClusterLocationLocked}
                                 />
                             </div>
                             <div className="info-item">
@@ -326,6 +342,7 @@ const EditPanel: React.FC = () => {
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.cityPlaceholder')}
                                     disabled={isClusterLocationLocked}
+                                    required={!isClusterLocationLocked}
                                 />
                             </div>
                             <div className="info-item">
@@ -337,6 +354,7 @@ const EditPanel: React.FC = () => {
                                     onChange={handleAddressManualChange}
                                     placeholder={t('addPanel.form.districtPlaceholder')}
                                     disabled={isClusterLocationLocked}
+                                    required={!isClusterLocationLocked}
                                 />
                             </div>
 

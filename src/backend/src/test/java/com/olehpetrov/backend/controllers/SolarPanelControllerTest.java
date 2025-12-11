@@ -80,7 +80,14 @@ class SolarPanelControllerTest {
                 "name", "Panel",
                 "powerRating", 400,
                 "efficiency", 20,
-                "quantity", 2
+                "quantity", 2,
+                "location", Map.of(
+                        "lat", 10.0,
+                        "lon", 10.0,
+                        "city", "City",
+                        "district", "District",
+                        "country", "Country"
+                )
         );
 
         mockMvc.perform(post("/api/panel/add")
@@ -154,7 +161,14 @@ class SolarPanelControllerTest {
                 "name", "Updated",
                 "powerRating", 420,
                 "efficiency", 21,
-                "quantity", 3
+                "quantity", 3,
+                "location", Map.of(
+                        "lat", 20.0,
+                        "lon", 20.0,
+                        "city", "City",
+                        "district", "District",
+                        "country", "Country"
+                )
         );
 
         mockMvc.perform(put("/api/panel/panel-id")
@@ -178,6 +192,52 @@ class SolarPanelControllerTest {
         mockMvc.perform(delete("/api/panel/panel-id")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void addPanelReturnsBadRequestWhenPowerRatingMissing() throws Exception {
+        User user = buildUser();
+        when(jwtUtils.extractUsername("token")).thenReturn("user");
+        when(userService.findByUsername("user")).thenReturn(user);
+
+        Map<String, Object> request = Map.of(
+                "name", "Panel",
+                "efficiency", 20,
+                "quantity", 2,
+                "location", Map.of(
+                        "lat", 10.0,
+                        "lon", 10.0,
+                        "city", "City",
+                        "district", "District",
+                        "country", "Country"
+                )
+        );
+
+        mockMvc.perform(post("/api/panel/add")
+                        .header("Authorization", "Bearer token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addPanelReturnsBadRequestWhenLocationMissing() throws Exception {
+        User user = buildUser();
+        when(jwtUtils.extractUsername("token")).thenReturn("user");
+        when(userService.findByUsername("user")).thenReturn(user);
+
+        Map<String, Object> request = Map.of(
+                "name", "Panel",
+                "powerRating", 400,
+                "efficiency", 20,
+                "quantity", 2
+        );
+
+        mockMvc.perform(post("/api/panel/add")
+                        .header("Authorization", "Bearer token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 }
 
