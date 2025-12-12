@@ -415,6 +415,7 @@ const EditCluster: React.FC = () => {
                                     type="checkbox"
                                     checked={isGroupCluster}
                                     onChange={handleGroupToggle}
+                                    style={{ width: '10%' }}
                                 />
                                 {t('editCluster.form.groupLabel')}
                             </label>
@@ -469,15 +470,13 @@ const EditCluster: React.FC = () => {
                 </form>
                 {responseMessage && <div className="response-message">{responseMessage}</div>}
                 </div>
-                <div className="panel-assignment-section">
-                    <h2>{t('editCluster.panelsSection.title')}</h2>
-                    <p className="panel-assignment-description">
-                        {isEditMode
-                            ? t('editCluster.panelsSection.description')
-                            : t('editCluster.panelsSection.unavailable')}
-                    </p>
-                    {isEditMode ? (
-                        panelsLoading ? (
+                {isEditMode && (
+                    <div className="panel-assignment-section">
+                        <h2>{t('editCluster.panelsSection.title')}</h2>
+                        <p className="panel-assignment-description">
+                            {t('editCluster.panelsSection.description')}
+                        </p>
+                        {panelsLoading ? (
                             <p className="panel-assignment-status">{t('editCluster.panelsSection.loading')}</p>
                         ) : panels.length === 0 ? (
                             <p className="panel-assignment-status">{t('editCluster.panelsSection.noPanels')}</p>
@@ -507,14 +506,12 @@ const EditCluster: React.FC = () => {
                                     );
                                 })}
                             </ul>
-                        )
-                    ) : (
-                        <p className="panel-assignment-status">{t('editCluster.panelsSection.unavailable')}</p>
-                    )}
-                    {isEditMode && !panelsLoading && panels.some((panel) => panel.cluster && panel.cluster.id !== id) && (
-                        <p className="panel-assignment-hint">{t('editCluster.panelsSection.moveHint')}</p>
-                    )}
-                </div>
+                        )}
+                        {!panelsLoading && panels.some((panel) => panel.cluster && panel.cluster.id !== id) && (
+                            <p className="panel-assignment-hint">{t('editCluster.panelsSection.moveHint')}</p>
+                        )}
+                    </div>
+                )}
                 <div className="panel-map-container">
                     <h2 className="location_header">{t('editCluster.mapSection.header')}</h2>
                     <MapComponent
