@@ -159,7 +159,7 @@
     "titleEdit": "Redaguoti saulės skydelį",
     "currentLocation": "Dabartinė vieta",
     "profileLocation": "Profilio vieta",
-    "currentLocationHttpsWarning": "Vietos nustatymas galimas tik naudojant saugų (HTTPS) ryšį. Vietą nustatėme į Vilnius, Didlaukio g. 49.",
+    "currentLocationHttpsWarning": "Vietos nustatymas galimas tik naudojant saugų (HTTPS) ryšį. Vietą nustatėme į Vilnius, Didlaukio g. 47.",
     "form": {
       "panelName": "Skydelio pavadinimas",
       "panelNamePlaceholder": "Įveskite skydelio pavadinimą",

@@ -159,7 +159,7 @@
     "titleEdit": "Редагувати сонячну панель",
     "currentLocation": "Поточне місцезнаходження",
     "profileLocation": "Місцезнаходження профілю",
-    "currentLocationHttpsWarning": "Визначення поточного місця доступне лише через захищене (HTTPS) з'єднання. Ми встановили місце на Вільнюс, Didlaukio g. 49.",
+    "currentLocationHttpsWarning": "Визначення поточного місця доступне лише через захищене (HTTPS) з'єднання. Ми встановили місце на Вільнюс, Didlaukio g. 47.",
     "form": {
       "panelName": "Назва панелі",
       "panelNamePlaceholder": "Введіть назву панелі",

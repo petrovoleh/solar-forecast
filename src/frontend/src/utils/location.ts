@@ -4,7 +4,7 @@ export const DEFAULT_LOCATION: LocationData = {
     lat: 54.7405,
     lon: 25.2637,
     city: 'Vilnius',
-    district: 'Didlaukio g. 49',
+    district: 'Didlaukio g. 47',
     country: 'Lithuania',
 };
 

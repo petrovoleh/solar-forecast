@@ -160,7 +160,7 @@
     "titleEdit": "Edit Solar Panel",
     "currentLocation": "Current location",
     "profileLocation": "Profile location",
-    "currentLocationHttpsWarning": "Current location works only over a secure (HTTPS) connection. We've set the map to Vilnius, Didlaukio g. 49 instead.",
+    "currentLocationHttpsWarning": "Current location works only over a secure (HTTPS) connection. We've set the map to Vilnius, Didlaukio g. 47 instead.",
     "form": {
       "panelName": "Panel Name",
       "panelNamePlaceholder": "Enter panel name",
