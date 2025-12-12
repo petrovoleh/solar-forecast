@@ -1,11 +1,11 @@
 import {LocationData} from '../types/location';
 
 export const DEFAULT_LOCATION: LocationData = {
-    lat: 54.6872,
-    lon: 25.2797,
-    city: '',
-    district: '',
-    country: '',
+    lat: 54.7405,
+    lon: 25.2637,
+    city: 'Vilnius',
+    district: 'Didlaukio g. 49',
+    country: 'Lithuania',
 };
 
 export const mergeLocation = (

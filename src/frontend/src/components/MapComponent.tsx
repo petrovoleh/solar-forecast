@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import {useTranslation} from 'react-i18next';
 import {backend_url} from "../config";
 import {LocationData, LocationDetails} from '../types/location';
+import {DEFAULT_LOCATION} from '../utils/location';
 import {reverseGeocode} from '../utils/geocoding';
 import {apiRequest, requireOk} from '../utils/apiClient';
 
@@ -98,6 +99,20 @@ const MapComponent: React.FC<MapComponentProps> = ({
     };
     const handleCurrentLocation = () => {
         if (disabled) return;
+
+        if (!window.isSecureContext) {
+            alert(t('addPanel.currentLocationHttpsWarning'));
+
+            setPosition([DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon]);
+            onLocationChange(DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon);
+            onAddressChange({
+                country: DEFAULT_LOCATION.country,
+                city: DEFAULT_LOCATION.city,
+                district: DEFAULT_LOCATION.district,
+            });
+
+            return;
+        }
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
