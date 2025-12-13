@@ -23,9 +23,16 @@ public class InverterSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         List<Inverter> defaultInverters = List.of(
-                createInverter("Aurora Flex 5", "SolarSim", 90.0, 5.0),
-                createInverter("Aurora Flex 10", "SolarSim", 92.5, 10.0),
-                createInverter("Aurora Flex 20", "SolarSim", 94.0, 20.0)
+                createInverter("Sample Inverter 5", "SampleTech", 95.0, 5.0),
+                createInverter("Sample Inverter 10", "SampleTech", 95.5, 10.0),
+                createInverter("Sample Inverter 15", "SampleTech", 96.0, 15.0),
+                createInverter("Sample Inverter 20", "SampleTech", 96.5, 20.0),
+                createInverter("Sample Inverter 25", "SampleTech", 97.0, 25.0),
+                createInverter("Sample Inverter 30", "SampleTech", 97.2, 30.0),
+                createInverter("Sample Inverter 35", "SampleTech", 97.4, 35.0),
+                createInverter("Sample Inverter 40", "SampleTech", 97.6, 40.0),
+                createInverter("Sample Inverter 50", "SampleTech", 97.8, 50.0),
+                createInverter("Sample Inverter 60", "SampleTech", 98.0, 60.0)
         );
 
         defaultInverters.forEach(inverter -> {
