@@ -512,7 +512,10 @@ const EditCluster: React.FC = () => {
                         )}
                     </div>
                 )}
-                <div className="panel-map-container">
+                <div
+                    className="panel-map-container"
+                    style={isEditMode ? undefined : {gridColumn: '2 / 4'}}
+                >
                     <h2 className="location_header">{t('editCluster.mapSection.header')}</h2>
                     <MapComponent
                         onLocationChange={handleLocationChange}
