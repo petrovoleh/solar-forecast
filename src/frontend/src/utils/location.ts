@@ -1,8 +1,8 @@
 import {LocationData} from '../types/location';
 
 export const DEFAULT_LOCATION: LocationData = {
-    lat: 54.7405,
-    lon: 25.2637,
+    lat: 54.7299,
+    lon: 25.2638,
     city: 'Vilnius',
     district: 'Didlaukio g. 47',
     country: 'Lithuania',
