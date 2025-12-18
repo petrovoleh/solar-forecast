@@ -8,15 +8,12 @@ import matplotlib.pyplot as plt
 import os
 import joblib
 # ============================================================
-# 1️⃣ Завантаження PVGIS
+# 1. PVGIS data loading
 # ============================================================
-
-
-
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     """
-    Завантажує річні дані вироблення сонячної енергії з PVGIS (ERA5)
-    з pvcalculation=1. Підтримує формат часу типу 20230101:0030.
+    Download yearly solar production data from PVGIS (ERA5) with pvcalculation=1.
+    Supports timestamps like 20230101:0030.
     """
 
     os.makedirs("data", exist_ok=True)
@@ -37,37 +34,37 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
         "&outputformat=csv"
     )
 
-    print(f"\n➡️ Отримую дані з PVGIS (ERA5) для {year} року...")
-    print(f"🔗 URL: {url}")
+    print(f"\nFetching PVGIS (ERA5) data for {year}...")
+    print(f"URL: {url}")
 
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
     except Exception as e:
-        raise RuntimeError(f"❌ Помилка запиту до PVGIS: {e}")
+        raise RuntimeError(f"PVGIS request failed: {e}")
 
     text = response.text.strip().replace("\r", "")
     with open("data/pvgis_last_response.txt", "w", encoding="utf-8") as f:
         f.write(text)
 
-    # знайти де починається таблиця
+    # Find where the table starts
     lines = text.splitlines()
     start_idx = next((i for i, l in enumerate(lines) if l.lower().startswith("time")), None)
     if start_idx is None:
-        raise ValueError("❌ Не знайдено таблицю CSV у відповіді PVGIS! Перевір data/pvgis_last_response.txt")
+        raise ValueError("CSV table not found in PVGIS response. Check data/pvgis_last_response.txt")
 
     csv_data = "\n".join(lines[start_idx:])
     df = pd.read_csv(StringIO(csv_data))
     df.columns = [c.strip() for c in df.columns]
 
-    print(f"🔹 Колонки CSV: {df.columns.tolist()}")
+    print(f"CSV columns: {df.columns.tolist()}")
 
-    # === Обробка часу ===
+    # === Time handling ===
     time_col = next((c for c in df.columns if "time" in c.lower()), None)
     if not time_col:
-        raise ValueError("❌ У CSV немає колонки часу (time/time(UTC))")
+        raise ValueError("CSV response is missing a time column (time/time(UTC))")
 
-    # новий формат: 20230101:0030 → 2023-01-01 00:30
+    # Convert 20230101:0030 → 2023-01-01 00:30
     df["time_str"] = (
         df[time_col]
         .astype(str)
@@ -76,9 +73,9 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     )
     df["time"] = pd.to_datetime(df["time_str"], format="%Y-%m-%d %H%M", utc=True, errors="coerce")
 
-    # === Потужність P ===
+    # === Power P ===
     if "P" not in df.columns:
-        raise ValueError("❌ У CSV немає колонки 'P' (потужності).")
+        raise ValueError("CSV response is missing the 'P' (power) column.")
 
     df["P"] = (
         df["P"]
@@ -89,27 +86,27 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     )
     df["P"] = pd.to_numeric(df["P"], errors="coerce")
 
-    # === Температура ===
+    # === Temperature ===
     if "T2m" in df.columns:
         df = df.rename(columns={"T2m": "temp_air"})
     elif "Temp" in df.columns:
         df = df.rename(columns={"Temp": "temp_air"})
 
-    # === Очищення ===
+    # === Cleaning ===
     df = df.dropna(subset=["time", "P"]).reset_index(drop=True)
     df = df.rename(columns={"P": "power_PVGIS_W_per_kWp"})
 
     if len(df) == 0:
-        raise ValueError("⚠️ PVGIS повернув таблицю без валідних значень потужності!")
+        raise ValueError("PVGIS returned a table without valid power values.")
 
-    print(f"✅ Завантажено {len(df)} рядків даних з PVGIS (ERA5, {year})")
-    print("🔍 Приклад даних:")
+    print(f"Loaded {len(df)} rows of PVGIS data (ERA5, {year})")
+    print("Sample data:")
     print(df.head(5)[["time", "power_PVGIS_W_per_kWp", "temp_air"]])
 
     return df
 
 # ============================================================
-# 2️⃣ Завантаження погоди з Open-Meteo
+# 2. Weather loading from Open-Meteo
 # ============================================================
 def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
     url = (
@@ -133,7 +130,7 @@ def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
 
 
 # ============================================================
-# 3️⃣ Підготовка фіч
+# 3. Feature preparation
 # ============================================================
 def prepare_features(df):
     df = df.copy()
@@ -147,13 +144,13 @@ def prepare_features(df):
 
 
 # ============================================================
-# 4️⃣ Тренування та тест
+# 4. Training and testing
 # ============================================================
 def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     os.makedirs("data", exist_ok=True)
 
-    # --- тренування ---
-    print("🔹 Завантажую дані для Вільнюса...")
+    # --- Training ---
+    print("Loading data for Vilnius...")
     vilnius_pv = get_pvgis_data(train_lat, train_lon, year)
     vilnius_weather = get_openmeteo(train_lat, train_lon)
 
@@ -167,7 +164,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     df_train = prepare_features(df_train)
     train_path = "data/train_vilnius_2023.csv"
     df_train.to_csv(train_path, index=False)
-    print(f"✅ Дані для тренування збережено у {train_path}")
+    print(f"Training data saved to {train_path}")
 
     X_train = df_train[
         [
@@ -183,7 +180,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     ]
     y_train = df_train["power_PVGIS_W_per_kWp"]
 
-    print("🚀 Треную модель XGBoost...")
+    print("Training XGBoost model...")
     model = XGBRegressor(
         n_estimators=600,
         max_depth=6,
@@ -193,13 +190,13 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
         random_state=42,
     )
     model.fit(X_train, y_train)
-    print("✅ Модель навчена!")
+    print("Model trained.")
     joblib.dump(model, "model.joblib")
-    # збережи також список фіч, щоб при infer знати порядок
+    # Save the feature list so inference preserves the same order
     features = ["temperature_2m","cloudcover","shortwave_radiation","wind_speed_10m","hour_sin","hour_cos","day_sin","day_cos"]
     joblib.dump(features, "model_features.joblib")
-    # --- тест ---
-    print("\n🔹 Завантажую дані для Каунса...")
+    # --- Testing ---
+    print("\nLoading data for Kaunas...")
     kaunas_pv = get_pvgis_data(test_lat, test_lon, year)
     kaunas_weather = get_openmeteo(test_lat, test_lon)
 
@@ -213,7 +210,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
 
     test_path = "data/test_kaunas_2023.csv"
     df_test.to_csv(test_path, index=False)
-    print(f"✅ Дані для тестування збережено у {test_path}")
+    print(f"Test data saved to {test_path}")
 
     X_test = df_test[
         [
@@ -229,12 +226,12 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
     ]
     y_test = df_test["power_PVGIS_W_per_kWp"]
 
-    print("📊 Обчислюю метрики...")
+    print("Calculating metrics...")
     y_pred = model.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
 
-    print(f"\n🌞 Результати:")
+    print("\nResults:")
     print(f"MAE: {mae:.2f} W/kWp")
     print(f"R² : {r2:.3f}")
 
@@ -252,7 +249,7 @@ def train_and_test(train_lat, train_lon, test_lat, test_lon, year=2023):
 
 
 # ============================================================
-# 5️⃣ Запуск
+# 5. Entry point
 # ============================================================
 if __name__ == "__main__":
     train_and_test(54.6872, 25.2797, 54.8979, 23.8869, 2023)

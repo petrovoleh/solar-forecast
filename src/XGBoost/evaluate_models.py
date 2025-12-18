@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
 # ============================================================
-# 1️⃣ PVGIS data ingestion
+# 1. PVGIS data ingestion
 # ============================================================
 def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     url = (
@@ -28,7 +28,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
         "&outputformat=csv"
     )
 
-    print(f"\n➡️ Отримую PVGIS дані для ({lat}, {lon}) {year}")
+    print(f"\nFetching PVGIS data for ({lat}, {lon}) {year}")
     response = requests.get(url, timeout=60)
     response.raise_for_status()
     text = response.text.strip().replace("\r", "")
@@ -36,7 +36,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
     lines = text.splitlines()
     start_idx = next((i for i, l in enumerate(lines) if l.lower().startswith("time")), None)
     if start_idx is None:
-        raise ValueError("❌ Не знайдено таблицю CSV у відповіді PVGIS!")
+        raise ValueError("CSV table not found in PVGIS response.")
     csv_data = "\n".join(lines[start_idx:])
     df = pd.read_csv(StringIO(csv_data))
     df.columns = [c.strip() for c in df.columns]
@@ -62,7 +62,7 @@ def get_pvgis_data(lat: float, lon: float, year: int = 2023) -> pd.DataFrame:
 
 
 # ============================================================
-# 2️⃣ Open-Meteo API
+# 2. Open-Meteo API
 # ============================================================
 def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
     url = (
@@ -86,7 +86,7 @@ def get_openmeteo(lat, lon, start="2016-01-01", end="2023-12-31"):
 
 
 # ============================================================
-# 3️⃣ Feature engineering
+# 3. Feature engineering
 # ============================================================
 def prepare_features(df):
     df["hour"] = df["time"].dt.hour
@@ -99,7 +99,7 @@ def prepare_features(df):
 
 
 # ============================================================
-# 4️⃣ Metrics
+# 4. Metrics
 # ============================================================
 def compute_metrics(y_true, y_pred):
     # Convert to NumPy and drop NaN/Inf values
@@ -138,11 +138,11 @@ def compute_metrics(y_true, y_pred):
 
 
 # ============================================================
-# 5️⃣ Loading models and testing
+# 5. Loading models and testing
 # ============================================================
 def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     os.makedirs("data", exist_ok=True)
-    print(f"📥 Завантажую тестові дані (Каунас, {year})...")
+    print(f"Loading test data (Kaunas, {year})...")
     df_pv = get_pvgis_data(test_lat, test_lon, year)
     df_weather = get_openmeteo(test_lat, test_lon)
     df_test = pd.merge_asof(
@@ -164,17 +164,17 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     X_rf = df_test[features_rf]
     y_true = df_test["power_PVGIS_W_per_kWp"]
 
-    print("⚡ Прогнозую XGBoost...")
+    print("Running XGBoost inference...")
     y_pred_xgb = model_xgb.predict(X_xgb)
 
-    print("🌲 Прогнозую RandomForest...")
+    print("Running RandomForest inference...")
     y_pred_rf = model_rf.predict(X_rf)
 
     metrics_xgb = compute_metrics(y_true, y_pred_xgb)
     metrics_rf = compute_metrics(y_true, y_pred_rf)
 
     df_cmp = pd.DataFrame([metrics_rf, metrics_xgb], index=["RandomForest", "XGBoost"])
-    print("\n🌞 === Порівняння моделей (готові моделі) ===")
+    print("\n=== Model comparison (pretrained models) ===")
     print(df_cmp.round(3))
 
     df_out = df_test[["time"]].copy()
@@ -183,14 +183,14 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     df_out["pred_rf"] = y_pred_rf
     df_out.to_csv("data/results_evaluated_models.csv", index=False)
 
-    print("\n📁 Збережено результати у data/results_evaluated_models.csv")
+    print("\nResults saved to data/results_evaluated_models.csv")
 
     # ============================================================
-    # 7️⃣ Save plot (no GUI needed)
+    # 6. Save plot (no GUI needed)
     # ============================================================
     os.makedirs("plots", exist_ok=True)
 
-    # щоб графік не був надто важкий — візьмемо, наприклад, 7 днів
+    # Limit the plot to keep it light—use the last 7 days
     df_plot = df_out.copy()
     df_plot["time"] = pd.to_datetime(df_plot["time"], utc=True)
     df_plot = df_plot.sort_values("time")
@@ -214,11 +214,11 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     plt.savefig(plot_path, dpi=200, bbox_inches="tight")
     plt.close()
 
-    print(f"🖼️ Plot saved to: {plot_path}")
+    print(f"Plot saved to: {plot_path}")
 
 
 # ============================================================
-# 6️⃣ Entry point
+# 7. Entry point
 # ============================================================
 if __name__ == "__main__":
     evaluate_saved_models()

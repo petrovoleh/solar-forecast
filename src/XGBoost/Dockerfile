@@ -1,5 +1,5 @@
 # ===========================
-# 🌞 PV Forecast FastAPI
+# PV Forecast FastAPI
 # ===========================
 
 FROM python:3.11-slim

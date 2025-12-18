@@ -20,7 +20,7 @@ import logging
 import sys
 
 # ============================================================
-# 🧩 Configure Logger
+# Configure logger
 # ============================================================
 def configure_logger():
     logger = logging.getLogger("pv_forecast")
@@ -47,7 +47,7 @@ def configure_logger():
 logger = configure_logger()
 
 # ============================================================
-# 1️⃣ Model loading
+# 1. Model loading
 # ============================================================
 def load_model():
     try:
@@ -55,11 +55,11 @@ def load_model():
         features = joblib.load(FEATURES_PATH)
         return model, features
     except Exception as e:
-        raise RuntimeError(f"❌ Failed to load model: {e}")
+        raise RuntimeError(f"Failed to load model: {e}")
 
 
 # ============================================================
-# 2️⃣ Weather retrieval
+# 2. Weather retrieval
 # ============================================================
 def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> pd.DataFrame:
     start_date = start_date.split(" ")[0]
@@ -76,13 +76,13 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
                 if r.status_code == 200:
                     return r
                 elif r.status_code in (429, 503) or "Too many" in r.text:
-                    logger.warning(f"⚠️ {label} API rate-limited (attempt {attempt}/10). Waiting 2s...")
+                    logger.warning(f"{label} API rate-limited (attempt {attempt}/10). Waiting 2s...")
                     time.sleep(2)
                 else:
-                    logger.error(f"❌ {label} API error ({r.status_code}): {r.text[:120]}")
+                    logger.error(f"{label} API error ({r.status_code}): {r.text[:120]}")
                     break
             except requests.exceptions.RequestException as e:
-                logger.warning(f"⚠️ Network error on {label} attempt {attempt}/10: {e}")
+                logger.warning(f"Network error on {label} attempt {attempt}/10: {e}")
                 time.sleep(2)
         raise HTTPException(status_code=500, detail=f"{label} API failed after 10 attempts")
 
@@ -132,16 +132,16 @@ def fetch_open_meteo(lat: float, lon: float, start_date: str, end_date: str) -> 
 
     # ---------------------- MERGE RESULTS ----------------------
     if not df_parts:
-        raise HTTPException(status_code=500, detail="❌ No weather data available for requested range")
+        raise HTTPException(status_code=500, detail="No weather data available for requested range")
 
     df = pd.concat(df_parts).drop_duplicates(subset=["time"]).sort_values("time").reset_index(drop=True)
-    logger.info(f"✅ Weather data fetched successfully: {len(df)} records")
+    logger.info(f"Weather data fetched successfully: {len(df)} records")
     return df
 
 
 
 # ============================================================
-# 3️⃣ Feature generation
+# 3. Feature generation
 # ============================================================
 def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
@@ -155,7 +155,7 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ============================================================
-# 4️⃣ Forecasting
+# 4. Forecasting
 # ============================================================
 def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
     df_weather = fetch_open_meteo(lat, lon, start_date, end_date)
@@ -164,7 +164,7 @@ def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
     preds_w_per_kwp = model.predict(X)
     preds_w = preds_w_per_kwp * float(kWp)
 
-    # 🩵 Clamp all negative values (night noise or measurement error)
+    # Clamp all negative values (night noise or measurement error)
     preds_w = np.maximum(preds_w, 0)
     preds_w_per_kwp = np.maximum(preds_w_per_kwp, 0)
 
@@ -178,7 +178,7 @@ def predict_for_range(lat, lon, start_date, end_date, kWp, model, features):
 
 
 # ============================================================
-# 5️⃣ Plot creation
+# 5. Plot creation
 # ============================================================
 def make_plot(df, start_date, end_date, lat, lon, kwp):
     buf = io.BytesIO()
@@ -197,13 +197,13 @@ def make_plot(df, start_date, end_date, lat, lon, kwp):
 
 
 # ============================================================
-# 6️⃣ Endpoints
+# 6. Endpoints
 # ============================================================
 
 @app.get("/")
 def root():
     return {
-        "message": "Welcome to PV Forecast API 🚀",
+        "message": "Welcome to PV Forecast API",
         "usage": {
             "/forecast": "hourly forecast",
             "/daily_forecast": "daily aggregated forecast (kWh per day)"
@@ -247,7 +247,7 @@ def forecast(
 
 
 # ============================================================
-# 7️⃣ New endpoint: daily production total
+# 7. Daily production total endpoint
 # ============================================================
 @app.get("/daily_forecast")
 def daily_forecast(
@@ -257,13 +257,13 @@ def daily_forecast(
         end: str = Query(...),
         kwp: float = Query(...),
 ):
-    logger.info(f"🔹 daily_forecast called with lat={lat}, lon={lon}, kwp={kwp}, {start}→{end}")
+    logger.info(f"daily_forecast called with lat={lat}, lon={lon}, kwp={kwp}, {start}→{end}")
     try:
         model, features = load_model()
-        logger.info(f"✅ Model and features loaded: {len(features)} features")
+        logger.info(f"Model and features loaded: {len(features)} features")
 
         df = predict_for_range(lat, lon, start, end, kwp, model, features)
-        logger.info(f"✅ Predictions generated: {len(df)} rows")
+        logger.info(f"Predictions generated: {len(df)} rows")
 
         df["date"] = df["time"].dt.date
         daily = (
@@ -275,9 +275,9 @@ def daily_forecast(
         daily["pred_kWh"] = (daily["pred_kWh"] * 2.0).round(2)
         daily["date"] = daily["date"].astype(str)
 
-        logger.info("✅ Daily forecast ready")
+        logger.info("Daily forecast ready")
         return JSONResponse(daily.to_dict(orient="records"))
 
     except Exception as e:
-        logger.exception("❌ Error in /daily_forecast")
+        logger.exception("Error in /daily_forecast")
         raise HTTPException(status_code=500, detail=str(e))

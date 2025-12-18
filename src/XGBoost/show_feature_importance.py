@@ -1,5 +1,5 @@
 # ============================================================
-# 7️⃣ Automated feature importance analysis (RF + XGB)
+# 1. Automated feature importance analysis (RF + XGB)
 # ============================================================
 import os
 import joblib
@@ -16,11 +16,11 @@ def analyze_feature_importance_from_files():
             model_rf = joblib.load("model_rf.joblib")
             features_rf = joblib.load("model_rf_features.joblib")
             models["RandomForest"] = (model_rf, features_rf)
-            print("🌲 RandomForest модель завантажено.")
+            print("RandomForest model loaded.")
         except Exception as e:
-            print(f"⚠️ Не вдалося завантажити RandomForest: {e}")
+            print(f"Could not load RandomForest: {e}")
     else:
-        print("⚠️ Файли RandomForest не знайдено.")
+        print("RandomForest files not found.")
 
     # === Load XGBoost model ===
     if os.path.exists("model.joblib") and os.path.exists("model_features.joblib"):
@@ -28,14 +28,14 @@ def analyze_feature_importance_from_files():
             model_xgb = joblib.load("model.joblib")
             features_xgb = joblib.load("model_features.joblib")
             models["XGBoost"] = (model_xgb, features_xgb)
-            print("⚡ XGBoost модель завантажено.")
+            print("XGBoost model loaded.")
         except Exception as e:
-            print(f"⚠️ Не вдалося завантажити XGBoost: {e}")
+            print(f"Could not load XGBoost: {e}")
     else:
-        print("⚠️ Файли XGBoost не знайдено.")
+        print("XGBoost files not found.")
 
     if not models:
-        print("❌ Жодну модель не вдалося знайти.")
+        print("No models were found.")
         return
 
     # === Display feature importances ===
@@ -43,7 +43,7 @@ def analyze_feature_importance_from_files():
 
     for name, (model, features) in models.items():
         if not hasattr(model, "feature_importances_"):
-            print(f"⚠️ Модель {name} не має feature_importances_ — пропускаю.")
+            print(f"Model {name} does not expose feature_importances_; skipping.")
             continue
 
         df_imp = (
@@ -56,13 +56,13 @@ def analyze_feature_importance_from_files():
         )
 
         all_importances[name] = df_imp
-        print(f"\n🌿 Топ-10 фіч для {name}:")
+        print(f"\nTop 10 features for {name}:")
         for i, row in df_imp.head(10).iterrows():
             print(f"   {row['feature']:<25} {row['importance']:.4f}")
 
     # === Build a comparative chart ===
     if not all_importances:
-        print("❌ Жодна модель не має importances.")
+        print("No model provides importances.")
         return
 
     merged = pd.DataFrame()
@@ -96,6 +96,6 @@ def analyze_feature_importance_from_files():
 
 
 
-# 🔹 Call this only once:
+# Call this only once:
 if __name__ == "__main__":
     analyze_feature_importance_from_files()
