@@ -89,7 +89,11 @@ def analyze_feature_importance_from_files():
     plt.title("Feature Importance Comparison (RF vs XGBoost)")
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    out_path = "plots/feature_importance.png"
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=200, bbox_inches="tight")
+    print(f"Saved plot to: {out_path}")
+
 
 
 # 🔹 Call this only once:

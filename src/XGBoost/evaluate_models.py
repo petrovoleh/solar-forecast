@@ -6,6 +6,7 @@ from io import StringIO
 import os
 import joblib
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import matplotlib.pyplot as plt
 
 # ============================================================
 # 1️⃣ PVGIS data ingestion
@@ -183,6 +184,37 @@ def evaluate_saved_models(test_lat=54.8979, test_lon=23.8869, year=2023):
     df_out.to_csv("data/results_evaluated_models.csv", index=False)
 
     print("\n📁 Збережено результати у data/results_evaluated_models.csv")
+
+    # ============================================================
+    # 7️⃣ Save plot (no GUI needed)
+    # ============================================================
+    os.makedirs("plots", exist_ok=True)
+
+    # щоб графік не був надто важкий — візьмемо, наприклад, 7 днів
+    df_plot = df_out.copy()
+    df_plot["time"] = pd.to_datetime(df_plot["time"], utc=True)
+    df_plot = df_plot.sort_values("time")
+
+    last_ts = df_plot["time"].max()
+    if pd.notna(last_ts):
+        df_plot = df_plot[df_plot["time"] >= (last_ts - pd.Timedelta(days=7))]
+
+    plt.figure(figsize=(14, 6))
+    plt.plot(df_plot["time"], df_plot["actual"], label="Actual")
+    plt.plot(df_plot["time"], df_plot["pred_xgb"], label="XGBoost")
+    plt.plot(df_plot["time"], df_plot["pred_rf"], label="RandomForest")
+    plt.xlabel("Time (UTC)")
+    plt.ylabel("Power (W per kWp)")
+    plt.title(f"Model predictions vs actual — last 7 days (lat={test_lat}, lon={test_lon}, year={year})")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+    plot_path = f"plots/predictions_{test_lat}_{test_lon}_{year}.png"
+    plt.savefig(plot_path, dpi=200, bbox_inches="tight")
+    plt.close()
+
+    print(f"🖼️ Plot saved to: {plot_path}")
 
 
 # ============================================================
