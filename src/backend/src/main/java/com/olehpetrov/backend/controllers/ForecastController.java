@@ -145,7 +145,7 @@ public class ForecastController {
                 "%s/forecast?lat=%.6f&lon=%.6f&start=%s&end=%s&kwp=%.3f",
                 forecastUrl, latitude, longitude, from, to, capacity_kwp
         );
-        logger.info("🌍 Sending GET request to: {}", url);
+        logger.info("Sending forecast GET request to: {}", url);
 
         // Send the request to the forecast API
         HttpHeaders headers = new HttpHeaders();
@@ -236,7 +236,7 @@ public class ForecastController {
                 forecastUrl, latitude, longitude, startDate, endDate, capacity_kwp
         );
 
-        logger.info("🌤️ Sending GET request to daily forecast: {}", url);
+        logger.info("Sending daily forecast GET request to: {}", url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
