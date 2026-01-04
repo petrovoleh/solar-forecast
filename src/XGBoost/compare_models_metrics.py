@@ -263,6 +263,7 @@ def evaluate_models(
     for bundle in models:
         X = df_eval[list(bundle.feature_names)]
         y_pred = bundle.model.predict(X)
+        y_pred = np.clip(y_pred, 0.0, None)
         preds[bundle.name] = y_pred
         metrics[bundle.name] = compute_metrics(y_true, y_pred, mape_floor)
 
@@ -337,7 +338,7 @@ def save_metrics_table(metrics_df: pd.DataFrame, output_dir: os.PathLike) -> str
             cell.set_text_props(weight="bold")
 
     fig.tight_layout()
-    out_path = os.fspath(os.path.join(output_dir, "model_metrics_table.png"))
+    out_path = os.fspath(os.path.join(output_dir, "model_metrics_table_after_removing_0.png"))
     fig.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     return out_path
