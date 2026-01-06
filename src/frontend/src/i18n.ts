@@ -9,6 +9,7 @@ i18n.use(initReactI18next).init({
     resources: {
         en: {translation: en},
         lt: {translation: lt},
+        ua: {translation: uk},
         uk: {translation: uk}
     },
     lng: 'en', // Default language

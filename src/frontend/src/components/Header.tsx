@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -9,11 +9,25 @@ const Header: React.FC = () => {
     // Using the auth context to get the current authentication state
     const {isLoggedIn, isAdmin} = useAuth();  // Get the isLoggedIn state from context
     const {t} = useTranslation(); // Use the useTranslation hook
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <header className="header">
             <nav className="nav">
-                <ul className="nav-links">
+                <button
+                    className="nav-toggle"
+                    type="button"
+                    aria-expanded={isMenuOpen}
+                    aria-controls="primary-navigation"
+                    onClick={() => setIsMenuOpen((open) => !open)}
+                >
+                    ☰ Menu
+                </button>
+                <ul
+                    id="primary-navigation"
+                    className={`nav-links${isMenuOpen ? ' is-open' : ''}`}
+                    onClick={() => setIsMenuOpen(false)}
+                >
                     <li><Link to="/">{t('nav.home')}</Link></li>
                     {!isLoggedIn ? (  // Check if user is logged in from context
                         <>

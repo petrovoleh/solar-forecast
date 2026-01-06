@@ -8,11 +8,22 @@ const LanguageSwitcher: React.FC = () => {
         i18n.changeLanguage(language);
     };
 
+    const rawLanguage = i18n.language.split('-')[0];
+    const currentLanguage = rawLanguage === 'uk' ? 'ua' : rawLanguage;
+
     return (
         <div className="language-switcher">
-            <button onClick={() => changeLanguage('en')} className="language-button">English</button>
-            <button onClick={() => changeLanguage('lt')} className="language-button">Lietuvių</button>
-            <button onClick={() => changeLanguage('uk')} className="language-button">Українська</button>
+            <label className="language-label" htmlFor="language-select">Language</label>
+            <select
+                id="language-select"
+                className="language-select"
+                value={currentLanguage}
+                onChange={(event) => changeLanguage(event.target.value)}
+            >
+                <option value="lt">LT</option>
+                <option value="en">EN</option>
+                <option value="ua">UA</option>
+            </select>
         </div>
     );
 };
