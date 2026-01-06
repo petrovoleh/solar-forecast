@@ -13,7 +13,6 @@ const LanguageSwitcher: React.FC = () => {
 
     return (
         <div className="language-switcher">
-            <label className="language-label" htmlFor="language-select">Language</label>
             <select
                 id="language-select"
                 className="language-select"

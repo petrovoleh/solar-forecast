@@ -83,13 +83,6 @@
     align-items: center;
 }
 
-.language-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-}
-
 .language-select {
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
