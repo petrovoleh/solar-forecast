@@ -19,7 +19,7 @@ const Home: React.FC = () => {
             <section className="features-section" aria-labelledby="key-components-title">
                 <h2 id="key-components-title">Key Components</h2>
                     <p>
-                        • <strong>Neural Network Service:</strong>
+                        • <strong>XGBoost Service:</strong>
                         A Python-based FastAPI service trained on historical and real-time weather data to
                         generate solar power output predictions.
                     </p>
@@ -64,7 +64,7 @@ const Home: React.FC = () => {
                 <div className="feature-card">
                     <h3>Purpose-Built for Solar Forecasting</h3>
                     <p>
-                        Integrates neural network models trained on extensive datasets to predict solar
+                        Integrates machine learning models trained on extensive datasets to predict solar
                         energy output with high accuracy, serving as a vital tool for renewable energy
                         planning and optimization.
                     </p>
